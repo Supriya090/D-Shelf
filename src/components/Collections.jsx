@@ -19,16 +19,16 @@ const Collections = () => {
       </div>
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>
-          <ListHead title={""} leftButton={"Books"} />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={""} leftButton={"Gold"} />
+          <HorizontalScrolling getItems={auctionContent} isCollection={true} />
         </div>
         <div className={homeClasses.notableCreators}>
-          <ListHead title={""} leftButton={"Blog Post"} />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={""} leftButton={"Silver"} />
+          <HorizontalScrolling getItems={auctionContent} isCollection={true} />
         </div>
         <div className={homeClasses.notableCreators}>
-          <ListHead title={""} leftButton={"Poems"} />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={""} leftButton={"Bronze"} />
+          <HorizontalScrolling getItems={auctionContent} isCollection={true} />
         </div>
       </div>
     </div>

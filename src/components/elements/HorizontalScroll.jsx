@@ -10,9 +10,10 @@ import SubTitle from "./SubTitle";
 
 function HorizontalScrolling({
   getItems,
-  isTrending = false,
-  isAuthor = false,
-  onSale = false,
+  isTrending,
+  isAuthor,
+  onSale,
+  isCollection,
 }) {
   const [items, setItems] = React.useState(getItems);
   const [selected, setSelected] = React.useState([]);
@@ -66,6 +67,7 @@ function HorizontalScrolling({
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
+            isCollection={isCollection}
           />
         </div>
       </div>

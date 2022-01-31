@@ -6,10 +6,16 @@ import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
 
-function SubTitle({ isTrending = false, isAuthor = false, onSale = false }) {
+function SubTitle({
+  isTrending = false,
+  isAuthor = false,
+  onSale = false,
+  isCollection = false,
+}) {
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
 
+  console.log(isCollection);
   let saleStats;
   if (onSale) {
     saleStats = (
@@ -86,6 +92,21 @@ function SubTitle({ isTrending = false, isAuthor = false, onSale = false }) {
           </Button>
         </div>
       </div>
+    );
+  } else if (isCollection) {
+    return (
+      <>
+        <Typography>
+          Learn to read Novels Like a Professor
+          <br />
+          Tips by Supriya Khadka
+        </Typography>
+        <Button
+          variant='contained'
+          className={`${scrollClasses.voteButton} ${homeClasses.exploreButton}`}>
+          List For Sale
+        </Button>
+      </>
     );
   } else {
     return null;
