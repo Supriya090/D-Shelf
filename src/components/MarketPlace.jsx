@@ -20,27 +20,23 @@ const MarketPlace = () => {
       </div>
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>
-          <ListHead title={""} leftButton={"Trending"} hasRightButton={false} />
+          <ListHead title={""} leftButton={"Trending"} />
           <HorizontalScrolling getItems={auctionContent} />
         </div>
         <div className={homeClasses.notableContents}>
-          <ListHead title={""} leftButton={"Top Sold"} hasRightButton={false} />
+          <ListHead title={""} leftButton={"Top Sold"} />
           <HorizontalScrolling getItems={auctionContent} />
         </div>
         <div className={homeClasses.notableCreators}>
-          <ListHead title={""} leftButton={"Live"} hasRightButton={false} />
+          <ListHead title={""} leftButton={"Live"} />
           <HorizontalScrolling getItems={auctionContent} />
         </div>
         <div className={homeClasses.notableCreators}>
-          <ListHead
-            title={""}
-            leftButton={"Blog Post"}
-            hasRightButton={false}
-          />
+          <ListHead title={""} leftButton={"Blog Post"} />
           <HorizontalScrolling getItems={auctionContent} />
         </div>
         <div className={homeClasses.notableCreators}>
-          <ListHead title={""} leftButton={"Poems"} hasRightButton={false} />
+          <ListHead title={""} leftButton={"Poems"} />
           <HorizontalScrolling getItems={auctionContent} />
         </div>
       </div>

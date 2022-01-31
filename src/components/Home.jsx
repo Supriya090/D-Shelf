@@ -76,12 +76,8 @@ const Home = () => {
       </div>
       <div className={classes.itemsList}>
         <div className={classes.auctions}>
-          <ListHead
-            title={"On Auctions"}
-            leftButton={"On Sale"}
-            hasRightButton={false}
-          />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={"On Auctions"} leftButton={"On Sale"} />
+          <HorizontalScrolling getItems={auctionContent} onSale={true} />
         </div>
         <div className={classes.notableContents}>
           <ListHead
@@ -89,7 +85,7 @@ const Home = () => {
             leftButton={"Trending"}
             hasRightButton={true}
           />
-          <HorizontalScrolling getItems={auctionContent} />
+          <HorizontalScrolling getItems={auctionContent} isTrending={true} />
         </div>
         <div className={classes.notableCreators}>
           <ListHead
@@ -97,7 +93,7 @@ const Home = () => {
             leftButton={"Popular"}
             hasRightButton={true}
           />
-          <HorizontalScrolling getItems={auctionContent} />
+          <HorizontalScrolling getItems={auctionContent} isAuthor={true} />
         </div>
       </div>
       <Button
