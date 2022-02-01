@@ -15,7 +15,6 @@ function SubTitle({
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
 
-  console.log(isCollection);
   let saleStats;
   if (onSale) {
     saleStats = (
