@@ -1,11 +1,13 @@
 import { Button, Divider, Typography } from "@material-ui/core";
 import React from "react";
 import dummy from "../assets/dummy.jpg";
+import dummy2 from "../assets/dummy1.jpg";
 import { useStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
 import { content } from "./elements/dummyImages";
 import ListHead from "./elements/ListHead";
 import { useNavigate } from "react-router";
+import ReadMore from "./elements/ReadMore";
 
 const auctionContent = content;
 
@@ -37,28 +39,27 @@ const Home = () => {
                 </Button>
               </div>
               <Divider />
-              <div className={classes.description}>
-                <Typography>
-                  Following the story of a marriage come undone, this moving
-                  book-length sequence is broken down into four seasons,
-                  distilling the details of the failed relationship through
-                  physical processes of nature, such as the buzzing life of
-                  wildflowers and birds that the speaker?a wife and
-                  mother?studies daily for clues on happiness. Intricately
-                  constructed and brimming with resourceful linguistic play,
-                  these poems are elemental odes on the end of love and its
-                  eventual renewal.
-                </Typography>
-                <Button
-                  size='small'
-                  onClick={singleRoute}
-                  className={classes.moreButton}>
-                  ⬇ MORE
-                </Button>
-              </div>
+              <ReadMore>
+                <div className={classes.description}>
+                  <Typography>
+                    Following the story of a marriage come undone, this moving
+                    book-length sequence is broken down into four seasons,
+                    distilling the details of the failed relationship through
+                    physical processes of nature, such as the buzzing life of
+                    wildflowers and birds that the speaker's wife and mother,
+                    studies daily for clues on happiness. Intricately
+                    constructed and brimming with resourceful linguistic play,
+                    these poems are elemental odes on the end of love and its
+                    eventual renewal.
+                  </Typography>
+                </div>
+              </ReadMore>
             </div>
           </div>
-          <Button variant='contained' className={classes.exploreButton}>
+          <Button
+            variant='contained'
+            className={classes.exploreButton}
+            style={{ marginTop: "40px" }}>
             Explore More
           </Button>
         </div>

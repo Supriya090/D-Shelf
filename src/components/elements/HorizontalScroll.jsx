@@ -5,6 +5,7 @@ import useStyles from "../styles/Scrollbar";
 import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
 import SubTitle from "./SubTitle";
+import { usePalette } from "react-palette";
 
 // const getItems = content;
 
@@ -58,10 +59,11 @@ function HorizontalScrolling({
 
   function Card({ onClick, selected, title, itemId, img }) {
     const visibility = React.useContext(VisibilityContext);
+    const { data, loading, error } = usePalette(img);
 
     return (
       <div onClick={() => onClick(visibility)}>
-        <div className={classes.card}>
+        <div className={classes.card} style={{ backgroundColor: data.muted }}>
           <img src={img} alt={title} className={classes.image} />
           <SubTitle
             isTrending={isTrending}
