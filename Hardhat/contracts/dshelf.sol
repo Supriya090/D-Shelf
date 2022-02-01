@@ -13,36 +13,14 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
     enum ContentType{BOOK, BLOG, POEM, PAPER, LYRICS, STORY, OTHERS}
 
     //user address => list of user owned tokens
-    mapping(address => uint256 []) public  userOwnedTokens;
+    mapping(address => uint256[]) public  userOwnedTokens;
 
     //mint fee of the tokens for each category
-    mapping(TokenType=>mapping(ContentType=>uint256)) internal mintingFee;
+    mapping(TokenType=>uint256) internal mintingFee;
 
-    constructor(uint[][] fee) ERC721("Content", "Token")  {
-        mintingFee[TokenType.GOLD][ContentType.BOOK]=fee[0][0];
-        mintingFee[TokenType.GOLD][ContentType.BLOG]=fee[1][0];
-        mintingFee[TokenType.GOLD][ContentType.POEM]=fee[2][0];
-        mintingFee[TokenType.GOLD][ContentType.PAPER]=fee[3][0];
-        mintingFee[TokenType.GOLD][ContentType.LYRICS]=fee[4][0];
-        mintingFee[TokenType.GOLD][ContentType.STORY]=fee[5][0];
-        mintingFee[TokenType.GOLD][ContentType.OTHERS]=fee[6][0];
+    //deployer address
+    address public deployer;
 
-        mintingFee[TokenType.SILVER][ContentType.BOOK]=fee[0][1];
-        mintingFee[TokenType.SILVER][ContentType.BLOG]=fee[1][1];
-        mintingFee[TokenType.SILVER][ContentType.POEM]=fee[2][1];
-        mintingFee[TokenType.SILVER][ContentType.PAPER]=fee[3][1];
-        mintingFee[TokenType.SILVER][ContentType.LYRICS]=fee[4][1];
-        mintingFee[TokenType.SILVER][ContentType.STORY]=fee[5][1];
-        mintingFee[TokenType.SILVER][ContentType.OTHERS]=fee[6][1];
-
-        mintingFee[TokenType.BRONZE][ContentType.BOOK]=fee[0][2];
-        mintingFee[TokenType.BRONZE][ContentType.BLOG]=fee[1][2];
-        mintingFee[TokenType.BRONZE][ContentType.POEM]=fee[2][2];
-        mintingFee[TokenType.BRONZE][ContentType.PAPER]=fee[3][2];
-        mintingFee[TokenType.BRONZE][ContentType.LYRICS]=fee[4][2];
-        mintingFee[TokenType.BRONZE][ContentType.STORY]=fee[5][2];
-        mintingFee[TokenType.BRONZE][ContentType.OTHERS]=fee[6][2];
-    }
 
     //details of each contents
     struct Content{
@@ -51,6 +29,7 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
         ContentType contentType;
         uint256 publicationDate;
         string author;
+        address authorAddr;
         string ipfsHash;
         string coverImageHash;
         bool onBid;
@@ -61,6 +40,51 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
 
     //List of minted contents
     Content[] public contents;
+
+    mapping(uint256 => uint256) private priceOfToken;
+
+//if book is listed for sale or not
+    event ListedForSale(uint256 _tokenId, uint256 _sellingPrice);
+
+//if the book is sold or not
+    event TokenSold(
+        uint256 _tokenId,
+        uint256 _sellingPrice,
+        address _buyer,
+        address _seller
+    );
+
+//modifier to only token owner access 
+    modifier OnlyTokenOwner(uint256 _tokenId, address _user) {
+        require(
+            _user == ownerOf(_tokenId),
+            'Err: only token owner can execute this'
+        );
+        _;
+    }
+
+//modifier to refund the excess value during transaction
+    modifier refundExcess(uint256 _tokenId) {
+        _;
+        uint256 _price = priceOfToken[_tokenId];
+        uint256 amountToRefund = msg.value - _price;
+
+        //refund
+        payable(msg.sender).transfer(amountToRefund);
+    }
+
+//reset token sale, price reset
+    modifier resetTokenSale(uint256 _tokenId) {
+        _;
+        delete priceOfToken[_tokenId];
+    }
+
+    constructor(uint gold,uint silver, uint bronze) ERC721("Content", "Token")  {
+        mintingFee[TokenType.GOLD]=gold;
+        mintingFee[TokenType.SILVER] = silver;
+        mintingFee[TokenType.BRONZE] = bronze;
+        deployer=msg.sender;
+    }
 
     function _getContentTypeId(string memory _contentType) public view returns (ContentType) {
         if (keccak256(abi.encodePacked(_contentType)) == keccak256(abi.encodePacked("poem"))) return ContentType.POEM;
@@ -98,13 +122,13 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
 
 
     function mint(string memory _ipfsHash, string memory _description, TokenType _tokenType,uint price,
-     ContentType _contentType, string memory _author, uint256 _pubdate, string memory _coverHash) external payable
+     ContentType _contentType, string memory _author, uint256 _pubDate, string memory _coverHash) external payable
     {
-        uint256 mintFee = mintingFee[_tokenType][_contentType];
+        uint256 mintFee = mintingFee[_tokenType];
         uint256 tokenId = contents.length;
 
         handleMintFee(mintFee);
-        contents.push(Content(tokenId,_tokenType,_contentType,_pubDate,_author,_ipfsHash,_coverHash,false,_descriptionHash,price,false));
+        contents.push(Content(tokenId,_tokenType,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
         
         //set the tokens owned by user
         userOwnedTokens[msg.sender].push(tokenId);
@@ -113,36 +137,35 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
     }
 
     function mintBatch(string memory _ipfsHash, string memory _description,ContentType _contentType, uint price, 
-    string memory _author, uint256 _pubdate, string memory _coverHash, uint gold, uint silver, uint bronze)
+    string memory _author, uint256 _pubDate, string memory _coverHash, uint gold, uint silver, uint bronze)
         external payable
     {
-        uint256 mintFee =   mintingFee[TokenType.GOLD][_contentType]*gold+
-                            mintingFee[TokenType.SILVER][_contentType]*silver+
-                            mintingFee[TokenType.BRONZE][_contentType]*bronze;
-        uint256 tokenId = i;
+        uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
+                            mintingFee[TokenType.SILVER]*silver+
+                            mintingFee[TokenType.BRONZE]*bronze;
         handleMintFee(mintFee);
-        for(int i=contents.length;i<(content.length+gold);i++)
+        for(uint i=contents.length;i<(contents.length+gold);i++)
         {
             uint256 tokenId = i;
-            contents.push(Content(tokenId,TokenType.GOLD,_contentType,_pubDate,_author,_ipfsHash,_coverHash,false,_descriptionHash,price,false));
+            contents.push(Content(tokenId,TokenType.GOLD,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
         
             //set the tokens owned by user
             userOwnedTokens[msg.sender].push(tokenId);
             _safeMint(msg.sender, tokenId);
         }
-        for(int i=contents.length;i<(content.length+silver);i++)
+        for(uint i=contents.length;i<(contents.length+silver);i++)
         {
             uint256 tokenId = i;
-            contents.push(Content(tokenId,TokenType.SILVER,_contentType,_pubDate,_author,_ipfsHash,_coverHash,false,_descriptionHash,price,false));
+            contents.push(Content(tokenId,TokenType.SILVER,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
             //set the tokens owned by user
             userOwnedTokens[msg.sender].push(tokenId);
 
             _safeMint(msg.sender, tokenId);
         }
-        for(int i=contents.length;i<(content.length+bronze);i++)
+        for(uint i=contents.length;i<(contents.length+bronze);i++)
         {
             uint256 tokenId = i;
-            contents.push(Content(tokenId,TokenType.BRONZE,_contentType,_pubDate,_author,_ipfsHash,_coverHash,false,_descriptionHash,price,false));
+            contents.push(Content(tokenId,TokenType.BRONZE,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
             //set the tokens owned by user
             userOwnedTokens[msg.sender].push(tokenId);
 
@@ -163,38 +186,38 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
 
     function burnOffensiveContent(uint256 tokenId) external {
         super._burn(tokenId);
-        contents.isBurnt=true;
+        // contents.isBurnt=true;
     }
 
-    function getTokensOwnedByUser(address addr) public view returns (uint256[]){
+    function getTokensOwnedByUser(address addr) public view returns (uint256[] memory){
         return userOwnedTokens[addr];
     }
 
-    function getContentofToken(uint256 tokenId) public view returns (Content content){
+    function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         require(contents[tokenId].isBurnt==false,"Content is burnt");
         return contents[tokenId];
     }
 
-    function getContentsOfUser(address addr) public view returns (Content[]){
-        Content[userOwnedTokens[addr].length] memory userContents;
-        for (uint i = 0;i<userOwnedTokens[addr].length;i++)
-        {
-            uint tokenId = userOwnedTokens[addr][i];
-            if(contents[tokenId].isBurnt==false)
-            {
-                userContents[i]=contents[tokenId];
-            }
-        }
+    // function getContentsOfUser(address addr) public view returns (Content[] memory){
+    //     Content[userOwnedTokens[addr].length] memory userContents;
+    //     for (uint i = 0;i<userOwnedTokens[addr].length;i++)
+    //     {
+    //         uint tokenId = userOwnedTokens[addr][i];
+    //         if(contents[tokenId].isBurnt==false)
+    //         {
+    //             userContents[i]=contents[tokenId];
+    //         }
+    //     }
 
-        return userContents;
-    }
+    //     return userContents;
+    // }
 
-    function getContentsOfEachTokenType(string _tokentype) public returns (Content[]){
+    function getContentsOfEachTokenType(string memory _tokentype) public returns (Content[] memory){
         TokenType _token = _getTokenTypeId(_tokentype);
         Content[] memory reqdContents = new Content[] (contents.length);
         for (uint i = 0;i<contents.length;i++)
         {
-            if(contents[i].isBurnt==false && contents[i].tokenType=_token)
+            if(contents[i].isBurnt==false && contents[i].tokenType==_token)
             {
                 reqdContents[i]=contents[i];
             }
@@ -203,20 +226,68 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
         return reqdContents;
     }
 
+      function listForSale(uint256 _tokenId, uint256 _sellingPrice)
+        public
+        OnlyTokenOwner(_tokenId, msg.sender)
+        returns (bool)
+    {
+        require(_sellingPrice != 0, 'Error: Cannot sale for zero value');
+        // token is not for sale already
+        require(
+            priceOfToken[_tokenId] == 0,
+            'Error: Contract is already for sale'
+        );
 
+        priceOfToken[_tokenId] = _sellingPrice;
+        emit ListedForSale(_tokenId, _sellingPrice);
+        return true;
+    }
 
+    function buyToken(uint256 _tokenId)
+        public
+        payable
+        resetTokenSale(_tokenId)
+        refundExcess(_tokenId)
+    {
+        uint256 _price = priceOfToken[_tokenId];
+        require(msg.value >= _price, 'Err: value sent insufficent to buy');
+        require(_price > 0, 'Err: token is not listed for sale');
 
-    
+        // // send 85% of the transaction to the seller
+        // address payable _seller = payable(ownerOf(_tokenId));
+        // _seller.transfer(_price*0.85);
 
+        // // send 10% of the transaction to the seller
+        // address payable AUTHOR = payable(contents[_tokenId].authorAddr);
+        // AUTHOR.transfer(_price*0.1);
 
+        // // send 10% of the transaction to the seller
+        // address payable DEVELOPER = payable(deployer);
+        // AUTHOR.transfer(_price*0.05);
 
+        // tranfer NFT to the buyer
+        safeTransferFrom(_seller, msg.sender, _tokenId);
 
+        emit TokenSold(_tokenId, _price, msg.sender, _seller);
+    }
 
+    function isListed(uint256 _tokenId) public view returns (bool) {
+        return (priceOfToken[_tokenId]!=0);
+    }
 
+    function getContentPrice(uint256 _tokenId) public view returns (uint256) {
+        require(
+            priceOfToken[_tokenId] != 0,
+            'Err: The item is not listed for sale'
+        );
+        return priceOfToken[_tokenId];
+    }
 
+    function removeFromSale(uint256 _tokenId) public OnlyTokenOwner(_tokenId, msg.sender){
+        uint256 _price = priceOfToken[_tokenId];
+        require(_price > 0, 'Err: token is not listed for sale');
 
-
-
-
+        delete priceOfToken[_tokenId];
+    }
   
 }
