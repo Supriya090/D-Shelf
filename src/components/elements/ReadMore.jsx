@@ -20,6 +20,7 @@ function ReadMore({ children }) {
   return (
     <>
       <div className={isHidden ? classes.hidden : null}>{children}</div>
+      {console.log(isHidden)}
       <Button
         size='small'
         onClick={() => setIsHidden(!isHidden)}

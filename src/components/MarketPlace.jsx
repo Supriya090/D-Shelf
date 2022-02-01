@@ -20,28 +20,16 @@ const MarketPlace = () => {
       </div>
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>
-          <ListHead title={""} leftButton={"Trending"} hasRightButton={false} />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={""} leftButton={"Trending"} />
+          <HorizontalScrolling getItems={auctionContent} isTrending={true} />
         </div>
         <div className={homeClasses.notableContents}>
-          <ListHead title={""} leftButton={"Top Sold"} hasRightButton={false} />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={""} leftButton={"Top Sold"} />
+          <HorizontalScrolling getItems={auctionContent} isTrending={true} />
         </div>
         <div className={homeClasses.notableCreators}>
-          <ListHead title={""} leftButton={"Live"} hasRightButton={false} />
-          <HorizontalScrolling getItems={auctionContent} />
-        </div>
-        <div className={homeClasses.notableCreators}>
-          <ListHead
-            title={""}
-            leftButton={"Blog Post"}
-            hasRightButton={false}
-          />
-          <HorizontalScrolling getItems={auctionContent} />
-        </div>
-        <div className={homeClasses.notableCreators}>
-          <ListHead title={""} leftButton={"Poems"} hasRightButton={false} />
-          <HorizontalScrolling getItems={auctionContent} />
+          <ListHead title={""} leftButton={"Live"} />
+          <HorizontalScrolling getItems={auctionContent} onSale={true} />
         </div>
       </div>
     </div>

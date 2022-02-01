@@ -4,10 +4,17 @@ import { Arrow } from "./Arrow";
 import useStyles from "../styles/Scrollbar";
 import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
+import SubTitle from "./SubTitle";
 
 // const getItems = content;
 
-function HorizontalScrolling({ getItems }) {
+function HorizontalScrolling({
+  getItems,
+  isTrending,
+  isAuthor,
+  onSale,
+  isCollection,
+}) {
   const [items, setItems] = React.useState(getItems);
   const [selected, setSelected] = React.useState([]);
   const [position, setPosition] = React.useState(0);
@@ -55,7 +62,13 @@ function HorizontalScrolling({ getItems }) {
     return (
       <div onClick={() => onClick(visibility)}>
         <div className={classes.card}>
-          <img src={img} alt={title} />
+          <img src={img} alt={title} className={classes.image} />
+          <SubTitle
+            isTrending={isTrending}
+            isAuthor={isAuthor}
+            onSale={onSale}
+            isCollection={isCollection}
+          />
         </div>
       </div>
     );

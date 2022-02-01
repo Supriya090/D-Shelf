@@ -11,6 +11,10 @@ const useStyles = makeStyles((theme) => ({
         margin: "20px",
         marginBottom: "0px"
     },
+    moreButton: {
+        color: "#FFD600",
+        fontFamily: "Rancho, cursive",
+    },
     featured: {
         display: "flex",
         flexDirection: "column",
