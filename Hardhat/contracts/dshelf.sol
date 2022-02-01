@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MyToken is ERC721, Ownable, ERC721Burnable {
+contract DShelf is ERC721, Ownable, ERC721Burnable {
     //token type of the the NFT
     enum TokenType{GOLD, SILVER, BRONZE}
 
@@ -202,6 +202,9 @@ contract MyToken is ERC721, Ownable, ERC721Burnable {
 
         return reqdContents;
     }
+
+
+
 
     
 
