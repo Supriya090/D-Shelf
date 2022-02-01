@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { makeStyles } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
@@ -28,9 +29,11 @@ const PDFViewer = () => {
                 onEnterFullScreen: (zoom) => {
                     zoom(SpecialZoomLevel.ActualSize);
                 },
+
                 onExitFullScreen: (zoom) => {
                     zoom(SpecialZoomLevel.ActualSize);
                 },
+
                 //Toolbar in fullscreen
                 getFullScreenTarget: (pagesContainer) =>
                     pagesContainer.closest('[data-testid="default-layout__body"]'),
@@ -38,7 +41,7 @@ const PDFViewer = () => {
             },
         },
     });
-    
+
     //pdf file onChange state
     const [pdfFile, setPdfFile]=useState(null);
     //pdf file error state
@@ -47,34 +50,34 @@ const PDFViewer = () => {
     //handle file onChange event
     const allowedFiles = ["application/pdf"];
     const handleFile = (e) => {
-    let selectedFile = e.target.files[0];
-    if(selectedFile) {
-        if(selectedFile && allowedFiles.includes(selectedFile.type)) {
-        let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend=(e)=>{
-            setPdfError("");
-            setPdfFile(e.target.result);
+        let selectedFile = e.target.files[0];
+        if(selectedFile) {
+            if(selectedFile && allowedFiles.includes(selectedFile.type)) {
+                let reader = new FileReader();
+                reader.readAsDataURL(selectedFile);
+                reader.onloadend=(e)=>{
+                    setPdfError("");
+                    setPdfFile(e.target.result);
+                }
+            }
+            else {
+                setPdfError("Invalid file type: Please select only PDF");
+                setPdfFile("");
+            }
         }
-        }
-        else {
-        setPdfError("Invalid file type: Please select only PDF");
-        setPdfFile("");
-        }
-    }
     }
 
     return (
         <div>
             <form>
-                <label><h5>Upload PDF</h5></label>
-                <br />
-                
+                <label>Upload PDF</label>    
                 <input 
                     type="file" 
                     className="form-control"
+                    accept = "application/pdf"
+                    required
                     onChange={handleFile}
-                ></input>
+                />
 
                 {/* Display error message in case user selects other than pdf */}
                 {pdfError && <span className="text-danger">{pdfError}</span>}
