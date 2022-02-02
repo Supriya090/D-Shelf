@@ -13,9 +13,10 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: "0px",
         "& p": {
             fontFamily: "Rubik, sans-serif",
-            fontSize: "4rem",
+            fontSize: "3.5rem",
             color: "#fff",
             textAlign: "left",
+            fontWeight: 500
         },
     },
     NFTImage: {
@@ -37,7 +38,17 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     bidDetails: {
-
+        display: "flex",
+        lineHeight: 1.8,
+        justifyContent: "space-around",
+        marginTop: "20px",
+        fontSize: "1.2rem"
+    },
+    left: {
+        textAlign: "left"
+    },
+    right: {
+        textAlign: "right"
     },
     details: {
         marginTop: "20px",
@@ -51,10 +62,10 @@ const useStyles = makeStyles((theme) => ({
             fontFamily: "Rubik, sans-serif",
             color: "#fff",
             textAlign: "left",
-            fontSize: "1.2rem",
+            fontSize: "1.1rem",
         },
-        padding: "25px",
-        margin: "30px 130px"
+        padding: "25px 40px",
+        margin: "40px 130px"
     }
 }));
 

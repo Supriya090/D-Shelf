@@ -1,4 +1,4 @@
-import { Button, Divider, Typography } from "@material-ui/core";
+import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
 import React from "react";
 import dummy from "../assets/dummy.jpg";
 import dummy2 from "../assets/dummy1.jpg";
@@ -34,9 +34,19 @@ const Home = () => {
                   0xD43f4536...5e4 ) <br />
                   Author : Susan Briscoe <br />
                 </Typography>
-                <Button variant='contained' className={classes.exploreButton}>
-                  Place a Bid
-                </Button>
+                <Tooltip title='$10000'>
+                  <Button
+                    variant='contained'
+                    className={classes.exploreButton}
+                    style={{
+                      color: "#fff",
+                      backgroundColor: "#000",
+                      fontWeight: 500,
+                      cursor: "default",
+                    }}>
+                    4 ETH
+                  </Button>
+                </Tooltip>
               </div>
               <Divider />
               <ReadMore>
@@ -65,17 +75,6 @@ const Home = () => {
         </div>
         <div className={classes.currentBid}>
           <img src={dummy} alt='NFTImage' className={classes.NFTImage} />
-          <div className={classes.biddings}>
-            <div>
-              Current Bid
-              <div className={classes.bidNumStyle}>4 ETH </div>
-              ($10000)
-            </div>
-            <div>
-              Remaining Time{" "}
-              <div className={classes.bidNumStyle}>10 : 22 : 29</div>
-            </div>
-          </div>
         </div>
       </div>
       <div className={classes.itemsList}>

@@ -5,15 +5,18 @@ import { useStyles as HomeStyles } from "../styles/Home";
 import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
+import { usePalette } from "react-palette";
 
 function SubTitle({
   isTrending = false,
   isAuthor = false,
   onSale = false,
   isCollection = false,
+  src,
 }) {
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
+  const { data } = usePalette(src);
 
   let saleStats;
   if (onSale) {
@@ -21,26 +24,19 @@ function SubTitle({
       <div>
         <div className={`${scrollClasses.biddings} ${homeClasses.biddings}`}>
           <div>
-            Current Bid
+            Current Value
             <div
               className={`${scrollClasses.bidNumStyle} ${homeClasses.bidNumStyle}`}>
               4 ETH{" "}
             </div>
             ($10000)
           </div>
-          <div>
-            Remaining Time{" "}
-            <div
-              className={`${scrollClasses.bidNumStyle} ${homeClasses.bidNumStyle}`}>
-              10 : 22 : 29
-            </div>
-          </div>
+          <Button
+            variant='contained'
+            className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
+            Buy Now
+          </Button>
         </div>
-        <Button
-          variant='contained'
-          className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
-          Place a Bid
-        </Button>
       </div>
     );
   }
@@ -72,14 +68,16 @@ function SubTitle({
     );
   } else if (isAuthor) {
     return (
-      <div className={scrollClasses.forAuthor}>
+      <div
+        className={scrollClasses.forAuthor}
+        style={{ backgroundColor: data.darkVibrant }}>
         <img src={dummy} alt='avatar' className={scrollClasses.avatar} />
         <div className={scrollClasses.authorInfo}>
           <Typography>Rahul Shah</Typography>
           <Typography style={{ marginBottom: "10px" }}>
             1000 followers
           </Typography>
-          <Typography style={{ fontSize: "1.05rem" }}>
+          <Typography style={{ fontSize: "0.85rem" }}>
             I'm a five star basketball skills development coach for youth to
             professional talent. I'm passionate about implementing integrity and
             joy into my players. That's kinda how my meme came about!

@@ -59,17 +59,20 @@ function HorizontalScrolling({
 
   function Card({ onClick, selected, title, itemId, img }) {
     const visibility = React.useContext(VisibilityContext);
-    const { data, loading, error } = usePalette(img);
+    const { data } = usePalette(img);
 
     return (
       <div onClick={() => onClick(visibility)}>
-        <div className={classes.card} style={{ backgroundColor: data.muted }}>
+        <div
+          className={classes.card}
+          style={{ backgroundColor: data.darkVibrant }}>
           <img src={img} alt={title} className={classes.image} />
           <SubTitle
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
             isCollection={isCollection}
+            src={img}
           />
         </div>
       </div>

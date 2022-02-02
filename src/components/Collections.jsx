@@ -15,7 +15,7 @@ const Collections = () => {
   return (
     <div className={marketClasses.mainContent}>
       <div className={marketClasses.heading} style={{ marginTop: "30px" }}>
-        <Typography>MY Content Collections</Typography>
+        <Typography>My Content Collections</Typography>
       </div>
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>

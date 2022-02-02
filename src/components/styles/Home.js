@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     featuredContent: {
         display: "flex",
         justifyContent: "space-around",
-        alignItems: "stretch",
+        alignItems: "center",
         margin: "20px",
         marginBottom: "0px"
     },
@@ -31,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
         margin: "30px",
     },
     NFTImage: {
-        maxWidth: "350px",
-        maxHeight: "350px",
-        margin: "0px 30px",
+        maxHeight: "450px",
+        borderRadius: "20px",
+        boxShadow: "3px 3px 1px #313131"
     },
     NFTFeatures: {
         backgroundColor: "#313131",

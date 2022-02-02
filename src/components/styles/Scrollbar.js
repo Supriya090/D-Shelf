@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme) => ({
     card: {
         margin: "20px 10px",
         "& p": {
-            fontSize: "1.2rem",
+            fontSize: "0.9rem",
             textAlign: "center",
             marginBottom: "25px"
         },
@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "space-between"
     },
     voteButton: {
-        fontSize: "1.1rem",
-        padding: "2px 18px",
+        fontSize: "0.8rem",
+        padding: "2px 12px",
         margin: "10px 5px"
     },
     voteArrow: {
@@ -63,10 +63,10 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         left: 0,
         bottom: 0,
-        background: "rgba(49, 49, 49, 0.9)",
         padding: "50px 15px 0px 15px",
         borderRadius: "10px",
-        height: "60%"
+        height: "60%",
+        opacity: 0.95
     },
     avatar: {
         height: "80px",
@@ -85,11 +85,11 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     followButton: {
-        fontSize: "1.2rem",
+        fontSize: "1.0rem",
         padding: "1px 18px",
         margin: "10px 5px",
         position: "absolute",
-        bottom: 4,
+        bottom: 15,
         left: 0,
         right: 0,
         marginLeft: "auto",
