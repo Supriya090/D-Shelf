@@ -97,7 +97,7 @@ contract dshelf is ERC721, Ownable, ERC721Burnable {
         deployer=msg.sender;
     }
 
-    function _getContentTypeId(string memory _contentType) public view returns (ContentType) {
+    function _getContentTypeId(string memory _contentType) internal returns (ContentType) {
         if (keccak256(abi.encodePacked(_contentType)) == keccak256(abi.encodePacked("Fiction"))) return ContentType.Fiction;
         if (keccak256(abi.encodePacked(_contentType)) == keccak256(abi.encodePacked("Non-Fiction"))) return ContentType.NonFiction;
         if (keccak256(abi.encodePacked(_contentType)) == keccak256(abi.encodePacked("Informative"))) return ContentType.Informative;
@@ -116,7 +116,7 @@ contract dshelf is ERC721, Ownable, ERC721Burnable {
     //     return _contentTypeIds;
     // }
 
-    function _getTokenTypeId(string memory _tokenType) public view returns (TokenType) {
+    function _getTokenTypeId(string memory _tokenType) internal returns (TokenType) {
         if (keccak256(abi.encodePacked(_tokenType)) == keccak256(abi.encodePacked("gold"))) return TokenType.GOLD;
         if (keccak256(abi.encodePacked(_tokenType)) == keccak256(abi.encodePacked("silver"))) return TokenType.SILVER;
         if (keccak256(abi.encodePacked(_tokenType)) == keccak256(abi.encodePacked("bronze"))) return TokenType.BRONZE;
@@ -132,17 +132,18 @@ contract dshelf is ERC721, Ownable, ERC721Burnable {
     // }
 
 
-    function mint(string memory _ipfsHash, string memory _description, TokenType _tokenType,uint price,
-     ContentType _contentType, string memory _author, uint256 _pubDate, string memory _coverHash) public payable
+    function mint(Content memory content) public payable
     {
         TokenIds.increment();
-        uint256 mintFee = mintingFee[_tokenType];
+        uint256 mintFee = mintingFee[content.tokenType];
         uint256 tokenId = TokenIds.current();
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
 
         handleMintFee(mintFee);
-        contents.push(Content(tokenIds,_tokenType,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
+        content.authorAddr=msg.sender;
+        content.tokenId=tokenIds;
+        contents.push(content);
         
         //set the tokens owned by user
         userOwnedTokens[msg.sender].push(tokenId);
@@ -152,106 +153,41 @@ contract dshelf is ERC721, Ownable, ERC721Burnable {
         emit minted(msg.sender,tokenId);
     }
 
-    // function mintGold() internal
-    //     function mintApe(uint numberOfTokens) public payable {
-    //     require(saleIsActive, "Sale must be active to mint Ape");
-    //     require(numberOfTokens <= maxApePurchase, "Can only mint 20 tokens at a time");
-    //     require(totalSupply().add(numberOfTokens) <= MAX_APES, "Purchase would exceed max supply of Apes");
-    //     require(apePrice.mul(numberOfTokens) <= msg.value, "Ether value sent is not correct");
-        
-    //     for(uint i = 0; i < numberOfTokens; i++) {
-    //         uint mintIndex = totalSupply();
-    //         if (totalSupply() < MAX_APES) {
-    //             _safeMint(msg.sender, mintIndex);
-    //         }
-    //     }
 
-    //     // If we haven't set the starting index and this is either 1) the last saleable token or 2) the first token to be sold after
-    //     // the end of pre-sale, set the starting index block
-    //     if (startingIndexBlock == 0 && (totalSupply() == MAX_APES || block.timestamp >= REVEAL_TIMESTAMP)) {
-    //         startingIndexBlock = block.number;
-    //     } 
-    // }
-
-
-    function mintBatch(string memory _ipfsHash, string memory _description,ContentType _contentType, uint price, 
-    string memory _author, uint256 _pubDate, string memory _coverHash, uint gold, uint silver, uint bronze)
-        external payable
-    {
-        TokenIds.increment();
+  function mintBatch(Content memory content, uint gold, uint silver, uint bronze)
+  external payable
+{
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
                             mintingFee[TokenType.SILVER]*silver+
                             mintingFee[TokenType.BRONZE]*bronze;
         handleMintFee(mintFee);
-
-        uint256 tokenIdRef = TokenIds.current();
-        uint256 i = 0;
-        for (i = 0; i < (gold + silver + bronze); i++) {
+        uint256[] memory tokenIdsGold = new uint256[](gold);
+        uint256[] memory tokenIdsSilver = new uint256[](silver);
+        uint256[] memory tokenIdsBronze = new uint256[](bronze);
+        for (uint256 i = 0; i < (gold + silver + bronze); i++) {
             TokenIds.increment();
             uint256 tokenId = TokenIds.current();
-            // contents.push(Content(tokenId,TokenType.GOLD,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-            // userOwnedTokens[msg.sender].push(tokenId);
             _safeMint(msg.sender, tokenId);
+            emit minted(msg.sender,tokenId);
+            userOwnedTokens[msg.sender].push(tokenId);
+            if (i < gold) {
+                tokenIdsGold[i] = tokenId;
+            } else if (i < (gold + silver)) {
+                tokenIdsSilver[i - gold] = tokenId;
+            } else {
+                tokenIdsBronze[i - (gold + silver)] = tokenId;
+            }
         }
-        uint256[] memory tokenIdsGold = new uint256[](gold);
-        for(i = 0; i < gold; i++) {
-            userOwnedTokens[msg.sender].push(tokenIdRef);
-            tokenIdsGold[i] = tokenIdRef;
-            tokenIdRef++;
-        }
-        contents.push(Content(tokenIdsGold,TokenType.GOLD,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-        
-        uint256[] memory tokenIdsSilver = new uint256[](silver);
-        for(i = 0; i < silver; i++) {
-            userOwnedTokens[msg.sender].push(tokenIdRef);
-            tokenIdsGold[i] = tokenIdRef;
-            tokenIdRef++;
-        }
-        contents.push(Content(tokenIdsSilver,TokenType.SILVER,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-        
-        uint256[] memory tokenIdsBronze = new uint256[](bronze);
-        for(i = 0; i < bronze; i++) {
-            userOwnedTokens[msg.sender].push(tokenIdRef);
-            tokenIdsBronze[i] = tokenIdRef;
-            tokenIdRef++;
-        }
-        contents.push(Content(tokenIdsBronze,TokenType.BRONZE,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-        
+    content.authorAddr=msg.sender;
+    content.tokenId=tokenIdsGold;
+    contents.push(content);
+    content.tokenId=tokenIdsSilver;
+    contents.push(content);
+    content.tokenId=tokenIdsBronze;
+    contents.push(content);
+    
+}
 
-        // for(uint i=contents.length;i<(contents.length+gold);i++)
-        // {
-        //     uint256 tokenId = i;
-
-        //     contents.push(Content(tokenId,TokenType.GOLD,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-        
-        //     //set the tokens owned by user
-        //     userOwnedTokens[msg.sender].push(tokenId);
-            
-        //     _safeMint(msg.sender, tokenId);
-        //     emit minted(msg.sender,tokenId);
-            
-        // }
-        // for(uint i=contents.length;i<(contents.length+silver);i++)
-        // {
-        //     uint256 tokenId = i;
-        //     contents.push(Content(tokenId,TokenType.SILVER,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-        //     //set the tokens owned by user
-        //     userOwnedTokens[msg.sender].push(tokenId);
-
-        //     _safeMint(msg.sender, tokenId);
-        //     emit minted(msg.sender,tokenId);
-        // }
-        // for(uint i=contents.length;i<(contents.length+bronze);i++)
-        // {
-        //     uint256 tokenId = i;
-        //     contents.push(Content(tokenId,TokenType.BRONZE,_contentType,_pubDate,_author,msg.sender,_ipfsHash,_coverHash,false,_description,price,false));
-        //     //set the tokens owned by user
-        //     userOwnedTokens[msg.sender].push(tokenId);
-
-        //     _safeMint(msg.sender, tokenId);
-        //     emit minted(msg.sender,tokenId);
-        // }
-    }
 
     function handleMintFee(uint256 _totalFee) internal {
         uint256 ethSent = msg.value;
@@ -266,6 +202,7 @@ contract dshelf is ERC721, Ownable, ERC721Burnable {
 
     function burnOffensiveContent(uint256 tokenId) external {
         super._burn(tokenId);
+        
         // contents.isBurnt=true;
     }
 
