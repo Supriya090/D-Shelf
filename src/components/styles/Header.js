@@ -42,8 +42,13 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: "rgba(255, 255, 255, 0.3)",
         },
         "&:last-child": {
-            backgroundColor: "#c3a400",
+            backgroundColor: "#FFD600",
             color: "#000",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+            "&:hover": {
+                backgroundColor: "#c3a400",
+            },
         },
     },
     search: {
@@ -71,8 +76,8 @@ const useStyles = makeStyles((theme) => ({
     },
     inputRoot: {
         color: "inherit",
-        fontFamily: "Rancho, cursive",
-        fontSize: "1.25rem",
+        fontFamily: "Rubik, sans-serif",
+        fontSize: "0.9rem",
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),

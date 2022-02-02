@@ -13,17 +13,18 @@ const useStyles = makeStyles((theme) => ({
     },
     moreButton: {
         color: "#FFD600",
-        fontFamily: "Rancho, cursive",
+        fontFamily: "Rubik, sans-serif",
     },
     featured: {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
         "& p": {
-            fontFamily: "Rancho, cursive",
-            fontSize: "4rem",
+            fontFamily: "Rubik, sans-serif",
+            fontSize: "3.2rem",
             color: "#fff",
             textAlign: "left",
+            fontWeight: 500
         },
     },
     currentBid: {
@@ -39,10 +40,13 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "10px",
         marginTop: "20px",
         "& p": {
-            fontSize: "1.3rem",
+            fontSize: "1.1rem",
+            fontWeight: 400
+
         },
         "& hr": {
-            margin: "10px 0px",
+            margin: "15px 0px",
+            backgroundColor: "#fff"
         },
         padding: "25px",
         maxWidth: "600px",
@@ -54,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     },
     description: {
         "& p": {
-            fontSize: "1.15rem",
+            fontSize: "0.9rem",
         },
     },
     exploreButton: {
@@ -63,12 +67,12 @@ const useStyles = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: "rgba(255, 214, 0,0.7)",
         },
-        borderRadius: "30px",
-        fontFamily: "Rancho, cursive",
-        fontSize: "1.5rem",
+        borderRadius: "10px",
+        fontFamily: "Rubik, sans-serif",
+        fontSize: "1.1rem",
         textTransform: "capitalize",
-        fontWeight: 500,
-        padding: "2px 30px",
+        fontWeight: 600,
+        padding: "2px 20px",
         marginTop: "20px",
     },
     biddings: {
@@ -86,8 +90,9 @@ const useStyles = makeStyles((theme) => ({
     },
     itemsList: {
         "& p": {
-            fontFamily: "Rancho, cursive",
-            fontSize: "4rem",
+            fontFamily: "Rubik, sans-serif",
+            fontSize: "3.2rem",
+            fontWeight: 500,
             color: "#fff",
             textAlign: "left",
         },
@@ -104,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: "rgba(255, 255, 255,0.1)",
         },
-        paddingTop: "0px"
+        fontWeight: 500
     }
 }));
 

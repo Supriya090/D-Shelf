@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 const useStyles = makeStyles((theme) => ({
     heading: {
         "& p": {
-            fontFamily: "Rancho, cursive",
+            fontFamily: "Rubik, sans-serif",
             fontSize: "4rem",
             color: "#fff",
             textAlign: "center",

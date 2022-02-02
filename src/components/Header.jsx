@@ -62,7 +62,7 @@ const Header = () => {
               <div className={logoName}>
                 <img src={logo} alt='logo' className={img} />
                 <Typography variant='h6' component='h1' className={headerTitle}>
-                  Patra
+                  D-Shelf
                 </Typography>
               </div>
               <div className={search}>
