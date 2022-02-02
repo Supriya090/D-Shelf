@@ -54,6 +54,12 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
         address _seller
     );
 
+//if the token is minted 
+    event minted(
+        address _address,
+        uint256 _tokenId
+    );
+
 //modifier to only token owner access 
     modifier OnlyTokenOwner(uint256 _tokenId, address _user) {
         require(
@@ -134,16 +140,18 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
         userOwnedTokens[msg.sender].push(tokenId);
         
         _safeMint(msg.sender, tokenId);
+
+        emit minted(msg.sender,tokenId);
     }
 
     function mintBatch(string memory _ipfsHash, string memory _description,ContentType _contentType, uint price, 
     string memory _author, uint256 _pubDate, string memory _coverHash, uint gold, uint silver, uint bronze)
-        external payable
+        external 
     {
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
                             mintingFee[TokenType.SILVER]*silver+
                             mintingFee[TokenType.BRONZE]*bronze;
-        handleMintFee(mintFee);
+        // handleMintFee(mintFee);
         for(uint i=contents.length;i<(contents.length+gold);i++)
         {
             uint256 tokenId = i;
@@ -152,6 +160,7 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
             //set the tokens owned by user
             userOwnedTokens[msg.sender].push(tokenId);
             _safeMint(msg.sender, tokenId);
+            emit minted(msg.sender,tokenId);
         }
         for(uint i=contents.length;i<(contents.length+silver);i++)
         {
@@ -161,6 +170,7 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
             userOwnedTokens[msg.sender].push(tokenId);
 
             _safeMint(msg.sender, tokenId);
+            emit minted(msg.sender,tokenId);
         }
         for(uint i=contents.length;i<(contents.length+bronze);i++)
         {
@@ -170,6 +180,7 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
             userOwnedTokens[msg.sender].push(tokenId);
 
             _safeMint(msg.sender, tokenId);
+            emit minted(msg.sender,tokenId);
         }
     }
 
@@ -253,17 +264,17 @@ contract DShelf is ERC721, Ownable, ERC721Burnable {
         require(msg.value >= _price, 'Err: value sent insufficent to buy');
         require(_price > 0, 'Err: token is not listed for sale');
 
-        // // send 85% of the transaction to the seller
-        // address payable _seller = payable(ownerOf(_tokenId));
-        // _seller.transfer(_price*0.85);
+        // send 85% of the transaction to the seller
+        address payable _seller = payable(ownerOf(_tokenId));
+        _seller.transfer((_price*17)/20);
 
-        // // send 10% of the transaction to the seller
-        // address payable AUTHOR = payable(contents[_tokenId].authorAddr);
-        // AUTHOR.transfer(_price*0.1);
+        // send 10% of the transaction to the seller
+        address payable AUTHOR = payable(contents[_tokenId].authorAddr);
+        AUTHOR.transfer((_price)/10);
 
-        // // send 10% of the transaction to the seller
-        // address payable DEVELOPER = payable(deployer);
-        // AUTHOR.transfer(_price*0.05);
+        // send 10% of the transaction to the seller
+        address payable DEVELOPER = payable(deployer);
+        AUTHOR.transfer((_price*1)/20);
 
         // tranfer NFT to the buyer
         safeTransferFrom(_seller, msg.sender, _tokenId);
