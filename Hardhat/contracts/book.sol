@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "hardhat/console.sol";
 
-contract BookNFT is ERC721URIStorage {
+contract book is ERC721URIStorage {
 
     //token type of the the NFT
     enum TokenType{GOLD, SILVER, BRONZE}
