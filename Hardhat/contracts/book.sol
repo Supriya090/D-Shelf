@@ -54,6 +54,7 @@ contract book is ERC721URIStorage {
 
     //list of all the contents
     Content[] public contents;
+    uint256 [] public contentIds;
 
     //if the token is minted 
     event minted(
@@ -80,6 +81,9 @@ contract book is ERC721URIStorage {
         mintingFee[TokenType.SILVER] = silver;
         mintingFee[TokenType.BRONZE] = bronze;
         deployer=msg.sender;
+        uint256[] memory array = new uint256[](0);
+        Content memory empty = Content(array, TokenType.GOLD, ContentType.Other, 0, "", msg.sender, "", "", false, "", 0, false);
+        contents.push(empty);
     }
 
     function mintOneToken(string memory tokenURI,Content memory content) public payable returns (uint) {
@@ -178,8 +182,6 @@ contract book is ERC721URIStorage {
             }
             else{
             //Remove tokenId from toeknIds list array
-            // contents[contentID].tokenIds.remove(IndexoftokenId);
-            // }
             contents[contentID].tokenIds[IndexoftokenId] = contents[contentID].tokenIds[contents[contentID].tokenIds.length-1];
             contents[contentID].tokenIds.pop();
             }
@@ -201,34 +203,72 @@ contract book is ERC721URIStorage {
     }
 
     function getContentOfUserbyIndex(address user) public returns (uint256[] memory){
+        
+        uint256 i = 0;
+        while(i < contentIds.length){
+            contentIds.pop();
+        }
+        
         uint256 totalToken = getTokensOwnedByUser(user).length;
-        uint256[] memory totalContentOwnedByIndex;
+        // uint256[] memory totalContentOwnedByIndex = new uint256[](contents.length);
         uint256 contentID;
         uint256 IndexoftokenId;
+        bool isPresent;
         bool valid;
-        for (uint256 i = 0; i < totalToken; i++){
+        uint256 j = 0;
+        for (i = 0; i < totalToken; i++){
             (contentID, IndexoftokenId, valid) = getContentIndexByID(getTokensOwnedByUser(user)[i]);
-            // if( valid == true && contentID not in totalContentOwnedByIndex){
-            //     totalContentOwnedByIndex.push(contentID);
-            // }
+            if( valid == true){
+                isPresent = false;
+                j = 0;
+                while(contentIds.length > j){
+                    if(contentIds[j] == contentID){
+                        isPresent = true;
+                        break;
+                    }
+                    j++;
+                }
+                if(isPresent == false){
+                    contentIds.push(contentID);
+                }
+            }
         }
         //Return array of contentIds
-        return totalContentOwnedByIndex;
+        return contentIds;
     }
 
     function getContentbyIndexArray(uint256[] memory arr) public returns (uint256[] memory){
+        
+        uint256 i = 0;
+        while(i < contentIds.length){
+            contentIds.pop();
+        }
         uint256 totalToken = arr.length;
-        uint256[] memory totalContentIds;
         uint256 contentID;
         uint256 IndexoftokenId;
+        bool isPresent = false;
         bool valid;
-        for (uint256 i = 0; i < totalToken; i++){
+        uint256 j = 0;
+        uint256 k = 0;
+        for (i = 0; i < totalToken; i++){
             (contentID, IndexoftokenId, valid) = getContentIndexByID(arr[i]);
-            // if( valid == true && contentID not in totalContentOwnedByIndex){
-            //     totalContentIds.push(contentID);
-            // }
+            if( valid == true){
+                isPresent = false;
+                j = 0;
+                while(contentIds.length > j){
+                    if(contentIds[j] == contentID){
+                        isPresent = true;
+                        break;
+                    }
+                    j++;
+                }
+                if(isPresent == false){
+                    contentIds.push(contentID);
+                }
+            }
         }
-        return totalContentIds;
+        //Return array of contentIds
+        return contentIds;
     }
 
     function getContentbyContentIndex(uint256 index) public view returns (Content memory content){
@@ -258,36 +298,41 @@ contract book is ERC721URIStorage {
         return getContentbyContentIndexArray(arrofContentIndex);
     }
 
-    function getContentsOfEachTokenTypeByUser(string memory _tokentype, address user) public returns (Content[] memory){
-        uint256[] memory arrofTokenIdsofUser;
+    function getContentsByTokenTypeofUser(string memory _tokentype, address user) public returns (Content[] memory){
+        // uint256[] memory arrofTokenIdsofUser;
+        uint256 i = 0;
+        // i = 0;
+        while(i < contentIds.length){
+            contentIds.pop();
+        }
         uint256 j = 0;
         if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("gold"))){
-            for(uint256 i = 0; i < goldTokenIds.length; i++){
+            for(i = 0; i < goldTokenIds.length; i++){
                 if(ownerOf(goldTokenIds[i]) == msg.sender){
-                    arrofTokenIdsofUser[j] = goldTokenIds[i];
+                    contentIds.push(goldTokenIds[i]);
                     j++;
                 }
             }
         }
         else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("silver"))){
-            for(uint256 i = 0; i < goldTokenIds.length; i++){
+            for(i = 0; i < goldTokenIds.length; i++){
                 j = 0;
                 if(ownerOf(silverTokenIds[i]) == msg.sender){
-                    arrofTokenIdsofUser[j] = silverTokenIds[i];
+                    contentIds.push(silverTokenIds[i]);
                     j++;
                 }
             }
         }
         else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("bronze"))){
-            for(uint256 i = 0; i < goldTokenIds.length; i++){
+            for(i = 0; i < goldTokenIds.length; i++){
                 j = 0;
                 if(ownerOf(bronzeTokenIds[i]) == msg.sender){
-                    arrofTokenIdsofUser[j] = bronzeTokenIds[i];
+                    contentIds.push(bronzeTokenIds[i]);
                     j++;
                 }
             }
         }
-        uint256[] memory arrofContentIndex = getContentbyIndexArray(arrofTokenIdsofUser);
+        uint256[] memory arrofContentIndex = getContentbyIndexArray(contentIds);
         return getContentbyContentIndexArray(arrofContentIndex);
     }
 }

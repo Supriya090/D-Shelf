@@ -13,6 +13,7 @@ contract bookmarket is ReentrancyGuard {
   Counters.Counter private _itemsSold;
 
   address payable owner;
+  //Required price to list an item for sale in marketplace
   uint256 listingPrice = 0.025 ether;
 
   constructor() {
