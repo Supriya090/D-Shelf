@@ -335,4 +335,20 @@ contract book is ERC721URIStorage {
         uint256[] memory arrofContentIndex = getContentbyIndexArray(contentIds);
         return getContentbyContentIndexArray(arrofContentIndex);
     }
+
+    function addtoken(uint256 _tokenId, address buyer) external {
+        userOwnedTokens[buyer].push(_tokenId);
+    }
+
+    function removetoken(uint256 _tokenId, address seller) external {
+        uint256 index;
+        for(uint256 i = 0; i< userOwnedTokens[seller].length; i++){
+            if(userOwnedTokens[seller][i] == _tokenId){
+                index = i;
+                break;
+            }
+        }
+        userOwnedTokens[seller][index] = userOwnedTokens[seller][userOwnedTokens[seller].length-1];
+        userOwnedTokens[seller].pop();
+    }
 }

@@ -32,6 +32,10 @@ describe("NFTMarket", function() {
 
   it("should mint single as well as batch of nfts", async function() {
     const dummy = accounts[5];
+    const buyerAddress = accounts[6];
+    let listingPrice = await market.getListingPrice()
+    listingPrice = listingPrice.toString()
+    const auctionPrice = ethers.utils.parseUnits('1', 'ether')
     const content1 = {
       tokenIds:[],
       tokenType : 1,
@@ -63,10 +67,23 @@ describe("NFTMarket", function() {
     }
 
     await nft.connect(accounts[1]).mintOneToken("https://www.mytokenlocation1.com", content1, { value: ethers.utils.parseEther("10.0")} );
-    await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
-    expect(await nft.balanceOf(owner.address)).to.equal(60);
-  })
+    // await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+    // expect(await nft.balanceOf(owner.address)).to.equal(60);
+    expect(await nft.balanceOf(accounts[1].address)).to.equal(1);
+    expect(await nft.balanceOf(buyerAddress.address)).to.equal(0);
+    await market.connect(accounts[1]).createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
 
+    console.log("Minter : ", await nft.getTokensOwnedByUser(accounts[1].address))
+    console.log("Before Buying : ", await nft.getTokensOwnedByUser(buyerAddress.address))
+    
+    await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, { value: auctionPrice})
+    console.log("Seller : ", await nft.getTokensOwnedByUser(accounts[1].address))
+    console.log("Buyer : ", await nft.getTokensOwnedByUser(buyerAddress.address))
+
+    expect(await nft.balanceOf(accounts[1].address)).to.equal(0);
+    expect(await nft.balanceOf(buyerAddress.address)).to.equal(1);
+  })
+/*
   it("should have contents index value=4, 1 single mint,10mint of gold, 20 mints of silver, 30 mint of bronze  ", async function() {
     const dummy = accounts[5];
     const content1 = {
@@ -180,5 +197,5 @@ describe("NFTMarket", function() {
     }))
     console.log('items: ', items)
   })
-
+*/
 })

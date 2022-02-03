@@ -7,6 +7,11 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 import "hardhat/console.sol";
 
+interface Ibook{
+  function addtoken(uint256 _tokenId, address buyer) external;
+  function removetoken(uint256 _tokenId, address seller) external;
+}
+
 contract bookmarket is ReentrancyGuard {
   using Counters for Counters.Counter;
   Counters.Counter private _itemIds;
@@ -89,7 +94,9 @@ contract bookmarket is ReentrancyGuard {
     uint256 itemId
     ) public payable nonReentrant {
     uint price = idToMarketItem[itemId].price;
+    console.log(price);
     uint tokenId = idToMarketItem[itemId].tokenId;
+    // require(itemId < _itemIds.current(), "Item does not exist");
     require(msg.value == price, "Please submit the asking price in order to complete the purchase");
 
     idToMarketItem[itemId].seller.transfer(msg.value);
@@ -98,6 +105,10 @@ contract bookmarket is ReentrancyGuard {
     idToMarketItem[itemId].sold = true;
     _itemsSold.increment();
     payable(owner).transfer(listingPrice);
+
+    Ibook book = Ibook(nftContract);
+    book.addtoken(tokenId, msg.sender);
+    book.removetoken(tokenId, idToMarketItem[itemId].seller);
   }
 
   /* Returns all unsold market items */
