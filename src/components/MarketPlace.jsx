@@ -14,7 +14,7 @@ const MarketPlace = () => {
   const homeClasses = homeStyles();
 
   return (
-    <div className={marketClasses.mainContent}>
+    <div className={homeClasses.mainContent}>
       <div className={marketClasses.heading} style={{ marginTop: "30px" }}>
         <Typography>All Contents</Typography>
       </div>

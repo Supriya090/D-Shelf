@@ -4,6 +4,7 @@ const useStyles = makeStyles((theme) => ({
     singleContent: {
         display: "flex",
         flexDirection: "column",
+        marginTop: "90px"
     },
     bookDetails: {
         display: "flex",

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 600,
         fontSize: "0.9rem",
         color: "#FFFFFF",
-        borderRadius: "10px",
+        borderRadius: "5px",
         size: "small",
         marginLeft: "40px",
         transition: "0.5s all ease-out",

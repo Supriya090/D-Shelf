@@ -27,7 +27,7 @@ const headersData = [
     href: "/mycollections",
   },
   {
-    label: "Write",
+    label: "Upload",
     href: "/write",
   },
   {
@@ -52,7 +52,7 @@ const Header = () => {
   const displayHeader = () => {
     return (
       <header>
-        <AppBar className={header} position='static'>
+        <AppBar className={header} position='fixed'>
           <Box
             borderBottom={1}
             borderColor={"#c3a400"}

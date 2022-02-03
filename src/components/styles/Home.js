@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
     mainContent: {
-        marginTop: "40px"
+        marginTop: "130px"
     },
     featuredContent: {
         display: "flex",

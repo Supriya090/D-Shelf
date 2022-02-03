@@ -13,7 +13,7 @@ const Collections = () => {
   const homeClasses = homeStyles();
 
   return (
-    <div className={marketClasses.mainContent}>
+    <div className={homeClasses.mainContent}>
       <div className={marketClasses.heading} style={{ marginTop: "30px" }}>
         <Typography>My Content Collections</Typography>
       </div>
