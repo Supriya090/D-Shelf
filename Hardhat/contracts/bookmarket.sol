@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-import "hardhat/console.sol";
-
 interface Ibook{
   function addtoken(uint256 _tokenId, address buyer) external;
   function removetoken(uint256 _tokenId, address seller) external;
@@ -19,7 +17,7 @@ contract bookmarket is ReentrancyGuard {
 
   address payable owner;
   //Required price to list an item for sale in marketplace
-  uint256 listingPrice = 0.025 ether;
+  uint256 listingPrice = 0.005 ether;
 
   constructor() {
     owner = payable(msg.sender);
@@ -94,7 +92,6 @@ contract bookmarket is ReentrancyGuard {
     uint256 itemId
     ) public payable nonReentrant {
     uint price = idToMarketItem[itemId].price;
-    console.log(price);
     uint tokenId = idToMarketItem[itemId].tokenId;
     // require(itemId < _itemIds.current(), "Item does not exist");
     require(msg.value == price, "Please submit the asking price in order to complete the purchase");
