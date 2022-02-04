@@ -1,43 +1,61 @@
 import Header from '../components/Header';
+import React, { useState, useEffect } from "react";
 import "../App.css"
 import { Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
 import Home from '../components/Home';
 import Write from '../components/Write';
 import MarketPlace from '../components/MarketPlace';
 import Collections from '../components/Collections';
 import SinglePage from '../components/SinglePage';
-// import Web3 from "web3";
+import {ethers} from 'ethers'
+
 
 function App() {
-  // const [isConnected, setIsConnected] = useState(false);
-  // const [currentAccount, setCurrentAccount] = useState(null);
-  // const [balance, setBalance] = useState(0);
 
-  // const onLogin = async (provider) => {
-  //   const web3 = new Web3(provider);
-  //   const accounts = await web3.eth.getAccounts();
-  //   if (accounts.length === 0) {
-  //     console.log("Please connect to MetaMask!");
-  //   } else if (accounts[0] !== currentAccount) {
-  //     setCurrentAccount(accounts[0]);
-  //     const accBalanceEth = web3.utils.fromWei(
-  //       await web3.eth.getBalance(accounts[0]),
-  //       "ether"
-  //     );
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [defaultAccount, setDefaultAccount] = useState(null);
+  const [userBalance, setUserBalance] = useState(null);
+  const [connButtonText, setConnButtonText] = useState('Connect Wallet');
+  const [provider, setProvider] = useState(null);
+  const ConnectWalletHandler = () => {
+    if (window.ethereum && defaultAccount == null) {
+      // set ethers provider
+      setProvider(new ethers.providers.Web3Provider(window.ethereum));
 
-  //     setBalance(Number(accBalanceEth).toFixed(6));
-  //     setIsConnected(true);
-  //   }
-  // };
+      // connect to metamask
+      window.ethereum.request({ method: 'eth_requestAccounts'})
+      .then(result => {
+        setConnButtonText('Wallet Connected');
+        setDefaultAccount(result[0]);
+      })
+      .catch(error => {
+        setErrorMessage(error.message);
+      });
 
-  // const onLogout = () => {
-  //   setIsConnected(false);
-  // };
+    } else if (!window.ethereum){
+      console.log('Need to install MetaMask');
+      setErrorMessage('Please install MetaMask browser extension to interact');
+    }
+  }
+
+  useEffect(() => {
+    if(defaultAccount){
+    provider.getBalance(defaultAccount)
+    .then(balanceResult => {
+      setUserBalance(ethers.utils.formatEther(balanceResult));
+    })
+    };
+  }, [defaultAccount]);
+  
   return (
     <div className="App">
-      {/* <Header currentAccount={currentAccount} balance={balance} /> */}
-      <Header />
+      <Header 
+        userAccount={defaultAccount}
+        userBalance = {userBalance}
+        ConnectWalletHandler = {ConnectWalletHandler}
+        errorMessage = {errorMessage}
+        connButtonText = {connButtonText}
+      />
       <Routes>
         <Route exact path="/" element={<Home />}></Route>
         <Route path="/MarketPlace" element={<MarketPlace />}></Route>
