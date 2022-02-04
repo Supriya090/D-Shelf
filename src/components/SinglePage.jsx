@@ -4,7 +4,7 @@ import { Typography, Button } from "@material-ui/core";
 import dummy from "../assets/dummy.jpg";
 import { useStyles } from "./styles/SinglePage";
 
-function SinglePage() {
+function SinglePage(props) {
   const homeClasses = homeStyles();
   const classes = useStyles();
   return (

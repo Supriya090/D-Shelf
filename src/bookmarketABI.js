@@ -1,6 +1,4 @@
-const bookMarketContractAddress = "0xD974E4c2BadE31e60928a87E1fbAB65293Fab681"
-
-const bookMarketAbi = [
+export const bookMarketAbi = [
     {
       "inputs": [],
       "stateMutability": "nonpayable",

@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
         color: "#FFFFFF",
         borderRadius: "5px",
         size: "small",
-        marginLeft: "40px",
+        marginLeft: "25px",
         transition: "0.5s all ease-out",
         "&:hover": {
             backgroundColor: "rgba(255, 255, 255, 0.3)",

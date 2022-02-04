@@ -31,11 +31,19 @@ function SubTitle({
             </div>
             ($10000)
           </div>
-          <Button
-            variant='contained'
-            className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
-            Buy Now
-          </Button>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Button
+              variant='contained'
+              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
+              Buy Now
+            </Button>
+            <Button
+              variant='contained'
+              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}
+              style={{ backgroundColor: "#C9B037" }}>
+              Gold
+            </Button>
+          </div>
         </div>
       </div>
     );

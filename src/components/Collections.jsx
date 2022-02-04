@@ -8,7 +8,7 @@ import ListHead from "./elements/ListHead";
 
 const auctionContent = content;
 
-const Collections = () => {
+const Collections = (props) => {
   const marketClasses = marketStyles();
   const homeClasses = homeStyles();
 

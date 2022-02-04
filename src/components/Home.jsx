@@ -11,7 +11,7 @@ import ReadMore from "./elements/ReadMore";
 
 const auctionContent = content;
 
-const Home = () => {
+const Home = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const marketRoute = () => {
@@ -82,7 +82,7 @@ const Home = () => {
           <ListHead title={"On Auctions"} leftButton={"On Sale"} />
           <HorizontalScrolling getItems={auctionContent} onSale={true} />
         </div>
-        <div className={classes.notableContents}>
+        <div className={classes.notableContents} style={{ marginTop: "80px" }}>
           <ListHead
             title={"Notable Contents"}
             leftButton={"Trending"}
@@ -90,7 +90,7 @@ const Home = () => {
           />
           <HorizontalScrolling getItems={auctionContent} isTrending={true} />
         </div>
-        <div className={classes.notableCreators}>
+        <div className={classes.notableCreators} style={{ marginTop: "80px" }}>
           <ListHead
             title={"Notable Writers"}
             leftButton={"Popular"}
@@ -111,7 +111,6 @@ const Home = () => {
 };
 
 export default Home;
-
 
 /*
 // https://docs.metamask.io/guide/ethereum-provider.html#using-the-provider

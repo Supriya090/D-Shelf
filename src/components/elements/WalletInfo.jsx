@@ -4,11 +4,11 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiDialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import { useStyles } from "../styles/Home";
+import InfoIcon from "@material-ui/icons/Info";
 
 const styles = (theme) => ({
   root: {
@@ -22,10 +22,15 @@ const styles = (theme) => ({
     color: theme.palette.grey[500],
   },
   detailsButton: {
-    position: "absolute",
-    bottom: 100,
+    color: "#FFD600",
+    borderRadius: "50%",
   },
-  dialogBox: {},
+  "& MuiPaper-root.MuiDialog-paper.MuiDialog-paperScrollPaper.MuiDialog-paperWidthSm.MuiPaper-elevation24.MuiPaper-rounded":
+    {
+      backgroundColor: "#313131",
+      borderRadius: "10px",
+      color: "#fff",
+    },
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -47,7 +52,7 @@ const DialogTitle = withStyles(styles)((props) => {
 
 const DialogContent = withStyles((theme) => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
 }))(MuiDialogContent);
 
@@ -65,26 +70,21 @@ export default function WalletInfo({ defaultAccount = "", userBalance = "" }) {
   const homeClasses = useStyles();
   return (
     <div>
-      <Button
-        onClick={handleClickOpen}
-        className={`${homeClasses.exploreButton} ${classes.detailsButton}`}>
-        Wallet Details
+      <Button onClick={handleClickOpen} className={classes.detailsButton}>
+        <InfoIcon style={{ color: "#FFD600" }} />
       </Button>
       <Dialog
         onClose={handleClose}
         aria-labelledby='customized-dialog-title'
-        open={open}
-        className={classes.dialogBox}>
+        open={open}>
         <DialogTitle id='customized-dialog-title' onClose={handleClose}>
           Wallet Details
         </DialogTitle>
         <DialogContent dividers>
-          <div className='accountDisplay'>
-            <h3>Address: {defaultAccount}</h3>
-          </div>
-          <div className='balanceDisplay'>
-            <h3>Balance: {userBalance}</h3>
-          </div>
+          <Typography style={{ marginBottom: "10px" }}>
+            Address: {defaultAccount}
+          </Typography>
+          <Typography>Balance: {userBalance}</Typography>
         </DialogContent>
       </Dialog>
     </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import logo from "../assets/logo.png";
-import { ethers } from "ethers";
 import {
   AppBar,
   Toolbar,
@@ -34,40 +33,7 @@ const headersData = [
   },
 ];
 
-const Header = () => {
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [defaultAccount, setDefaultAccount] = useState(null);
-  const [userBalance, setUserBalance] = useState(null);
-  const [connButtonText, setConnButtonText] = useState("Connect Wallet");
-  const [provider, setProvider] = useState(null);
-  const ConnectWalletHandler = () => {
-    if (window.ethereum && defaultAccount == null) {
-      // set ethers provider
-      setProvider(new ethers.providers.Web3Provider(window.ethereum));
-
-      // connect to metamask
-      window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then((result) => {
-          setConnButtonText("Wallet Connected");
-          setDefaultAccount(result[0]);
-        })
-        .catch((error) => {
-          setErrorMessage(error.message);
-        });
-    } else if (!window.ethereum) {
-      console.log("Need to install MetaMask");
-      setErrorMessage("Please install MetaMask browser extension to interact");
-    }
-  };
-
-  useEffect(() => {
-    if (defaultAccount) {
-      provider.getBalance(defaultAccount).then((balanceResult) => {
-        setUserBalance(ethers.utils.formatEther(balanceResult));
-      });
-    }
-  }, [defaultAccount]);
+const Header = (props) => {
   const {
     header,
     img,
@@ -82,9 +48,12 @@ const Header = () => {
   } = useStyles();
   const displayHeader = () => {
     let walletDetails;
-    if (connButtonText === "Wallet Connected") {
+    if (props.connButtonText === "Wallet Connected") {
       walletDetails = (
-        <WalletInfo defaultAccount={defaultAccount} userBalance={userBalance} />
+        <WalletInfo
+          defaultAccount={props.userAccount}
+          userBalance={props.userBalance}
+        />
       );
     }
     return (
@@ -115,13 +84,15 @@ const Header = () => {
                   inputProps={{ "aria-label": "search" }}
                 />
               </div>
-              <div>
+              <div style={{ display: "flex" }}>
                 {getMenuButtons()}
-                <Button onClick={ConnectWalletHandler} className={headerButton}>
-                  {connButtonText}
+                <Button
+                  onClick={props.ConnectWalletHandler}
+                  className={headerButton}>
+                  {props.connButtonText}
                 </Button>
                 {walletDetails}
-                {errorMessage}
+                {props.errorMessage}
               </div>
             </Toolbar>
           </Box>

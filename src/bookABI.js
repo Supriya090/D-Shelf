@@ -1,27 +1,10 @@
-const bookContractAddress = "0xdD5E54C1e09117C2bFf92a022Fdf8Eae156A1569"
-
-const bookABI = [
+export const bookAbi =[
     {
       "inputs": [
         {
           "internalType": "address",
           "name": "marketplaceAddress",
           "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "gold",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "silver",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "bronze",
-          "type": "uint256"
         }
       ],
       "stateMutability": "nonpayable",
@@ -354,7 +337,7 @@ const bookABI = [
           "type": "bool"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {

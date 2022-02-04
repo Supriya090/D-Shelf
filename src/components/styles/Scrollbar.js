@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
         fontFamily: "Rubik, sans-serif",
         fontSize: "1.1rem",
         padding: "2px 15px",
-        marginBottom: "15px"
+        margin: "5px"
     },
     arrow: {
         width: 50,
