@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import logo from "../assets/logo.png";
-import {ethers} from 'ethers'
+import { ethers } from "ethers";
 import {
   AppBar,
   Toolbar,
@@ -13,6 +13,7 @@ import {
 import SearchIcon from "@material-ui/icons/Search";
 
 import { useStyles } from "./styles/Header";
+import WalletInfo from "./elements/WalletInfo";
 
 const headersData = [
   {
@@ -30,15 +31,14 @@ const headersData = [
   {
     label: "Upload",
     href: "/write",
-  }
+  },
 ];
 
 const Header = () => {
-
   const [errorMessage, setErrorMessage] = useState(null);
   const [defaultAccount, setDefaultAccount] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
-  const [connButtonText, setConnButtonText] = useState('Connect Wallet');
+  const [connButtonText, setConnButtonText] = useState("Connect Wallet");
   const [provider, setProvider] = useState(null);
   const ConnectWalletHandler = () => {
     if (window.ethereum && defaultAccount == null) {
@@ -46,28 +46,27 @@ const Header = () => {
       setProvider(new ethers.providers.Web3Provider(window.ethereum));
 
       // connect to metamask
-      window.ethereum.request({ method: 'eth_requestAccounts'})
-      .then(result => {
-        setConnButtonText('Wallet Connected');
-        setDefaultAccount(result[0]);
-      })
-      .catch(error => {
-        setErrorMessage(error.message);
-      });
-
-    } else if (!window.ethereum){
-      console.log('Need to install MetaMask');
-      setErrorMessage('Please install MetaMask browser extension to interact');
+      window.ethereum
+        .request({ method: "eth_requestAccounts" })
+        .then((result) => {
+          setConnButtonText("Wallet Connected");
+          setDefaultAccount(result[0]);
+        })
+        .catch((error) => {
+          setErrorMessage(error.message);
+        });
+    } else if (!window.ethereum) {
+      console.log("Need to install MetaMask");
+      setErrorMessage("Please install MetaMask browser extension to interact");
     }
-  }
+  };
 
   useEffect(() => {
-    if(defaultAccount){
-    provider.getBalance(defaultAccount)
-    .then(balanceResult => {
-      setUserBalance(ethers.utils.formatEther(balanceResult));
-    })
-    };
+    if (defaultAccount) {
+      provider.getBalance(defaultAccount).then((balanceResult) => {
+        setUserBalance(ethers.utils.formatEther(balanceResult));
+      });
+    }
   }, [defaultAccount]);
   const {
     header,
@@ -82,6 +81,12 @@ const Header = () => {
     inputRoot,
   } = useStyles();
   const displayHeader = () => {
+    let walletDetails;
+    if (connButtonText === "Wallet Connected") {
+      walletDetails = (
+        <WalletInfo defaultAccount={defaultAccount} userBalance={userBalance} />
+      );
+    }
     return (
       <header>
         <AppBar className={header} position='fixed'>
@@ -110,17 +115,13 @@ const Header = () => {
                   inputProps={{ "aria-label": "search" }}
                 />
               </div>
-              <div>{getMenuButtons()}
-                  <Button onClick={ConnectWalletHandler} className={headerButton}>
-                    {connButtonText}
-                  </Button>
-                  <div className='accountDisplay'>
-                    <h3>Address: {defaultAccount}</h3>
-                  </div>
-                  <div className='balanceDisplay'>
-                    <h3>Balance: {userBalance}</h3>
-                  </div>
-                  {errorMessage}
+              <div>
+                {getMenuButtons()}
+                <Button onClick={ConnectWalletHandler} className={headerButton}>
+                  {connButtonText}
+                </Button>
+                {walletDetails}
+                {errorMessage}
               </div>
             </Toolbar>
           </Box>
