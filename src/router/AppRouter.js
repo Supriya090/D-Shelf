@@ -15,39 +15,38 @@ import {bookMarketAbi} from '../bookmarketABI'
 function App() {
 
   const [errorMessage, setErrorMessage] = useState(null);
-  const [defaultAccount, setDefaultAccount] = useState(null);
+  let defaultAccount = null;
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
   const ConnectWalletHandler = async () => {
-    if (window.ethereum && defaultAccount == null) {
-      // set ethers provider
-      setProvider(new ethers.providers.Web3Provider(window.ethereum));
-
-      // connect to metamask
-      window.ethereum.request({ method: 'eth_requestAccounts'})
-      .then(result => {
+    try{
+      if (window.ethereum && defaultAccount == null) {
+        // set ethers provider
+        setProvider(new ethers.providers.Web3Provider(window.ethereum));
+  
+        // connect to metamask
+        let result = await window.ethereum.request({ method: 'eth_requestAccounts'})
         setConnButtonText('Wallet Connected');
-        setDefaultAccount(result[0]);
-      })
-      .catch(error => {
-        setErrorMessage(error.message);
-      });
-
-    } else if (!window.ethereum){
-      console.log('Need to install MetaMask');
-      setErrorMessage('Please install MetaMask browser extension to interact');
+        defaultAccount = result[0];
+      } else if (!window.ethereum){
+        console.log('Need to install MetaMask');
+        setErrorMessage('Please install MetaMask browser extension to interact');
+      }
+    }
+    catch (error){
+      console.log(error);
     }
 
     let signer = await (new ethers.providers.Web3Provider(window.ethereum)).getSigner()
     const contract = new ethers.Contract("0xEA9E8318328314519dfeFc00222352B63349Ba2b", bookAbi, signer)
-    console.log(contract)
-
+    // console.log(contract)
+    console.log(defaultAccount);
     contract.connect(defaultAccount) 
 
 
-    console.log("Tokens:",await contract.getTokensOwnedByUser("0xF9372e4f47057fCfF1124Ae8c27535A09FbDe6C9"))
+    console.log("Tokens:",await contract.getTokensOwnedByUser(defaultAccount))
     setContract(contract)
   }
 
