@@ -21,7 +21,7 @@ describe("NFTMarket", function() {
     const marketAddress = market.address
 
     const NFT = await ethers.getContractFactory("book");
-    nft = await NFT.deploy(marketAddress, 3, 2, 1)
+    nft = await NFT.deploy(marketAddress)
     
     await nft.deployed()
     // console.log("Deployed at : ",nft.address);
@@ -83,7 +83,7 @@ describe("NFTMarket", function() {
     expect(await nft.balanceOf(accounts[1].address)).to.equal(0);
     expect(await nft.balanceOf(buyerAddress.address)).to.equal(1);
   })
-/*
+
   it("should have contents index value=4, 1 single mint,10mint of gold, 20 mints of silver, 30 mint of bronze  ", async function() {
     const dummy = accounts[5];
     const content1 = {
@@ -197,5 +197,5 @@ describe("NFTMarket", function() {
     }))
     console.log('items: ', items)
   })
-*/
+
 })

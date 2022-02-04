@@ -4,10 +4,6 @@ pragma solidity ^0.8.3;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-import "hardhat/console.sol";
 
 contract book is ERC721URIStorage {
 
@@ -75,15 +71,12 @@ contract book is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     address contractAddress;
 
-    constructor(address marketplaceAddress,uint256 gold,uint256 silver, uint256 bronze) ERC721("Metaverse", "METT") {
+    constructor(address marketplaceAddress) ERC721("BookNFT", "Content") {
         contractAddress = marketplaceAddress;
-        mintingFee[TokenType.GOLD]=gold;
-        mintingFee[TokenType.SILVER] = silver;
-        mintingFee[TokenType.BRONZE] = bronze;
+        mintingFee[TokenType.GOLD]= 0.03 ether;
+        mintingFee[TokenType.SILVER] = 0.02 ether;
+        mintingFee[TokenType.BRONZE] = 0.01 ether;
         deployer=msg.sender;
-        uint256[] memory array = new uint256[](0);
-        Content memory empty = Content(array, TokenType.GOLD, ContentType.Other, 0, "", msg.sender, "", "", false, "", 0, false);
-        contents.push(empty);
     }
 
     function mintOneToken(string memory tokenURI,Content memory content) public payable returns (uint) {
