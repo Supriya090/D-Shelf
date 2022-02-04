@@ -50,7 +50,6 @@ contract book is ERC721URIStorage {
 
     //list of all the contents
     Content[] public contents;
-    uint256 [] public contentIds;
 
     //if the token is minted 
     event minted(
@@ -186,7 +185,7 @@ contract book is ERC721URIStorage {
         return userOwnedTokens[addr];
     }
 
-    function getContentofToken(uint256 tokenId) public returns (Content memory content){
+    function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;
         uint256 IndexoftokenId;
         bool valid;
@@ -195,12 +194,8 @@ contract book is ERC721URIStorage {
         return contents[contentID];
     }
 
-    function getContentOfUserbyIndex(address user) public returns (uint256[] memory){
-        
-        uint256 i = 0;
-        while(i < contentIds.length){
-            contentIds.pop();
-        }
+    function getContentOfUserbyIndex(address user) public view returns (uint256[] memory){        
+        uint256[] memory contentIds = new uint256[](1000); 
         
         uint256 totalToken = getTokensOwnedByUser(user).length;
         // uint256[] memory totalContentOwnedByIndex = new uint256[](contents.length);
@@ -209,7 +204,8 @@ contract book is ERC721URIStorage {
         bool isPresent;
         bool valid;
         uint256 j = 0;
-        for (i = 0; i < totalToken; i++){
+        uint256 k =0;
+        for (uint256 i = 0; i < totalToken; i++){
             (contentID, IndexoftokenId, valid) = getContentIndexByID(getTokensOwnedByUser(user)[i]);
             if( valid == true){
                 isPresent = false;
@@ -222,20 +218,23 @@ contract book is ERC721URIStorage {
                     j++;
                 }
                 if(isPresent == false){
-                    contentIds.push(contentID);
+                    contentIds[k]=contentID;
+                    k++;
                 }
             }
         }
+        uint[] memory trimmedResult = new uint[](k);
+        for (uint j = 0; j < trimmedResult.length; j++) {
+            trimmedResult[j] = contentIds[j];
+        }
         //Return array of contentIds
-        return contentIds;
+        return trimmedResult;
     }
 
-    function getContentbyIndexArray(uint256[] memory arr) public returns (uint256[] memory){
+    function getContentbyIndexArray(uint256[] memory arr) public  view returns (uint256[] memory){
         
         uint256 i = 0;
-        while(i < contentIds.length){
-            contentIds.pop();
-        }
+       uint256[] memory contentIds = new uint256[](1000); 
         uint256 totalToken = arr.length;
         uint256 contentID;
         uint256 IndexoftokenId;
@@ -256,12 +255,18 @@ contract book is ERC721URIStorage {
                     j++;
                 }
                 if(isPresent == false){
-                    contentIds.push(contentID);
+                    contentIds[k]=contentID;
+                    k++;
                 }
             }
         }
+
+        uint[] memory trimmedResult = new uint[](k);
+        for (uint j = 0; j < trimmedResult.length; j++) {
+            trimmedResult[j] = contentIds[j];
+        }
         //Return array of contentIds
-        return contentIds;
+        return trimmedResult;
     }
 
     function getContentbyContentIndex(uint256 index) public view returns (Content memory content){
@@ -269,7 +274,7 @@ contract book is ERC721URIStorage {
         return contents[index];
     }
 
-    function getContentbyContentIndexArray(uint256[] memory contentIDs) public returns (Content[] memory){
+    function getContentbyContentIndexArray(uint256[] memory contentIDs) public view returns (Content[] memory){
         Content[] memory Contents = new Content[](contentIDs.length);
         for (uint256 i = 0; i < contentIDs.length; i++){
             Contents[i] = getContentbyContentIndex(contentIDs[i]);
@@ -277,7 +282,7 @@ contract book is ERC721URIStorage {
         return Contents;
     }
 
-    function getContentsOfEachTokenType(string memory _tokentype) public returns (Content[] memory){
+    function getContentsOfEachTokenType(string memory _tokentype) public view returns (Content[] memory){
         uint256[] memory arrofContentIndex;
         if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("gold"))){
             arrofContentIndex = getContentbyIndexArray(goldTokenIds);
@@ -291,18 +296,16 @@ contract book is ERC721URIStorage {
         return getContentbyContentIndexArray(arrofContentIndex);
     }
 
-    function getContentsByTokenTypeofUser(string memory _tokentype, address user) public returns (Content[] memory){
+    function getContentsByTokenTypeofUser(string memory _tokentype, address user) public view returns (Content[] memory){
         // uint256[] memory arrofTokenIdsofUser;
         uint256 i = 0;
         // i = 0;
-        while(i < contentIds.length){
-            contentIds.pop();
-        }
+       uint256[] memory contentIds = new uint256[](1000); 
         uint256 j = 0;
         if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("gold"))){
             for(i = 0; i < goldTokenIds.length; i++){
                 if(ownerOf(goldTokenIds[i]) == msg.sender){
-                    contentIds.push(goldTokenIds[i]);
+                    contentIds[j]=goldTokenIds[i];
                     j++;
                 }
             }
@@ -311,7 +314,7 @@ contract book is ERC721URIStorage {
             for(i = 0; i < goldTokenIds.length; i++){
                 j = 0;
                 if(ownerOf(silverTokenIds[i]) == msg.sender){
-                    contentIds.push(silverTokenIds[i]);
+                    contentIds[j]=silverTokenIds[i];
                     j++;
                 }
             }
@@ -320,12 +323,17 @@ contract book is ERC721URIStorage {
             for(i = 0; i < goldTokenIds.length; i++){
                 j = 0;
                 if(ownerOf(bronzeTokenIds[i]) == msg.sender){
-                    contentIds.push(bronzeTokenIds[i]);
+                    contentIds[j]=bronzeTokenIds[i];
                     j++;
                 }
             }
         }
-        uint256[] memory arrofContentIndex = getContentbyIndexArray(contentIds);
+        uint[] memory trimmedResult = new uint[](j);
+        for (uint p = 0; p < trimmedResult.length; p++) {
+            trimmedResult[p] = contentIds[p];
+        }
+    
+        uint256[] memory arrofContentIndex = getContentbyIndexArray(trimmedResult);
         return getContentbyContentIndexArray(arrofContentIndex);
     }
 

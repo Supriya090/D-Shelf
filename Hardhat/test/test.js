@@ -127,13 +127,13 @@ describe("NFTMarket", function() {
     console.log(await nft.connect(owner.address).callStatic.getTokensOwnedByUser(accounts[1].address));
     console.log(await nft.callStatic.getContentofToken(23));
     const a = [1,5,18,40];
-    const value3 = await nft.callStatic.getContentbyIndexArray(a)
+    const value3 = await nft.getContentbyIndexArray(a)
     console.log(value3);
     for(let i=0;i<4;i++){
-      console.log(await nft.callStatic.getContentbyContentIndex(i));
+      console.log(await nft.getContentbyContentIndex(i));
     }
-    console.log(await nft.callStatic.getContentsOfEachTokenType("gold"));
-    console.log(await nft.callStatic.getContentsByTokenTypeofUser("silver",owner.address));
+    console.log(await nft.getContentsOfEachTokenType("gold"));
+    console.log(await nft.getContentsByTokenTypeofUser("silver",owner.address));
 
   })
 
