@@ -3,6 +3,7 @@ import {
   TextField,
   TextareaAutosize,
   Divider,
+  Button,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import PDFViewer from "./PDFViewer";
@@ -87,10 +88,12 @@ const Write = (props) => {
               </div>
               <img src={preview} alt='' className={classes.uploadedImage} />
               <input
-                type='submit'
+                type='button'
                 value='Submit'
                 className={`${classes.submitButton} ${classes.chooseFile}`}
+                onClick={props.mint}
               />
+               
             </div>
           </div>
         </form>

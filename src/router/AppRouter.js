@@ -47,12 +47,32 @@ function App() {
     contract.connect(defaultAccount) 
 
 
-    console.log("Tokens:",await contract.getContentIndexByID(3))
+    console.log("Tokens:",await contract.getTokensOwnedByUser("0xF9372e4f47057fCfF1124Ae8c27535A09FbDe6C9"))
     setContract(contract)
   }
 
-  const getUserCollections=()=>{
-    console.log(contract.methods.getTokensOwnedByUser())
+  const mint=async()=>{
+    const content = {
+      tokenIds:[],
+      tokenType : 0,
+      contentType : 0,
+      publicationDate:1225666,
+      author:"Ranju GC",
+      authorAddr: '0xF9372e4f47057fCfF1124Ae8c27535A09FbDe6C9',
+      ipfsHash: "thank you",
+      coverImageHash: "coverImage",
+      onBid : false,
+      descriptionHash : "descriptionHash",
+      Price : 400,
+      isBurnt :false
+    }
+    const tx = {value: ethers.utils.parseEther("4.0")}
+    console.log(await contract.mintBatch("abc",content,10,10,10,tx))
+  }
+
+  const getDataOfTokenType=async(gold)=>{
+    const tx = {value: ethers.utils.parseEther("4.0")}
+    console.log(await contract.getContentsOfEachTokenType("gold"))
   }
 
   useEffect(() => {
@@ -84,7 +104,7 @@ function App() {
         contract = {contract}
         />}></Route>
         <Route exact path="/write" element={<Write 
-        contract = {contract}
+        mint = {mint}
         />}></Route>
         <Route exact path="/singlePage" element={<SinglePage 
         contract = {contract}
