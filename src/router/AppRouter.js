@@ -8,6 +8,8 @@ import MarketPlace from '../components/MarketPlace';
 import Collections from '../components/Collections';
 import SinglePage from '../components/SinglePage';
 import {ethers} from 'ethers'
+import {bookAbi} from '../bookABI.js'
+import {bookMarketAbi} from '../bookmarketABI'
 
 
 function App() {
@@ -17,7 +19,8 @@ function App() {
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
   const [provider, setProvider] = useState(null);
-  const ConnectWalletHandler = () => {
+  const [contract, setContract] = useState(null);
+  const ConnectWalletHandler = async () => {
     if (window.ethereum && defaultAccount == null) {
       // set ethers provider
       setProvider(new ethers.providers.Web3Provider(window.ethereum));
@@ -36,6 +39,20 @@ function App() {
       console.log('Need to install MetaMask');
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
+
+    let signer = await (new ethers.providers.Web3Provider(window.ethereum)).getSigner()
+    const contract = new ethers.Contract("0xEA9E8318328314519dfeFc00222352B63349Ba2b", bookAbi, signer)
+    console.log(contract)
+
+    contract.connect(defaultAccount) 
+
+
+    console.log("Tokens:",await contract.getContentIndexByID(3))
+    setContract(contract)
+  }
+
+  const getUserCollections=()=>{
+    console.log(contract.methods.getTokensOwnedByUser())
   }
 
   useEffect(() => {
@@ -57,11 +74,21 @@ function App() {
         connButtonText = {connButtonText}
       />
       <Routes>
-        <Route exact path="/" element={<Home />}></Route>
-        <Route path="/MarketPlace" element={<MarketPlace />}></Route>
-        <Route path="/myCollections" element={<Collections />}></Route>
-        <Route exact path="/write" element={<Write />}></Route>
-        <Route exact path="/singlePage" element={<SinglePage />}></Route>
+        <Route exact path="/" element={<Home 
+        contract = {contract}
+        />}></Route>
+        <Route path="/MarketPlace" element={<MarketPlace 
+        contract = {contract}
+        />}></Route>
+        <Route path="/myCollections" element={<Collections 
+        contract = {contract}
+        />}></Route>
+        <Route exact path="/write" element={<Write 
+        contract = {contract}
+        />}></Route>
+        <Route exact path="/singlePage" element={<SinglePage 
+        contract = {contract}
+        />}></Route>
       </Routes>
     </div>
   );

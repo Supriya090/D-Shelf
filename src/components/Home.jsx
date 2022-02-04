@@ -11,7 +11,7 @@ import ReadMore from "./elements/ReadMore";
 
 const auctionContent = content;
 
-const Home = () => {
+const Home = (props) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const marketRoute = () => {

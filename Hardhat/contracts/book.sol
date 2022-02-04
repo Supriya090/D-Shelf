@@ -149,7 +149,7 @@ contract book is ERC721URIStorage {
     }
 
     //function to get content index
-    function getContentIndexByID(uint256 tokenId) public returns (uint256,uint256,bool) {
+    function getContentIndexByID(uint256 tokenId) public view returns (uint256,uint256,bool) {
         uint256 i = 0;
         uint256 j = 0;
         for (i = 0; i < contents.length; i++) {

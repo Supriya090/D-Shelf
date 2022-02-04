@@ -9,7 +9,7 @@ import PDFViewer from "./PDFViewer";
 import useStyles from "./styles/Write";
 import WriteCopies from "./elements/WriteCopies";
 
-const Write = () => {
+const Write = (props) => {
   const classes = useStyles();
 
   const [image, setImage] = useState(null);
