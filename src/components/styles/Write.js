@@ -110,7 +110,31 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         right: 205,
         bottom: -170
-    }
+    },chooseFile: {
+        padding: "5px 10px",
+        background: "#FFD600",
+        border: "1px solid #FFD600",
+        position: "relative",
+        color: "#000",
+        borderRadius: "2px",
+        textAlign: "center",
+        float: "left",
+        cursor: "pointer",
+        fontWeight: 500,
+        fontFamily: "Rubik, sans-serif",
+        marginLeft: "20px",
+      },
+      inputFile: {
+        position: "absolute",
+        zIndex: 1000,
+        opacity: 0,
+        cursor: "pointer",
+        right: 0,
+        top: 0,
+        height: "100%",
+        fontSize: "24px",
+        width: "100%",
+      },
 }));
 
 export default useStyles;

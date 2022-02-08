@@ -40,33 +40,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PDFViewer = () => {
+const PDFViewer = (props) => {
+
+  
   // const classes = writeStyles();
-  const { viewer, chooseFile, inputFile } = useStyles();
+  const { viewer } = useStyles();
 
   //pdf file onChange state
   const [pdfFile, setPdfFile] = useState(null);
-  //pdf file error state
-  const [pdfError, setPdfError] = useState("");
 
-  //handle file onChange event
-  const allowedFiles = ["application/pdf"];
-  const handleFile = (e) => {
-    let selectedFile = e.target.files[0];
-    if (selectedFile) {
-      if (selectedFile && allowedFiles.includes(selectedFile.type)) {
-        let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = (e) => {
-          setPdfError("");
-          setPdfFile(e.target.result);
-        };
-      } else {
-        setPdfError("Invalid file type: Please select only PDF");
-        setPdfFile("");
-      }
-    }
+  //exports pdf from prop
+  const {pdf} = props;
+
+  //starts reading data from the pdf and sets it after
+  let reader = new FileReader();
+  reader.readAsDataURL(pdf);
+  reader.onloadend = (e) => {
+    setPdfFile(e.target.result);
   };
+
 
   //Disabling download and print buttons from plugin
   const transform = (slot) => ({
@@ -126,31 +118,6 @@ const PDFViewer = () => {
 
   return (
     <div>
-      <form>
-        <Typography
-          style={{
-            margin: "10px 0px 0px 10px",
-            fontSize: "2rem",
-          }}>
-          Upload PDF
-        </Typography>
-        <div className={chooseFile}>
-          CHOOSE FILE
-          <input
-            type='file'
-            className='form-control'
-            accept='application/pdf'
-            required
-            onChange={handleFile}
-            className={inputFile}
-          />
-        </div>
-
-        {/* Display error message in case user selects other than pdf */}
-        {pdfError && <span className='text-danger'>{pdfError}</span>}
-      </form>
-      <br />
-
       {/* View PDF */}
       <div className={viewer} style={{ height: pdfFile ? "600px" : "0px" }}>
         {/* render this if we have a pdf file */}
