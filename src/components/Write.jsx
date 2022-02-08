@@ -107,6 +107,7 @@ const Write = (props) => {
                 />
               </div>
               <img src={preview} alt='' className={classes.uploadedImage} />
+
               <input
                 type='button'
                 value='Submit'
@@ -115,27 +116,29 @@ const Write = (props) => {
               />
                
             </div>
+            <div>
+              <Typography
+                style={{
+                  margin: "10px 0px 0px 10px",
+                  fontSize: "2rem",
+                }}>
+                Upload PDF
+              </Typography>
 
-            <Typography
-              style={{
-                margin: "10px 0px 0px 10px",
-                fontSize: "2rem",
-              }}>
-              Upload PDF
-            </Typography>
-            <div className={classes.chooseFile}>
-              CHOOSE FILE
-              <input
-                type='file'
-                className='form-control'
-                accept='application/pdf'
-                required
-                onChange={handleFile}
-                className={classes.inputFile}
-              />
+              <div className={classes.chooseFile}>
+                CHOOSE FILE
+                <input
+                  type='file'
+                  className='form-control'
+                  accept='application/pdf'
+                  required
+                  onChange={handleFile}
+                  className={classes.inputFile}
+                />
+              </div>
             </div>
-
           </div>
+          {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
         <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
         {pdfFile && <PDFViewer pdf={pdfFile}/>}
