@@ -9,7 +9,7 @@ import ListHead from "./elements/ListHead";
 
 const auctionContent = content;
 
-const MarketPlace = (props) => {
+const MarketPlace = () => {
   const marketClasses = marketStyles();
   const homeClasses = homeStyles();
 
@@ -23,11 +23,15 @@ const MarketPlace = (props) => {
           <ListHead title={""} leftButton={"Trending"} />
           <HorizontalScrolling getItems={auctionContent} isTrending={true} />
         </div>
-        <div className={homeClasses.notableContents}>
+        <div
+          className={homeClasses.notableContents}
+          style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Top Sold"} />
           <HorizontalScrolling getItems={auctionContent} isTrending={true} />
         </div>
-        <div className={homeClasses.notableCreators}>
+        <div
+          className={homeClasses.notableCreators}
+          style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Live"} />
           <HorizontalScrolling getItems={auctionContent} onSale={true} />
         </div>
