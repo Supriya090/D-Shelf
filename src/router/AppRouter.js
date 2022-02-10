@@ -57,19 +57,16 @@ function App() {
   }
 
   const mint=async()=>{
+
     const content = {
       tokenIds:[],
       tokenType : 0,
       contentType : 0,
       publicationDate:1225666,
       author:"Ranju GC",
-      authorAddr: '0xF9372e4f47057fCfF1124Ae8c27535A09FbDe6C9',
-      ipfsHash: "thank you",
+      authorAddr: dummy.address,
       coverImageHash: "coverImage",
-      onBid : false,
-      descriptionHash : "descriptionHash",
-      Price : 400,
-      isBurnt :false
+      descriptionHash : "descriptionHash"
     }
     console.log(defaultAccount);
     const tx = {value: ethers.utils.parseEther("4.0")}
