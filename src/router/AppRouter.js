@@ -15,7 +15,7 @@ import {bookMarketAbi} from '../bookmarketABI'
 function App() {
 
   const [errorMessage, setErrorMessage] = useState(null);
-  let defaultAccount = null;
+  const [defaultAccount, setDefaultAccount] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
   const [provider, setProvider] = useState(null);
@@ -29,7 +29,8 @@ function App() {
         // connect to metamask
         let result = await window.ethereum.request({ method: 'eth_requestAccounts'})
         setConnButtonText('Wallet Connected');
-        defaultAccount = result[0];
+        setDefaultAccount(result[0]);
+        return result[0];
       } else if (!window.ethereum){
         console.log('Need to install MetaMask');
         setErrorMessage('Please install MetaMask browser extension to interact');
@@ -38,13 +39,18 @@ function App() {
     catch (error){
       console.log(error);
     }
+  }
 
+  const setContracts = async() => {
     let signer = await (new ethers.providers.Web3Provider(window.ethereum)).getSigner()
     const contract = new ethers.Contract("0xEA9E8318328314519dfeFc00222352B63349Ba2b", bookAbi, signer)
     // console.log(contract)
     console.log(defaultAccount);
-    contract.connect(defaultAccount) 
+    contract.connect(defaultAccount)
+    setContract(contract);
+  }
 
+  const UserTokens = async()=>{
 
     console.log("Tokens:",await contract.getTokensOwnedByUser(defaultAccount))
     setContract(contract)
@@ -65,11 +71,15 @@ function App() {
       Price : 400,
       isBurnt :false
     }
+    console.log(defaultAccount);
     const tx = {value: ethers.utils.parseEther("4.0")}
     console.log(await contract.mintBatch("abc",content,10,10,10,tx))
+    UserTokens()
+    getDataOfTokenType()
   }
 
-  const getDataOfTokenType=async(gold)=>{
+  const getDataOfTokenType=async()=>{
+    console.log(defaultAccount);
     const tx = {value: ethers.utils.parseEther("4.0")}
     console.log(await contract.getContentsOfEachTokenType("gold"))
   }
@@ -87,6 +97,8 @@ function App() {
     <div className="App">
       <Header 
         userAccount={defaultAccount}
+        setDefaultAccount={setDefaultAccount}
+        setContracts={setContracts}
         userBalance = {userBalance}
         ConnectWalletHandler = {ConnectWalletHandler}
         errorMessage = {errorMessage}

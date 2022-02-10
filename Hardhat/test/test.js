@@ -43,12 +43,8 @@ describe("NFTMarket", function() {
       publicationDate:212112,
       author:"Rahul Shah",
       authorAddr: dummy.address,
-      ipfsHash: "rahul.com.np",
       coverImageHash: "Image",
-      onBid : false,
-      descriptionHash : "description",
-      Price : 500,
-      isBurnt :false
+      descriptionHash : "description"
     }
 
     const content2 = {
@@ -58,17 +54,13 @@ describe("NFTMarket", function() {
       publicationDate:1225666,
       author:"Ranju GC",
       authorAddr: dummy.address,
-      ipfsHash: "thank you",
       coverImageHash: "coverImage",
-      onBid : false,
-      descriptionHash : "descriptionHash",
-      Price : 400,
-      isBurnt :false
+      descriptionHash : "descriptionHash"
     }
 
-    await nft.connect(accounts[1]).mintOneToken("https://www.mytokenlocation1.com", content1, { value: ethers.utils.parseEther("10.0")} );
-    // await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
-    // expect(await nft.balanceOf(owner.address)).to.equal(60);
+    await nft.connect(accounts[1]).mintBatch("https://www.mytokenlocation1.com", content1, 1,0,0, { value: ethers.utils.parseEther("10.0")} );
+    await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+    expect(await nft.balanceOf(owner.address)).to.equal(60);
     expect(await nft.balanceOf(accounts[1].address)).to.equal(1);
     expect(await nft.balanceOf(buyerAddress.address)).to.equal(0);
     await market.connect(accounts[1]).createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
@@ -93,12 +85,8 @@ describe("NFTMarket", function() {
       publicationDate:212112,
       author:"Rahul Shah",
       authorAddr: dummy.address,
-      ipfsHash: "rahul.com.np",
       coverImageHash: "Image",
-      onBid : false,
-      descriptionHash : "description",
-      Price : 500,
-      isBurnt :false
+      descriptionHash : "description"
     }
 
     const content2 = {
@@ -108,36 +96,32 @@ describe("NFTMarket", function() {
       publicationDate:1225666,
       author:"Ranju GC",
       authorAddr: dummy.address,
-      ipfsHash: "thank you",
       coverImageHash: "coverImage",
-      onBid : false,
-      descriptionHash : "descriptionHash",
-      Price : 400,
-      isBurnt :false
+      descriptionHash : "descriptionHash"
     }
 
-    let value1 = await nft.connect(accounts[1]).mintOneToken("https://www.mytokenlocation1.com", content1, { value: ethers.utils.parseEther("10.0")} );
+    // let value1 = await nft.connect(accounts[1]).mintOneToken("https://www.mytokenlocation1.com", content1, { value: ethers.utils.parseEther("10.0")} );
     await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
-    const value = await nft.connect(owner.address).callStatic.getContentOfUserbyIndex(owner.address)
-    const value2 = await nft.connect(owner.address).callStatic.getContentbyContentIndexArray(value)
+    const value = await nft.connect(owner.address).callStatic.getAllContentsOfUser(owner.address)
+    console.log("content : ", value);
+    const value3 = [1,2,3]
+    const value2 = await nft.connect(owner.address).callStatic.getContentbyContentIndexArray(value3)
     expect(value.length).to.equal(3);
-    // console.log(value2);
+    console.log(value2);
     console.log(await nft.connect(owner.address).callStatic.getTokensOwnedByUser(owner.address));
     console.log(await nft.connect(owner.address).callStatic.getTokensOwnedByUser(accounts[1].address));
     console.log(await nft.callStatic.getContentofToken(23));
     const a = [1,5,18,40];
-    const value3 = await nft.callStatic.getContentbyIndexArray(a)
-    console.log(value3);
-    for(let i=0;i<4;i++){
-      console.log(await nft.callStatic.getContentbyContentIndex(i));
-    }
+    const value4 = await nft.callStatic.getContentbyTokensArray(a)
+    console.log(value4);
+    console.log(await nft.callStatic.getContentbyContentIndexArray(value4));
     console.log(await nft.callStatic.getContentsOfEachTokenType("gold"));
     console.log(await nft.callStatic.getContentsByTokenTypeofUser("silver",owner.address));
 
   })
 
-
+/*
   it("Should create and execute market sales", async function() {
     
     let buyerAddress = accounts[1];
@@ -197,5 +181,5 @@ describe("NFTMarket", function() {
     }))
     console.log('items: ', items)
   })
-
+*/
 })
