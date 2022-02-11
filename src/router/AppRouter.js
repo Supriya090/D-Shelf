@@ -12,6 +12,7 @@ import {bookAddress ,bookAbi} from '../bookABI.js'
 import {bookMarketAddress,bookMarketAbi} from '../bookmarketABI'
 
 
+
 function App() {
 
   const [errorMessage, setErrorMessage] = useState(null);
@@ -157,6 +158,7 @@ function App() {
     console.log(defaultAccount);
   }
 
+ 
   useEffect(() => {
     if(defaultAccount){
     provider.getBalance(defaultAccount)
