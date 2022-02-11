@@ -58,8 +58,8 @@ describe("NFTMarket", function() {
       descriptionHash : "descriptionHash"
     }
 
-    await nft.connect(accounts[1]).mintBatch("https://www.mytokenlocation1.com", content1, 1,0,0, { value: ethers.utils.parseEther("10.0")} );
-    await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+    await nft.connect(accounts[1]).mintBatch( content1, 1,0,0, { value: ethers.utils.parseEther("10.0")} );
+    await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
     expect(await nft.balanceOf(accounts[1].address)).to.equal(1);
     expect(await nft.balanceOf(buyerAddress.address)).to.equal(0);
@@ -99,9 +99,7 @@ describe("NFTMarket", function() {
       coverImageHash: "coverImage",
       descriptionHash : "descriptionHash"
     }
-
-    // let value1 = await nft.connect(accounts[1]).mintOneToken("https://www.mytokenlocation1.com", content1, { value: ethers.utils.parseEther("10.0")} );
-    await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+  await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
     const value = await nft.connect(owner.address).callStatic.getAllContentsOfUser(owner.address)
     console.log("content : ", value);
@@ -121,7 +119,7 @@ describe("NFTMarket", function() {
 
   })
 
-/*
+
   it("Should create and execute market sales", async function() {
     
     let buyerAddress = accounts[1];
@@ -129,19 +127,16 @@ describe("NFTMarket", function() {
     listingPrice = listingPrice.toString()
     const auctionPrice = ethers.utils.parseUnits('1', 'ether')
     console.log("Buyer Address : ",buyerAddress.address);
+    const dummy = accounts[5];
     const content1 = {
       tokenIds:[],
       tokenType : 1,
       contentType : 1,
       publicationDate:212112,
       author:"Rahul Shah",
-      authorAddr: buyerAddress.address,
-      ipfsHash: "rahul.com.np",
+      authorAddr: dummy.address,
       coverImageHash: "Image",
-      onBid : false,
-      descriptionHash : "description",
-      Price : 500,
-      isBurnt :false
+      descriptionHash : "description"
     }
 
     const content2 = {
@@ -150,36 +145,26 @@ describe("NFTMarket", function() {
       contentType : 0,
       publicationDate:1225666,
       author:"Ranju GC",
-      authorAddr: buyerAddress.address,
-      ipfsHash: "thank you",
+      authorAddr: dummy.address,
       coverImageHash: "coverImage",
-      onBid : false,
-      descriptionHash : "descriptionHash",
-      Price : 400,
-      isBurnt :false
+      descriptionHash : "descriptionHash"
     }
-
-    let value1 = await nft.mintOneToken("https://www.mytokenlocation1.com", content1, { value: ethers.utils.parseEther("10.0"),} );
-    console.log(value1);
-    await nft.mintBatch("https://www.mytokenlocation2.com", content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0"),} );
-    await market.createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
+    await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );    await market.createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
     await market.createMarketItem(nftContractAddress, 2, auctionPrice, { value: listingPrice })
 
     await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, { value: auctionPrice})
 
     items = await market.fetchMarketItems()
     items = await Promise.all(items.map(async i => {
-      const tokenUri = await nft.tokenURI(i.tokenId)
       let item = {
         price: i.price.toString(),
         tokenId: i.tokenId.toString(),
         seller: i.seller,
-        owner: i.owner,
-        tokenUri
+        owner: i.owner
       }
       return item
     }))
     console.log('items: ', items)
   })
-*/
+
 })

@@ -2,10 +2,10 @@
 pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract book is ERC721URIStorage {
+contract book is ERC721 {
 
     //token type of the the NFT
     enum TokenType{GOLD, SILVER, BRONZE}
@@ -66,7 +66,7 @@ contract book is ERC721URIStorage {
         contents.push(content);
     }
 
-    function mintBatch(string memory tokenURI,Content memory content,uint gold, uint silver, uint bronze) external payable {
+    function mintBatch(Content memory content,uint gold, uint silver, uint bronze) external payable {
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
                             mintingFee[TokenType.SILVER]*silver+
                             mintingFee[TokenType.BRONZE]*bronze;
@@ -86,7 +86,7 @@ contract book is ERC721URIStorage {
             uint256 newItemId = _tokenIds.current();
             _mint(msg.sender, newItemId);
             emit minted(msg.sender,newItemId);
-            _setTokenURI(newItemId, tokenURI);
+            // _setTokenURI(newItemId, tokenURI);
             setApprovalForAll(contractAddress, true);
             userOwnedTokens[msg.sender].push(newItemId);
             if (i < gold) {
@@ -154,6 +154,20 @@ contract book is ERC721URIStorage {
         return userOwnedTokens[addr];
     }
 
+    function getTotalContents() external view returns (uint256){
+        return contents.length;
+    } 
+
+    function getTotalgoldTokens() external view returns (uint256[] memory){
+        return goldTokenIds;
+    }
+    function getTotalsilverTokens() external view returns (uint256[] memory){
+        return silverTokenIds;
+    }
+    function getTotalbronzeTokens() external view returns (uint256[] memory){
+        return bronzeTokenIds;
+    }
+
     function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;
         uint256 IndexoftokenId;
@@ -172,15 +186,15 @@ contract book is ERC721URIStorage {
         return Contents;
     }
 
-    function getAllContentsOfUser(address user) external view returns (Content[] memory){
-        uint256 totalToken = getTokensOwnedByUser(user).length;
+    function getAllContentsOfUser() external view returns (Content[] memory){
+        uint256 totalToken = getTokensOwnedByUser(msg.sender).length;
         uint256[] memory PsudocontentIds = new uint256[](contents.length);
         uint256 contentID;
         bool isPresent;
         bool valid;
         uint256 k = 0;
         for (uint i = 0; i < totalToken; i++){
-            (contentID,, valid) = getContentIndexByID(getTokensOwnedByUser(user)[i]);
+            (contentID,, valid) = getContentIndexByID(getTokensOwnedByUser(msg.sender)[i]);
             if( valid == true){
                 isPresent = false;
                 for(uint j = 0; j < k; j++){
