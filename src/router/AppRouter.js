@@ -10,44 +10,42 @@ import SinglePage from '../components/SinglePage';
 import {ethers} from 'ethers'
 import {bookAbi} from '../bookABI.js'
 import {bookMarketAbi} from '../bookmarketABI'
+import getContentStateFragment from 'draft-js/lib/getContentStateFragment';
 
 
 function App() {
 
   const [errorMessage, setErrorMessage] = useState(null);
+  // const [defaultAccount, setdefaultAccount] = useState(null);
   let defaultAccount = null;
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
   const ConnectWalletHandler = async () => {
-    try{
       if (window.ethereum && defaultAccount == null) {
         // set ethers provider
         setProvider(new ethers.providers.Web3Provider(window.ethereum));
-  
+
         // connect to metamask
-        let result = await window.ethereum.request({ method: 'eth_requestAccounts'})
-        setConnButtonText('Wallet Connected');
-        defaultAccount = result[0];
+        await window.ethereum.request({ method: 'eth_requestAccounts'})
+        .then( function(result) {
+          setConnButtonText('Wallet Connected');
+          defaultAccount = result[0];
+          console.log(defaultAccount);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        
       } else if (!window.ethereum){
         console.log('Need to install MetaMask');
         setErrorMessage('Please install MetaMask browser extension to interact');
       }
-    }
-    catch (error){
-      console.log(error);
-    }
 
-    let signer = await (new ethers.providers.Web3Provider(window.ethereum)).getSigner()
-    const contract = new ethers.Contract("0xEA9E8318328314519dfeFc00222352B63349Ba2b", bookAbi, signer)
-    // console.log(contract)
     console.log(defaultAccount);
-    contract.connect(defaultAccount) 
+    mint()
 
-
-    console.log("Tokens:",await contract.getTokensOwnedByUser(defaultAccount))
-    setContract(contract)
   }
 
   const mint=async()=>{
@@ -65,13 +63,25 @@ function App() {
       Price : 400,
       isBurnt :false
     }
-    const tx = {value: ethers.utils.parseEther("4.0")}
-    console.log(await contract.mintBatch("abc",content,10,10,10,tx))
+    console.log(defaultAccount);
+    getDataOfTokenType(content);
+    // const tx = {value: ethers.utils.parseEther("4.0")}
+    // console.log(await contract.mintBatch("abc",content,10,10,10,tx))
   }
 
   const getDataOfTokenType=async(gold)=>{
-    const tx = {value: ethers.utils.parseEther("4.0")}
-    console.log(await contract.getContentsOfEachTokenType("gold"))
+    console.log(defaultAccount);
+    getContents()
+    getContents()
+    getContents()
+    getContents()
+    getContents()
+  //   const tx = {value: ethers.utils.parseEther("4.0")}
+  //   console.log(await contract.getContentsOfEachTokenType("gold"))
+  }
+
+  const getContents = async() => {
+    console.log(defaultAccount);
   }
 
   useEffect(() => {
