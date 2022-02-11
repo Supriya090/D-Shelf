@@ -48,11 +48,6 @@ const Header = (props) => {
   } = useStyles();
 
   const displayHeader = () => {
-    const Connect = () => {
-      let Addr = props.ConnectWalletHandler
-      props.setDefaultAccount(Addr)
-      props.setContracts()
-    }
     let walletDetails;
     if (props.connButtonText === "Wallet Connected") {
       walletDetails = (
@@ -93,7 +88,7 @@ const Header = (props) => {
               <div style={{ display: "flex" }}>
                 {getMenuButtons()}
                 <Button
-                  onClick={() => Connect()}
+                  onClick={props.ConnectWalletHandler}
                   className={headerButton}>
                   {props.connButtonText}
                 </Button>
