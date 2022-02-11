@@ -256,7 +256,7 @@ contract book is ERC721 {
         else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("silver"))){
             arrofContentIndex = getContentbyTokensArray(silverTokenIds);
         }
-        else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("bronz"))){
+        else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("bronze"))){
             arrofContentIndex = getContentbyTokensArray(bronzeTokenIds);
         }
         return getContentbyContentIndexArray(arrofContentIndex);
