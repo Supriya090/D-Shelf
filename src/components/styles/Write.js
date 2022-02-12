@@ -110,7 +110,11 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         right: 205,
         bottom: -170
+    },
+    uploadPdf: {
+        flex: "0 0 100%"
     }
+    
 }));
 
 export default useStyles;
