@@ -14,44 +14,46 @@ import {bookMarketAddress,bookMarketAbi} from '../bookmarketABI'
 
 function App() {
 
-  const [errorMessage, setErrorMessage] = useState(null);
   let defaultAccount = null;
   let bookContract = null;
   let marketContract = null;
   let provider = null;
+  let signer = null;
+  const [errorMessage, setErrorMessage] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
 
 //Please connect your account to the wallet first the click the button
 //If you have changed your account from wallet the click button again to refresh the defaultAccount
   const ConnectWalletHandler = async () => {
-      if (window.ethereum && defaultAccount == null) {
+      if (typeof window.ethereum !== undefined) {
         // set ethers provider
         provider = new ethers.providers.Web3Provider(window.ethereum);
-        bookContract = new ethers.Contract(bookAddress, bookAbi, provider.getSigner());
-        marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, provider.getSigner());
+        signer = provider.getSigner();
+        bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
+        marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
 
         // connect to metamask
         await window.ethereum.request({ method: 'eth_requestAccounts'})
         .then( function(result) {
+          setErrorMessage(null);
           setConnButtonText('Wallet Connected');
           defaultAccount = result[0];
-          console.log(defaultAccount);
+          mint();
         })
         .catch(error => {
           console.log(error);
         })
         
-      } else if (!window.ethereum){
+      } else {
         console.log('Need to install MetaMask');
         setErrorMessage('Please install MetaMask browser extension to interact');
       }
-      console.log(defaultAccount);
   }
   //mint Batch as well as single book by passing values 
   //for single mint chose one of tokentypes and pass 1 to that value making others 0
-  const mint = async(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,Amount)=>{
-    ContentMetadata = {
+  const mint = async()=>{
+    let ContentMetadata = {
       tokenIds:[],
       tokenType : 1,
       contentType : 1,
@@ -61,15 +63,22 @@ function App() {
       coverImageHash: "Image",
       descriptionHash : "description"
     }
-    NoOfgold = 10;
-    NoOfSilver = 20;
-    NoOfBronze = 30;
-    Amount = "4.0";
-    const tx = {value: ethers.utils.parseEther(Amount)}
-    const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze);
+    let NoOfgold = 1;
+    let NoOfSilver = 2;
+    let NoOfBronze = 3;
+    let Amount = "0.1";
+    console.log(defaultAccount);
+    const tx = {value: ethers.utils.parseEther(Amount), gasLimit: 1500000020};
+    const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
     await transaction.wait();
     console.log("transaction :", transaction);
     console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
+    getAllContentsOfUser();
+    getContentindexfromToken(1);
+    getContentByTokenId(1);
+    getContentbyitsIndices(1);
+    getUserDataOfTokenType(1);
+    getDataOfTokenType(1);
   }
 
   //get index value of the book i.e. of contents[] array from token id
@@ -120,17 +129,17 @@ function App() {
     tokenType = "gold";
     let transaction = await bookContract.getContentsByTokenTypeofUser(tokenType, {from: defaultAccount});
     await transaction.wait();
-    console.log("Gold :", transaction.events[0].args);
+    console.log("User Gold :", transaction.events[0].args);
 
     tokenType = "silver";
     transaction = await bookContract.getContentsByTokenTypeofUser(tokenType, {from: defaultAccount});
     await transaction.wait();
-    console.log("Silver :", transaction.events[0].args);
+    console.log("User Silver :", transaction.events[0].args);
     
     tokenType = "bronze";
     transaction = await bookContract.getContentsByTokenTypeofUser(tokenType, {from: defaultAccount});
     await transaction.wait();
-    console.log("Bronze :", transaction.events[0].args);
+    console.log("User Bronze :", transaction.events[0].args);
 
     //can also be done by filtering tokens in getTokensOwnedByUser and getTotalgoldTokens
   }
@@ -153,11 +162,16 @@ function App() {
     console.log("Bronze :", transaction.events[0].args);//need correction in SC 
   }
 
-  const getContents = async() => {
-    console.log(defaultAccount);
-  }
-
   useEffect(() => {
+    async function OnWalletChange() {
+      window.ethereum.on('accountsChanged', function (accounts) {
+        // Time to reload your interface with accounts[0]!
+        // console.log("accountsChanged :", accounts[0]);
+        setConnButtonText('Wallet Changed');
+        setErrorMessage('Click button to refresh contents');
+      })
+    }
+    OnWalletChange();
     if(defaultAccount){
     provider.getBalance(defaultAccount)
     .then(balanceResult => {

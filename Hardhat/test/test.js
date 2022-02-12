@@ -58,7 +58,7 @@ describe("NFTMarket", function() {
       descriptionHash : "descriptionHash"
     }
 
-    await nft.connect(accounts[1]).mintBatch( content1, 1,0,0, { value: ethers.utils.parseEther("10.0")} );
+    await nft.connect(accounts[1]).mintBatch( content1, 1,0,0, { value: ethers.utils.parseEther("0.1"), gasLimit: 2000000} );
     await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
     expect(await nft.balanceOf(accounts[1].address)).to.equal(1);
@@ -99,9 +99,9 @@ describe("NFTMarket", function() {
       coverImageHash: "coverImage",
       descriptionHash : "descriptionHash"
     }
-  await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+    await nft.mintBatch(content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
-    const value = await nft.connect(owner.address).callStatic.getAllContentsOfUser(owner.address)
+    const value = await nft.connect(owner.address).callStatic.getAllContentsOfUser()
     console.log("content : ", value);
     const value3 = [1,2,3]
     const value2 = await nft.connect(owner.address).callStatic.getContentbyContentIndexArray(value3)

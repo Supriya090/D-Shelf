@@ -53,14 +53,14 @@ contract book is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    address developer;
+    address payable developer;
     address contractAddress;
 
     constructor(address marketplaceAddress) ERC721("BookNFT", "Content") {
         contractAddress = marketplaceAddress;
-        mintingFee[TokenType.GOLD]= 0.03 ether;
-        mintingFee[TokenType.SILVER] = 0.02 ether;
-        mintingFee[TokenType.BRONZE] = 0.01 ether;
+        mintingFee[TokenType.GOLD]= 0.003 ether;
+        mintingFee[TokenType.SILVER] = 0.002 ether;
+        mintingFee[TokenType.BRONZE] = 0.001 ether;
         developer = payable(msg.sender);
         Content memory content = Content(new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
         contents.push(content);
@@ -72,10 +72,15 @@ contract book is ERC721 {
                             mintingFee[TokenType.BRONZE]*bronze;
         
         require(msg.value >= mintFee, "Insufficient eth sent to mint tokens");
-        payable(developer).transfer(mintFee);
+        bool sent;
+        bytes memory data;
+        (sent, data) = developer.call{value: mintFee}("");
+        require(sent, "Failed to send Ether");
         //return excess fee sent
+        address payable sender = payable(msg.sender);
         if (mintFee < msg.value) {
-            payable(msg.sender).transfer(msg.value - mintFee);
+            (sent, data) = sender.call{value: msg.value - mintFee}("");
+            require(sent, "Failed to return excess Ether");
         }
 
         uint256[] memory tokenIdsGold = new uint256[](gold);
