@@ -162,7 +162,7 @@ contract book is ERC721 {
     function getTotalContents() external view returns (uint256){
         return contents.length;
     } 
-
+/*
     function getTotalgoldTokens() external view returns (uint256[] memory){
         return goldTokenIds;
     }
@@ -172,7 +172,7 @@ contract book is ERC721 {
     function getTotalbronzeTokens() external view returns (uint256[] memory){
         return bronzeTokenIds;
     }
-
+*/
     function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;
         uint256 IndexoftokenId;
@@ -192,14 +192,14 @@ contract book is ERC721 {
     }
 
     function getAllContentsOfUser() external view returns (Content[] memory){
-        uint256 totalToken = getTokensOwnedByUser(msg.sender).length;
+        uint256 totalToken = userOwnedTokens[msg.sender].length;
         uint256[] memory PsudocontentIds = new uint256[](contents.length);
         uint256 contentID;
         bool isPresent;
         bool valid;
         uint256 k = 0;
         for (uint i = 0; i < totalToken; i++){
-            (contentID,, valid) = getContentIndexByID(getTokensOwnedByUser(msg.sender)[i]);
+            (contentID,, valid) = getContentIndexByID(userOwnedTokens[msg.sender][i]);
             if( valid == true){
                 isPresent = false;
                 for(uint j = 0; j < k; j++){
