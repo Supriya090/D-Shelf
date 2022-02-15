@@ -33,11 +33,11 @@ const Write = (props) => {
 
   const encrypt = (pdf) => {
     //full pdf string encryption --->
+    //console.log(pdf);
     pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
     setPdfFile(pdf);
     
-
-
+    
     //last 100 character encryption--->
     //var string = pdf.substring(len - 100,len);
     //const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
@@ -53,9 +53,9 @@ const Write = (props) => {
           let reader = new FileReader();
           reader.readAsDataURL(selectedFile);
           reader.onloadend = (e) => {
-            encrypt(e.target.result);  
-            setPdfError("");
+            encrypt(e.target.result);
             //setPdfFile(e.target.result);
+            setPdfError("");
           };
         };
       } else {
@@ -158,7 +158,7 @@ const Write = (props) => {
           {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
         <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
-        {pdfFile && <PDFViewer pdf={pdfFile}/>}
+        {pdfFile && <PDFViewer pdfBase64={pdfFile}/>}
       </div>
     </div>
   );

@@ -21,35 +21,45 @@ const PDFViewer = (props) => {
 
   //exports pdf from prop
 
-  var {pdf} = props; 
-  const len = pdf.length;
-  var enLen;
+  var {pdfBase64} = props; 
 
-  function encrypt() {
+  //console.log(String(pdfBase64));
+  const len = pdfBase64.length;
+  const cutLen = 5000;
+  var enLen; //for 100 -> 172
+
+  const encrypt = () => {
     //full pdf string encryption --->
-    //pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+    //pdfBase64 = CryptoJS.AES.encrypt(pdfBase64, "1234567890");
 
-
+    
     //last 100 character encryption--->
-    var string = pdf.substring(len - 100,len);
+    var string = pdfBase64.substring(len - cutLen,len);
     const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
     enLen = String(encrypted).length;
-    pdf = pdf.substring(0, len - 100) + encrypted;
+    pdfBase64 = pdfBase64.substring(0, len - cutLen) + encrypted;
   }
 
-  function decrypt() {
+
+  const decrypt = () => {
+    
     //full pdf string decryption --->
-    var bytes = CryptoJS.AES.decrypt(pdf, "1234567890");
-    pdf = bytes.toString(CryptoJS.enc.Utf8);
+    var bytes = CryptoJS.AES.decrypt(pdfBase64, "1234567890");
+    pdfBase64 = bytes.toString(CryptoJS.enc.Utf8);
+    
 
     /*
     //last 100 character decryption--->
-    var upLen = pdf.length;
+    var upLen = pdfBase64.length;
+    console.log(pdfBase64);
+    console.log(enLen);
 
-    var bytes = CryptoJS.AES.decrypt(pdf.substring(upLen - enLen,upLen), "1234567890");
+
+    var bytes = CryptoJS.AES.decrypt(pdfBase64.substring(upLen - enLen,upLen), "1234567890");
     var decrypted = bytes.toString(CryptoJS.enc.Utf8);
-    pdf = pdf.substring(0, upLen - enLen) + decrypted;
-    */
+    pdfBase64 = pdfBase64.substring(0, upLen - enLen) + decrypted;
+    console.log(pdfBase64);
+    console.log(pdfBase64.length);*/
   }
   
 
@@ -111,20 +121,18 @@ const PDFViewer = (props) => {
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
   
-  //pdf && dataUrl(); //sets pdfFile from DataURL of pdf
   //encrypt();
   decrypt();
-  //pdfFile && cropTest();
 
   return (
     <div>
       {/* View PDF */}
       <div className={viewer}>
         {/* render this if we have a pdf file */}
-        {pdf && (
+        {pdfBase64 && (
           <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'> 
             <Viewer
-              fileUrl={pdf}
+              fileUrl={pdfBase64}
               plugins={[defaultLayoutPluginInstance]}
               defaultScale={SpecialZoomLevel.PageFit}
               theme='dark'
