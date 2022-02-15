@@ -3,10 +3,13 @@ import { useStyles as homeStyles } from "./styles/Home";
 import { Typography, Button } from "@material-ui/core";
 import dummy from "../assets/dummy.jpg";
 import { useStyles } from "./styles/SinglePage";
+import PDFViewer from "./PDFViewer";
+import pdf from "../assets/pdf";
 
 function SinglePage(props) {
   const homeClasses = homeStyles();
   const classes = useStyles();
+  //console.log(pdf);
   return (
     <div className={classes.singleContent}>
       <div className={classes.bookDetails}>
@@ -72,6 +75,9 @@ function SinglePage(props) {
           and brimming with resourceful linguistic play, these poems are
           elemental odes on the end of love and its eventual renewal.
         </Typography>
+      </div>
+      <div className={classes.sPViewer}>
+          <PDFViewer pdfBase64={pdf} />
       </div>
     </div>
   );
