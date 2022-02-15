@@ -20,15 +20,27 @@ const Collections = (props) => {
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>
           <ListHead title={""} leftButton={"Gold"} />
-          <HorizontalScrolling getItems={auctionContent} isCollection={true} />
+          <HorizontalScrolling
+            getItems={auctionContent}
+            isCollection={true}
+            style={{ marginTop: "80px" }}
+          />
         </div>
         <div className={homeClasses.notableCreators}>
           <ListHead title={""} leftButton={"Silver"} />
-          <HorizontalScrolling getItems={auctionContent} isCollection={true} />
+          <HorizontalScrolling
+            getItems={auctionContent}
+            isCollection={true}
+            style={{ marginTop: "80px" }}
+          />
         </div>
         <div className={homeClasses.notableCreators}>
           <ListHead title={""} leftButton={"Bronze"} />
-          <HorizontalScrolling getItems={auctionContent} isCollection={true} />
+          <HorizontalScrolling
+            getItems={auctionContent}
+            isCollection={true}
+            style={{ marginTop: "80px" }}
+          />
         </div>
       </div>
     </div>

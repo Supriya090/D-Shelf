@@ -46,6 +46,7 @@ const Header = (props) => {
     inputInput,
     inputRoot,
   } = useStyles();
+
   const displayHeader = () => {
     let walletDetails;
     if (props.connButtonText === "Wallet Connected") {

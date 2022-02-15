@@ -3,18 +3,21 @@ import {
   TextField,
   TextareaAutosize,
   Divider,
-  Button,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import PDFViewer from "./PDFViewer";
 import useStyles from "./styles/Write";
 import WriteCopies from "./elements/WriteCopies";
+import CryptoJS from "crypto-js";
 
 const Write = (props) => {
   const classes = useStyles();
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfError, setPdfError] = useState(null);
+
   useEffect(() => {
     if (image) {
       const reader = new FileReader();
@@ -26,6 +29,39 @@ const Write = (props) => {
       setPreview(null);
     }
   }, [image]);
+
+  const encrypt = (pdf) => {
+    //full pdf string encryption --->
+    //console.log(pdf);
+    pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+    setPdfFile(pdf);
+    
+    
+    //last 100 character encryption--->
+    //var string = pdf.substring(len - 100,len);
+    //const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
+    //enLen = String(encrypted).length;
+    //pdf = pdf.substring(0, len - 100) + encrypted;
+  }
+
+  const allowedFiles = ["application/pdf"];
+  const handleFile = (e) => {
+    let selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile && allowedFiles.includes(selectedFile.type)) {
+          let reader = new FileReader();
+          reader.readAsDataURL(selectedFile);
+          reader.onloadend = (e) => {
+            encrypt(e.target.result);
+            //setPdfFile(e.target.result);
+            setPdfError("");
+          };
+        };
+      } else {
+        setPdfError("Invalid file type: Please select only PDF");
+        setPdfFile(null);
+      }
+    };
 
   return (
     <div className={classes.writePageContent}>
@@ -70,7 +106,7 @@ const Write = (props) => {
                 Upload Book Cover
               </Typography>
               <div className={classes.chooseFile}>
-                CHOOSE FILE
+                CHOOSE COVER
                 <input
                   type='file'
                   accept='image/*'
@@ -87,18 +123,40 @@ const Write = (props) => {
                 />
               </div>
               <img src={preview} alt='' className={classes.uploadedImage} />
+
               <input
                 type='button'
                 value='Submit'
                 className={`${classes.submitButton} ${classes.chooseFile}`}
                 onClick={props.mint}
               />
-               
             </div>
           </div>
+          <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              style={{
+                marginRight: "10px",
+                fontSize: "2rem",
+              }}>
+              Upload PDF
+            </Typography>
+
+            <div className={classes.chooseFile} style={{ marginLeft: "30px" }}>
+              CHOOSE FILE
+              <input
+                type='file'
+                className='form-control'
+                accept='application/pdf'
+                required
+                onChange={handleFile}
+                className={classes.inputFile}
+              />
+            </div>
+          </div>
+          {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
-        <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
-        <PDFViewer />
+        {pdfFile && <PDFViewer pdfBase64={pdfFile} />}
       </div>
     </div>
   );

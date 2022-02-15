@@ -2,10 +2,10 @@
 pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract book is ERC721URIStorage {
+contract book is ERC721 {
 
     //token type of the the NFT
     enum TokenType{GOLD, SILVER, BRONZE}
@@ -14,14 +14,11 @@ contract book is ERC721URIStorage {
     enum ContentType{Other,Fiction, NonFiction, Informative, Text, Novel, Romantic}
 
     //user address => list of user owned tokens
-    mapping(address => uint256[]) public  userOwnedTokens;
+    mapping(address => uint256 []) public  userOwnedTokens;
 
     //mint fee of the tokens for each category
     mapping(TokenType=>uint256) internal mintingFee;
-
-    //deployer address
-    address public deployer;
-
+   
     //list of gold tokens
     uint256[] public goldTokenIds;
 
@@ -40,17 +37,12 @@ contract book is ERC721URIStorage {
         uint256 publicationDate;
         string author;
         address authorAddr;
-        string ipfsHash;
         string coverImageHash;
-        bool onBid;
         string descriptionHash;
-        uint256 Price;
-        bool isBurnt;
     }
 
     //list of all the contents
     Content[] public contents;
-    uint256 [] public contentIds;
 
     //if the token is minted 
     event minted(
@@ -58,54 +50,43 @@ contract book is ERC721URIStorage {
         uint256 _tokenId
     );
 
-    //modifier to only token owner access 
-    modifier OnlyTokenOwner(uint256 _tokenId, address _user) {
-        require(
-            _user == ownerOf(_tokenId),
-            'Err: only token owner can execute this'
-        );
-        _;
-    }
-
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+
+    address payable developer;
+
     address contractAddress;
 
     constructor(address marketplaceAddress) ERC721("BookNFT", "Content") {
         contractAddress = marketplaceAddress;
-        mintingFee[TokenType.GOLD]= 0.03 ether;
-        mintingFee[TokenType.SILVER] = 0.02 ether;
-        mintingFee[TokenType.BRONZE] = 0.01 ether;
-        deployer=msg.sender;
-    }
 
-    function mintOneToken(string memory tokenURI,Content memory content) public payable returns (uint) {
-        _tokenIds.increment();
-        uint256 mintFee = mintingFee[content.tokenType];
-        uint256 newItemId = _tokenIds.current();
-        uint256[] memory tokenIds = new uint256[](1);
-        tokenIds[0] = newItemId;
+        mintingFee[TokenType.GOLD]= 0.003 ether;
+        mintingFee[TokenType.SILVER] = 0.002 ether;
+        mintingFee[TokenType.BRONZE] = 0.001 ether;
 
-        handleMintFee(mintFee);
-        content.authorAddr=msg.sender;
-        content.tokenIds=tokenIds;
+        developer = payable(msg.sender);
+        Content memory content = Content(new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
         contents.push(content);
-        
-        //set the tokens owned by user
-
-        _mint(msg.sender, newItemId);
-        emit minted(msg.sender,newItemId);
-        _setTokenURI(newItemId, tokenURI);
-        setApprovalForAll(contractAddress, true);
-        userOwnedTokens[msg.sender].push(newItemId);
-        return newItemId;
     }
 
-    function mintBatch(string memory tokenURI,Content memory content,uint gold, uint silver, uint bronze) public payable returns (uint) {
+    function mintBatch(Content memory content,uint gold, uint silver, uint bronze) external payable {
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
                             mintingFee[TokenType.SILVER]*silver+
                             mintingFee[TokenType.BRONZE]*bronze;
-        handleMintFee(mintFee);
+        
+        require(msg.value >= mintFee, "Insufficient eth sent to mint tokens");
+
+        bool sent;
+        bytes memory data;
+        (sent, data) = developer.call{value: mintFee}("");
+        require(sent, "Failed to send Ether");
+        //return excess fee sent
+        address payable sender = payable(msg.sender);
+        if (mintFee < msg.value) {
+            (sent, data) = sender.call{value: msg.value - mintFee}("");
+            require(sent, "Failed to return excess Ether");
+
+        }
 
         uint256[] memory tokenIdsGold = new uint256[](gold);
         uint256[] memory tokenIdsSilver = new uint256[](silver);
@@ -115,7 +96,7 @@ contract book is ERC721URIStorage {
             uint256 newItemId = _tokenIds.current();
             _mint(msg.sender, newItemId);
             emit minted(msg.sender,newItemId);
-            _setTokenURI(newItemId, tokenURI);
+            // _setTokenURI(newItemId, tokenURI);
             setApprovalForAll(contractAddress, true);
             userOwnedTokens[msg.sender].push(newItemId);
             if (i < gold) {
@@ -130,38 +111,22 @@ contract book is ERC721URIStorage {
             }
         }
         content.authorAddr=msg.sender;
-        content.tokenIds=tokenIdsGold;
-        contents.push(content);
-        content.tokenIds=tokenIdsSilver;
-        contents.push(content);
-        content.tokenIds=tokenIdsBronze;
-        contents.push(content);
-    }
-
-    function handleMintFee(uint256 _totalFee) internal {
-        uint256 ethSent = msg.value;
-        address payable receiver = payable(msg.sender);
-        require(ethSent >= _totalFee, "Insufficient eth sent to mint tokens");
-        //return excess fee sent 
-        if (_totalFee < ethSent) {
-            receiver.transfer(ethSent - _totalFee);
+        if(gold>0){
+            content.tokenType=TokenType.GOLD;
+            content.tokenIds=tokenIdsGold;
+            contents.push(content);
+        }
+        if(silver>0){
+            content.tokenType=TokenType.SILVER;
+            content.tokenIds=tokenIdsSilver;
+            contents.push(content);
+        }
+        if(bronze>0){
+            content.tokenType=TokenType.BRONZE;
+            content.tokenIds=tokenIdsBronze;
+            contents.push(content);
         }
     }
-
-    //function to get content index
-    function getContentIndexByID(uint256 tokenId) public view returns (uint256,uint256,bool) {
-        uint256 i = 0;
-        uint256 j = 0;
-        for (i = 0; i < contents.length; i++) {
-            for(j = 0;j < contents[i].tokenIds.length;j++){
-                if(contents[i].tokenIds[j]==tokenId){
-                    return (i,j,true);
-                }
-            } 
-        }
-        return (0,0,false);
-    }
-
 
     function burnOffensiveContent(uint256 tokenId) external {
         uint256 contentID;
@@ -182,11 +147,42 @@ contract book is ERC721URIStorage {
         super._burn(tokenId);
     }
 
+    //view functions
+    function getContentIndexByID(uint256 tokenId) public view returns (uint256,uint256,bool) {
+        for (uint i = 0; i < contents.length; i++) {
+            for(uint j = 0;j < contents[i].tokenIds.length;j++){
+                if(contents[i].tokenIds[j]==tokenId){
+                    return (i,j,true);
+                }
+            } 
+        }
+        return (0,0,false);
+    }
+
+
     function getTokensOwnedByUser(address addr) public view returns (uint256[] memory){
         return userOwnedTokens[addr];
     }
 
-    function getContentofToken(uint256 tokenId) public returns (Content memory content){
+    function getTotalContents() external view returns (uint256){
+        return contents.length;
+    } 
+
+/*
+
+    function getTotalgoldTokens() external view returns (uint256[] memory){
+        return goldTokenIds;
+    }
+    function getTotalsilverTokens() external view returns (uint256[] memory){
+        return silverTokenIds;
+    }
+    function getTotalbronzeTokens() external view returns (uint256[] memory){
+        return bronzeTokenIds;
+    }
+
+*/
+
+    function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;
         uint256 IndexoftokenId;
         bool valid;
@@ -195,137 +191,128 @@ contract book is ERC721URIStorage {
         return contents[contentID];
     }
 
-    function getContentOfUserbyIndex(address user) public returns (uint256[] memory){
-        
-        uint256 i = 0;
-        while(i < contentIds.length){
-            contentIds.pop();
-        }
-        
-        uint256 totalToken = getTokensOwnedByUser(user).length;
-        // uint256[] memory totalContentOwnedByIndex = new uint256[](contents.length);
-        uint256 contentID;
-        uint256 IndexoftokenId;
-        bool isPresent;
-        bool valid;
-        uint256 j = 0;
-        for (i = 0; i < totalToken; i++){
-            (contentID, IndexoftokenId, valid) = getContentIndexByID(getTokensOwnedByUser(user)[i]);
-            if( valid == true){
-                isPresent = false;
-                j = 0;
-                while(contentIds.length > j){
-                    if(contentIds[j] == contentID){
-                        isPresent = true;
-                        break;
-                    }
-                    j++;
-                }
-                if(isPresent == false){
-                    contentIds.push(contentID);
-                }
-            }
-        }
-        //Return array of contentIds
-        return contentIds;
-    }
-
-    function getContentbyIndexArray(uint256[] memory arr) public returns (uint256[] memory){
-        
-        uint256 i = 0;
-        while(i < contentIds.length){
-            contentIds.pop();
-        }
-        uint256 totalToken = arr.length;
-        uint256 contentID;
-        uint256 IndexoftokenId;
-        bool isPresent = false;
-        bool valid;
-        uint256 j = 0;
-        uint256 k = 0;
-        for (i = 0; i < totalToken; i++){
-            (contentID, IndexoftokenId, valid) = getContentIndexByID(arr[i]);
-            if( valid == true){
-                isPresent = false;
-                j = 0;
-                while(contentIds.length > j){
-                    if(contentIds[j] == contentID){
-                        isPresent = true;
-                        break;
-                    }
-                    j++;
-                }
-                if(isPresent == false){
-                    contentIds.push(contentID);
-                }
-            }
-        }
-        //Return array of contentIds
-        return contentIds;
-    }
-
-    function getContentbyContentIndex(uint256 index) public view returns (Content memory content){
-        require(index < contents.length, "Invalid index");
-        return contents[index];
-    }
-
-    function getContentbyContentIndexArray(uint256[] memory contentIDs) public returns (Content[] memory){
+    function getContentbyContentIndexArray(uint256[] memory contentIDs) public view returns (Content[] memory){
         Content[] memory Contents = new Content[](contentIDs.length);
         for (uint256 i = 0; i < contentIDs.length; i++){
-            Contents[i] = getContentbyContentIndex(contentIDs[i]);
+            require(contentIDs[i] < contents.length, "Invalid index");
+            Contents[i] = contents[contentIDs[i]];
         }
         return Contents;
     }
 
-    function getContentsOfEachTokenType(string memory _tokentype) public returns (Content[] memory){
+    function getAllContentsOfUser() external view returns (Content[] memory){
+
+        uint256 totalToken = userOwnedTokens[msg.sender].length;
+
+        uint256[] memory PsudocontentIds = new uint256[](contents.length);
+        uint256 contentID;
+        bool isPresent;
+        bool valid;
+        uint256 k = 0;
+        for (uint i = 0; i < totalToken; i++){
+
+            (contentID,, valid) = getContentIndexByID(userOwnedTokens[msg.sender][i]);
+
+            if( valid == true){
+                isPresent = false;
+                for(uint j = 0; j < k; j++){
+                    if(PsudocontentIds[j] == contentID){
+                        isPresent = true;
+                        break;
+                    }
+                }
+                if(isPresent == false){
+                    PsudocontentIds[k] = contentID;
+                    k++;
+                }
+            }
+        }
+        uint256 [] memory contentIds = new uint256[](k);
+        for (uint i = 0; i < k; i++){
+            contentIds[i] = PsudocontentIds[i];
+        }
+        //Return array of contentIds
+        return getContentbyContentIndexArray(contentIds);
+    }
+
+    function getContentbyTokensArray(uint256[] memory arr) public view returns (uint256[] memory){
+        uint256[] memory PsudocontentIds = new uint256[](contents.length);
+        uint256 totalToken = arr.length;
+        uint256 contentID;
+        bool isPresent = false;
+        bool valid;
+        uint256 k = 0;
+        for (uint i = 0; i < totalToken; i++){
+            (contentID,, valid) = getContentIndexByID(arr[i]);
+            if( valid == true){
+                isPresent = false;
+                for(uint j = 0; j < k; j++){
+                    if(PsudocontentIds[j] == contentID){
+                        isPresent = true;
+                        break;
+                    }
+                }
+                if(isPresent == false){
+                    PsudocontentIds[k] = contentID;
+                    k++;
+                }
+            }
+        }
+        uint256 [] memory contentIds = new uint256[](k);
+        for (uint i = 0; i < k; i++){
+            contentIds[i] = PsudocontentIds[i];
+        }
+        //Return array of contentIds
+        return contentIds;
+    }
+
+    function getContentsOfEachTokenType(string memory _tokentype) external view returns (Content[] memory){
         uint256[] memory arrofContentIndex;
         if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("gold"))){
-            arrofContentIndex = getContentbyIndexArray(goldTokenIds);
+            arrofContentIndex = getContentbyTokensArray(goldTokenIds);
         }
         else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("silver"))){
-            arrofContentIndex = getContentbyIndexArray(silverTokenIds);
+            arrofContentIndex = getContentbyTokensArray(silverTokenIds);
         }
-        else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("bronz"))){
-            arrofContentIndex = getContentbyIndexArray(bronzeTokenIds);
+        else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("bronze"))){
+            arrofContentIndex = getContentbyTokensArray(bronzeTokenIds);
         }
         return getContentbyContentIndexArray(arrofContentIndex);
     }
 
-    function getContentsByTokenTypeofUser(string memory _tokentype, address user) public returns (Content[] memory){
-        // uint256[] memory arrofTokenIdsofUser;
+    function getContentsByTokenTypeofUser(string memory _tokentype, address user) external view returns (Content[] memory){
         uint256 i = 0;
-        // i = 0;
-        while(i < contentIds.length){
-            contentIds.pop();
-        }
-        uint256 j = 0;
+        uint256 k = 0;
+        uint256 [] memory PsudoTokenIds = new uint256[](userOwnedTokens[user].length);
         if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("gold"))){
             for(i = 0; i < goldTokenIds.length; i++){
                 if(ownerOf(goldTokenIds[i]) == msg.sender){
-                    contentIds.push(goldTokenIds[i]);
-                    j++;
+                    PsudoTokenIds[k] = goldTokenIds[i];
+                    k++;
                 }
             }
         }
         else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("silver"))){
-            for(i = 0; i < goldTokenIds.length; i++){
-                j = 0;
+            for(i = 0; i < silverTokenIds.length; i++){
                 if(ownerOf(silverTokenIds[i]) == msg.sender){
-                    contentIds.push(silverTokenIds[i]);
-                    j++;
+                    PsudoTokenIds[k] = silverTokenIds[i];
+                    k++;
                 }
             }
         }
         else if(keccak256(abi.encodePacked(_tokentype)) == keccak256(abi.encodePacked("bronze"))){
-            for(i = 0; i < goldTokenIds.length; i++){
-                j = 0;
+            for(i = 0; i < bronzeTokenIds.length; i++){
                 if(ownerOf(bronzeTokenIds[i]) == msg.sender){
-                    contentIds.push(bronzeTokenIds[i]);
-                    j++;
+                    PsudoTokenIds[k] = bronzeTokenIds[i];
+                    k++;
                 }
             }
         }
-        uint256[] memory arrofContentIndex = getContentbyIndexArray(contentIds);
+        uint256 [] memory contentIds = new uint256[](k);
+        for (i = 0; i < k; i++){
+            contentIds[i] = PsudoTokenIds[i];
+        }
+        uint256[] memory arrofContentIndex = getContentbyTokensArray(contentIds);
         return getContentbyContentIndexArray(arrofContentIndex);
     }
 
@@ -334,14 +321,12 @@ contract book is ERC721URIStorage {
     }
 
     function removetoken(uint256 _tokenId, address seller) external {
-        uint256 index;
         for(uint256 i = 0; i< userOwnedTokens[seller].length; i++){
             if(userOwnedTokens[seller][i] == _tokenId){
-                index = i;
+                userOwnedTokens[seller][i] = userOwnedTokens[seller][userOwnedTokens[seller].length-1];
+                userOwnedTokens[seller].pop();
                 break;
             }
         }
-        userOwnedTokens[seller][index] = userOwnedTokens[seller][userOwnedTokens[seller].length-1];
-        userOwnedTokens[seller].pop();
     }
 }

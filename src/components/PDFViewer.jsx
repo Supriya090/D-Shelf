@@ -1,73 +1,70 @@
 import React, { useState } from "react";
-import { makeStyles, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { useStyles as writeStyles } from "./styles/Write";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import CryptoJS from "crypto-js";
 
 const useStyles = makeStyles((theme) => ({
   viewer: {
     backgroundColor: "#e4e4e4",
     overflowY: "auto",
     marginTop: "2rem",
-  },
-  chooseFile: {
-    padding: "5px 10px",
-    background: "#FFD600",
-    border: "1px solid #FFD600",
-    position: "relative",
-    color: "#000",
-    borderRadius: "2px",
-    textAlign: "center",
-    float: "left",
-    cursor: "pointer",
-    fontWeight: 500,
-    fontFamily: "Rubik, sans-serif",
-    marginLeft: "20px",
-  },
-  inputFile: {
-    position: "absolute",
-    zIndex: 1000,
-    opacity: 0,
-    cursor: "pointer",
-    right: 0,
-    top: 0,
-    height: "100%",
-    fontSize: "24px",
-    width: "100%",
+    height: "1000px",
   },
 }));
 
-const PDFViewer = () => {
-  // const classes = writeStyles();
-  const { viewer, chooseFile, inputFile } = useStyles();
+const PDFViewer = (props) => {
+  const { viewer } = useStyles();
 
-  //pdf file onChange state
-  const [pdfFile, setPdfFile] = useState(null);
-  //pdf file error state
-  const [pdfError, setPdfError] = useState("");
+  //exports pdf from prop
 
-  //handle file onChange event
-  const allowedFiles = ["application/pdf"];
-  const handleFile = (e) => {
-    let selectedFile = e.target.files[0];
-    if (selectedFile) {
-      if (selectedFile && allowedFiles.includes(selectedFile.type)) {
-        let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = (e) => {
-          setPdfError("");
-          setPdfFile(e.target.result);
-        };
-      } else {
-        setPdfError("Invalid file type: Please select only PDF");
-        setPdfFile("");
-      }
-    }
-  };
+  var {pdfBase64} = props; 
 
+  //console.log(String(pdfBase64));
+  const len = pdfBase64.length;
+  const cutLen = 5000;
+  var enLen; //for 100 -> 172
+
+  const encrypt = () => {
+    //full pdf string encryption --->
+    //pdfBase64 = CryptoJS.AES.encrypt(pdfBase64, "1234567890");
+
+    
+    //last 100 character encryption--->
+    var string = pdfBase64.substring(len - cutLen,len);
+    const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
+    enLen = String(encrypted).length;
+    pdfBase64 = pdfBase64.substring(0, len - cutLen) + encrypted;
+  }
+
+
+  const decrypt = () => {
+    
+    //full pdf string decryption --->
+    var bytes = CryptoJS.AES.decrypt(pdfBase64, "1234567890");
+    pdfBase64 = bytes.toString(CryptoJS.enc.Utf8);
+    
+
+    /*
+    //last 100 character decryption--->
+    var upLen = pdfBase64.length;
+    console.log(pdfBase64);
+    console.log(enLen);
+
+
+    var bytes = CryptoJS.AES.decrypt(pdfBase64.substring(upLen - enLen,upLen), "1234567890");
+    var decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    pdfBase64 = pdfBase64.substring(0, upLen - enLen) + decrypted;
+    console.log(pdfBase64);
+    console.log(pdfBase64.length);*/
+  }
+  
+
+  
+  // ****** Toolbar related codes **********
   //Disabling download and print buttons from plugin
   const transform = (slot) => ({
     ...slot,
@@ -76,17 +73,18 @@ const PDFViewer = () => {
     Search: () => <></>,
   });
 
+  //assigning changed toolbar to renderToolbar
   const renderToolbar = (Toolbar) => (
     <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
   );
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    renderToolbar, //for rendering element removed toolbar
+    renderToolbar, //rendering element removed toolbar
     toolbarPlugin: {
       fullScreenPlugin: {
         // Zoom to fit the screen after entering and exiting the full screen mode
         onEnterFullScreen: (zoom) => {
-          zoom(SpecialZoomLevel.ActualSize);
+          zoom(SpecialZoomLevel.PageFit);
         },
 
         onExitFullScreen: (zoom) => {
@@ -96,13 +94,12 @@ const PDFViewer = () => {
         //Toolbar in fullscreen
         getFullScreenTarget: (pagesContainer) =>
           pagesContainer.closest('[data-testid="default-layout__body"]'),
-        renderExitFullScreenButton: (props) => <></>,
+        renderExitFullScreenButton: () => <></>,
       },
     },
   });
 
-  const { renderDefaultToolbar } =
-    defaultLayoutPluginInstance.toolbarPluginInstance;
+  const { renderDefaultToolbar } = defaultLayoutPluginInstance.toolbarPluginInstance;
 
   //removing the text element in the pdf
   const CustomPageLayer = ({ renderPageProps }) => {
@@ -123,43 +120,21 @@ const PDFViewer = () => {
   };
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
+  
+  //encrypt();
+  decrypt();
 
   return (
     <div>
-      <form>
-        <Typography
-          style={{
-            margin: "10px 0px 0px 10px",
-            fontSize: "2rem",
-          }}>
-          Upload PDF
-        </Typography>
-        <div className={chooseFile}>
-          CHOOSE FILE
-          <input
-            type='file'
-            className='form-control'
-            accept='application/pdf'
-            required
-            onChange={handleFile}
-            className={inputFile}
-          />
-        </div>
-
-        {/* Display error message in case user selects other than pdf */}
-        {pdfError && <span className='text-danger'>{pdfError}</span>}
-      </form>
-      <br />
-
       {/* View PDF */}
-      <div className={viewer} style={{ height: pdfFile ? "600px" : "0px" }}>
+      <div className={viewer}>
         {/* render this if we have a pdf file */}
-        {pdfFile && (
-          <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'>
+        {pdfBase64 && (
+          <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'> 
             <Viewer
-              fileUrl={pdfFile}
+              fileUrl={pdfBase64}
               plugins={[defaultLayoutPluginInstance]}
-              defaultScale={SpecialZoomLevel.NormalSize}
+              defaultScale={SpecialZoomLevel.PageFit}
               theme='dark'
               renderPage={renderPage}
             />
