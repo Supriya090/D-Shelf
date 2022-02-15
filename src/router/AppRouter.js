@@ -23,7 +23,7 @@ function App() {
   let defaultAccount2 = null
   const ConnectWalletHandler = async () => {
     try {
-      if (window.ethereum && defaultAccount == '') {
+      if (window.ethereum && defaultAccount === '') {
         // set ethers provider
         setProvider(new ethers.providers.Web3Provider(window.ethereum));
 
