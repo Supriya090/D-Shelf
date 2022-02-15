@@ -9,7 +9,7 @@ import pdf from "../assets/pdf";
 function SinglePage(props) {
   const homeClasses = homeStyles();
   const classes = useStyles();
-  console.log(pdf);
+  //console.log(pdf);
   return (
     <div className={classes.singleContent}>
       <div className={classes.bookDetails}>

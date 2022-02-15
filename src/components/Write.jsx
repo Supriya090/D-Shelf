@@ -3,7 +3,6 @@ import {
   TextField,
   TextareaAutosize,
   Divider,
-  Button,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import PDFViewer from "./PDFViewer";
@@ -107,7 +106,7 @@ const Write = (props) => {
                 Upload Book Cover
               </Typography>
               <div className={classes.chooseFile}>
-                CHOOSE FILE
+                CHOOSE COVER
                 <input
                   type='file'
                   accept='image/*'
@@ -131,34 +130,33 @@ const Write = (props) => {
                 className={`${classes.submitButton} ${classes.chooseFile}`}
                 onClick={props.mint}
               />
-               
             </div>
-            <div>
-              <Typography
-                style={{
-                  margin: "10px 0px 0px 10px",
-                  fontSize: "2rem",
-                }}>
-                Upload PDF
-              </Typography>
+          </div>
+          <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              style={{
+                marginRight: "10px",
+                fontSize: "2rem",
+              }}>
+              Upload PDF
+            </Typography>
 
-              <div className={classes.chooseFile}>
-                CHOOSE FILE
-                <input
-                  type='file'
-                  className='form-control'
-                  accept='application/pdf'
-                  required
-                  onChange={handleFile}
-                  className={classes.inputFile}
-                />
-              </div>
+            <div className={classes.chooseFile} style={{ marginLeft: "30px" }}>
+              CHOOSE FILE
+              <input
+                type='file'
+                className='form-control'
+                accept='application/pdf'
+                required
+                onChange={handleFile}
+                className={classes.inputFile}
+              />
             </div>
           </div>
           {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
-        <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
-        {pdfFile && <PDFViewer pdfBase64={pdfFile}/>}
+        {pdfFile && <PDFViewer pdfBase64={pdfFile} />}
       </div>
     </div>
   );
