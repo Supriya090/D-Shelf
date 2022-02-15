@@ -13,6 +13,7 @@ import {bookMarketAddress,bookMarketAbi} from '../bookmarketABI'
 
 
 
+
 function App() {
 
   let defaultAccount = null;
@@ -43,6 +44,7 @@ function App() {
           bookContract.connect(defaultAccount);
           marketContract.connect(defaultAccount);
           mint();
+
         })
         .catch(error => {
           console.log(error);
@@ -167,8 +169,9 @@ function App() {
 
     tokenType = "bronze";
     transaction = await bookContract.getContentsOfEachTokenType(tokenType)
-    console.log("Bronze :", transaction);//need correction in SC 
+    console.log("Bronze :", transaction);
   }
+
 
   useEffect(() => {
     async function OnWalletChange() {
@@ -211,6 +214,7 @@ function App() {
         <Route path="/myCollections" element={<Collections 
         bookContract = {bookContract}
         marketContract = {marketContract}
+
         />}></Route>
         <Route exact path="/write" element={<Write 
         mint = {mint}
@@ -218,6 +222,7 @@ function App() {
         <Route exact path="/singlePage" element={<SinglePage 
         bookContract = {bookContract}
         marketContract = {marketContract}
+
         />}></Route>
       </Routes>
     </div>

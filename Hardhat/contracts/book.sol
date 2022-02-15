@@ -54,13 +54,16 @@ contract book is ERC721 {
     Counters.Counter private _tokenIds;
 
     address payable developer;
+
     address contractAddress;
 
     constructor(address marketplaceAddress) ERC721("BookNFT", "Content") {
         contractAddress = marketplaceAddress;
+
         mintingFee[TokenType.GOLD]= 0.003 ether;
         mintingFee[TokenType.SILVER] = 0.002 ether;
         mintingFee[TokenType.BRONZE] = 0.001 ether;
+
         developer = payable(msg.sender);
         Content memory content = Content(new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
         contents.push(content);
@@ -72,6 +75,7 @@ contract book is ERC721 {
                             mintingFee[TokenType.BRONZE]*bronze;
         
         require(msg.value >= mintFee, "Insufficient eth sent to mint tokens");
+
         bool sent;
         bytes memory data;
         (sent, data) = developer.call{value: mintFee}("");
@@ -81,6 +85,7 @@ contract book is ERC721 {
         if (mintFee < msg.value) {
             (sent, data) = sender.call{value: msg.value - mintFee}("");
             require(sent, "Failed to return excess Ether");
+
         }
 
         uint256[] memory tokenIdsGold = new uint256[](gold);
@@ -162,7 +167,9 @@ contract book is ERC721 {
     function getTotalContents() external view returns (uint256){
         return contents.length;
     } 
+
 /*
+
     function getTotalgoldTokens() external view returns (uint256[] memory){
         return goldTokenIds;
     }
@@ -172,7 +179,9 @@ contract book is ERC721 {
     function getTotalbronzeTokens() external view returns (uint256[] memory){
         return bronzeTokenIds;
     }
+
 */
+
     function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;
         uint256 IndexoftokenId;
@@ -192,14 +201,18 @@ contract book is ERC721 {
     }
 
     function getAllContentsOfUser() external view returns (Content[] memory){
+
         uint256 totalToken = userOwnedTokens[msg.sender].length;
+
         uint256[] memory PsudocontentIds = new uint256[](contents.length);
         uint256 contentID;
         bool isPresent;
         bool valid;
         uint256 k = 0;
         for (uint i = 0; i < totalToken; i++){
+
             (contentID,, valid) = getContentIndexByID(userOwnedTokens[msg.sender][i]);
+
             if( valid == true){
                 isPresent = false;
                 for(uint j = 0; j < k; j++){
