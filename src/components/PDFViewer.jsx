@@ -5,6 +5,7 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import CryptoJS from "crypto-js";
 
 const useStyles = makeStyles((theme) => ({
   viewer: {
@@ -16,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PDFViewer = (props) => {
   const { viewer } = useStyles();
+  //const [render, setRender] = useState(null)
 
   //pdf file onChange state
   const [pdfFile, setPdfFile] = useState(null);
@@ -25,14 +27,55 @@ const PDFViewer = (props) => {
   const {pdf} = props;
   //console.log(pdf);
 
- 
   //starts reading data from the pdf and sets it after
-  let reader = new FileReader();
-  reader.readAsDataURL(pdf);
-  reader.onloadend = (e) => {
-    setPdfFile(e.target.result);
-  };
 
+  function dataUrl () {
+    let reader = new FileReader();
+    reader.readAsDataURL(pdf);
+    reader.onloadend = (e) => {
+    setPdfFile(e.target.result);
+    console.log(pdfFile);
+    };
+  }
+  
+  
+  
+  var encrypted;
+  var decrypted;
+
+  function encrypt() {
+    const string="string can be that base64 of pdf";
+    //var string = pdfFile.substring(pdfFile.length - 100, pdfFile.length);
+    //console.log(string);
+    encrypted = CryptoJS.AES.encrypt(string, "1234567890");
+    //setPdfFile(encrypted);
+    //console.log(encrypted);
+    //setPdfFile(pdfFile.substring(0, pdfFile.length - 99) + string);
+  }
+
+  function cropTest() {
+    var len = pdfFile.length;
+    var string = pdfFile.substring(len - 10, len);
+    //console.log(pdfFile.substring(0, len - 10));
+    //console.log(string);
+    //console.log(pdfFile.substring(0, len - 10) + string);
+    setPdfFile(pdfFile.substring(0, len - 10) + string);
+  }
+  
+
+  function decrypt() {
+    var bytes = CryptoJS.AES.decrypt(encrypted, "1234567890");
+    var decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    
+    //setPdfFile(decrypted);
+    console.log("Decrypted message is");
+    console.log(decrypted);
+    //setPdfFile(decrypted); 
+  }
+  
+
+
+  // ****** Toolbar related codes **********
   //Disabling download and print buttons from plugin
   const transform = (slot) => ({
     ...slot,
@@ -52,7 +95,7 @@ const PDFViewer = (props) => {
       fullScreenPlugin: {
         // Zoom to fit the screen after entering and exiting the full screen mode
         onEnterFullScreen: (zoom) => {
-          zoom(SpecialZoomLevel.ActualSize);
+          zoom(SpecialZoomLevel.PageFit);
         },
 
         onExitFullScreen: (zoom) => {
@@ -89,6 +132,12 @@ const PDFViewer = (props) => {
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
 
+  
+  pdf && dataUrl(); //sets pdfFile from DataURL of pdf
+  encrypt();
+  decrypt();
+  //pdfFile && cropTest();
+
   return (
     <div>
       {/* View PDF */}
@@ -100,7 +149,7 @@ const PDFViewer = (props) => {
             <Viewer
               fileUrl={pdfFile}
               plugins={[defaultLayoutPluginInstance]}
-              defaultScale={SpecialZoomLevel.NormalSize}
+              defaultScale={SpecialZoomLevel.PageFit}
               theme='dark'
               renderPage={renderPage}
             />

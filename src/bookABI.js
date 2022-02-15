@@ -1,5 +1,5 @@
-export const bookAddress = "0x8C03A709Fa9ACe9dd5092ba00d82d138018A72d3";
-export const bookAbi =[
+export const bookAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+export const bookAbi = [
   {
     "inputs": [
       {
@@ -229,33 +229,13 @@ export const bookAbi =[
       },
       {
         "internalType": "string",
-        "name": "ipfsHash",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
         "name": "coverImageHash",
         "type": "string"
-      },
-      {
-        "internalType": "bool",
-        "name": "onBid",
-        "type": "bool"
       },
       {
         "internalType": "string",
         "name": "descriptionHash",
         "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "Price",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "isBurnt",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -263,12 +243,54 @@ export const bookAbi =[
   },
   {
     "inputs": [],
-    "name": "deployer",
+    "name": "getAllContentsOfUser",
     "outputs": [
       {
-        "internalType": "address",
+        "components": [
+          {
+            "internalType": "uint256[]",
+            "name": "tokenIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "enum book.TokenType",
+            "name": "tokenType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum book.ContentType",
+            "name": "contentType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "publicationDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "author",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "authorAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "coverImageHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "descriptionHash",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct book.Content[]",
         "name": "",
-        "type": "address"
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -325,106 +347,6 @@ export const bookAbi =[
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getContentOfUserbyIndex",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
-    ],
-    "name": "getContentbyContentIndex",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256[]",
-            "name": "tokenIds",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "enum book.TokenType",
-            "name": "tokenType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum book.ContentType",
-            "name": "contentType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "publicationDate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "author",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "authorAddr",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "coverImageHash",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "descriptionHash",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct book.Content",
-        "name": "content",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256[]",
         "name": "contentIDs",
         "type": "uint256[]"
@@ -466,33 +388,13 @@ export const bookAbi =[
           },
           {
             "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "coverImageHash",
             "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
           },
           {
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
           }
         ],
         "internalType": "struct book.Content[]",
@@ -511,7 +413,7 @@ export const bookAbi =[
         "type": "uint256[]"
       }
     ],
-    "name": "getContentbyIndexArray",
+    "name": "getContentbyTokensArray",
     "outputs": [
       {
         "internalType": "uint256[]",
@@ -566,33 +468,13 @@ export const bookAbi =[
           },
           {
             "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "coverImageHash",
             "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
           },
           {
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
           }
         ],
         "internalType": "struct book.Content",
@@ -652,33 +534,13 @@ export const bookAbi =[
           },
           {
             "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "coverImageHash",
             "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
           },
           {
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
           }
         ],
         "internalType": "struct book.Content[]",
@@ -733,33 +595,13 @@ export const bookAbi =[
           },
           {
             "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "coverImageHash",
             "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
           },
           {
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
           }
         ],
         "internalType": "struct book.Content[]",
@@ -779,6 +621,58 @@ export const bookAbi =[
       }
     ],
     "name": "getTokensOwnedByUser",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalContents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalbronzeTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalgoldTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalsilverTokens",
     "outputs": [
       {
         "internalType": "uint256[]",
@@ -835,11 +729,6 @@ export const bookAbi =[
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "tokenURI",
-        "type": "string"
-      },
-      {
         "components": [
           {
             "internalType": "uint256[]",
@@ -873,33 +762,13 @@ export const bookAbi =[
           },
           {
             "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "coverImageHash",
             "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
           },
           {
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
           }
         ],
         "internalType": "struct book.Content",
@@ -923,99 +792,7 @@ export const bookAbi =[
       }
     ],
     "name": "mintBatch",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenURI",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256[]",
-            "name": "tokenIds",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "enum book.TokenType",
-            "name": "tokenType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum book.ContentType",
-            "name": "contentType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "publicationDate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "author",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "authorAddr",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "ipfsHash",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "coverImageHash",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "onBid",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "descriptionHash",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "Price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isBurnt",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct book.Content",
-        "name": "content",
-        "type": "tuple"
-      }
-    ],
-    "name": "mintOneToken",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "payable",
     "type": "function"
   },
