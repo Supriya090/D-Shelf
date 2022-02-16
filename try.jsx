@@ -1,90 +1,90 @@
 import {
-  Typography,
-  TextField,
-  TextareaAutosize,
-  Divider,
-} from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import PDFViewer from "./PDFViewer";
-import useStyles from "./styles/Write";
-import WriteCopies from "./elements/WriteCopies";
-import CryptoJS from "crypto-js";
-
-const Write = (props) => {
-  const classes = useStyles();
-
-  const [image, setImage] = useState(null);
+    Typography,
+    TextField,
+    TextareaAutosize,
+    Divider,
+  } from "@material-ui/core";
+  import React, { useEffect, useState } from "react";
+  import PDFViewer from "./PDFViewer";
+  import useStyles from "./styles/Write";
+  import WriteCopies from "./elements/WriteCopies";
+  import CryptoJS from "crypto-js";
+  
+  const Write = (props) => {
+    const classes = useStyles();
+  
+    const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfError, setPdfError] = useState(null);
 
-  useEffect(() => {
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(image);
-    } else {
-      setPreview(null);
-    }
-  }, [image]);
-
-  const encrypt = (pdf) => {
-    //full pdf string encryption --->
-    //console.log(pdf);
-    pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
-    setPdfFile(pdf);
-    
-    
-    //last 100 character encryption--->
-    //var string = pdf.substring(len - 100,len);
-    //const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
-    //enLen = String(encrypted).length;
-    //pdf = pdf.substring(0, len - 100) + encrypted;
-  }
-
-  const allowedFiles = ["application/pdf"];
-  const handleFile = (e) => {
-    let selectedFile = e.target.files[0];
-    if (selectedFile) {
-      if (selectedFile && allowedFiles.includes(selectedFile.type)) {
-          let reader = new FileReader();
-          reader.readAsDataURL(selectedFile);
-          reader.onloadend = (e) => {
-            encrypt(e.target.result);
-            //setPdfFile(e.target.result);
-            setPdfError("");
-          };
+    useEffect(() => {
+      if (image) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
         };
+        reader.readAsDataURL(image);
       } else {
-        setPdfError("Invalid file type: Please select only PDF");
-        setPdfFile(null);
+        setPreview(null);
       }
-    };
+    }, [image]);
 
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
-
-  return (
-    <div className={classes.writePageContent}>
-      <div className={classes.successSubmit}>
+    const encrypt = (pdf) => {
+        //full pdf string encryption --->
+        //console.log(pdf);
+        pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+        setPdfFile(pdf);
+        
+        
+        //last 100 character encryption--->
+        //var string = pdf.substring(len - 100,len);
+        //const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
+        //enLen = String(encrypted).length;
+        //pdf = pdf.substring(0, len - 100) + encrypted;
+      }
+    
+      const allowedFiles = ["application/pdf"];
+      const handleFile = (e) => {
+        let selectedFile = e.target.files[0];
+        if (selectedFile) {
+          if (selectedFile && allowedFiles.includes(selectedFile.type)) {
+              let reader = new FileReader();
+              reader.readAsDataURL(selectedFile);
+              reader.onloadend = (e) => {
+                encrypt(e.target.result);
+                //setPdfFile(e.target.result);
+                setPdfError("");
+              };
+            };
+          } else {
+            setPdfError("Invalid file type: Please select only PDF");
+            setPdfFile(null);
+          }
+        };
+    
+      const [submitted, setSubmitted] = useState(false);
+    
+      const handleOnSubmit = (e) => {
+        e.preventDefault();
+        setSubmitted(true);
+      };
+    
+  
+    return (
+      <div className={classes.writePageContent}>
+        <div className={classes.successSubmit}>
         <Typography>Upload Book</Typography>
         {/* <div>Successfully Submitted!</div> */}
       </div>
-      <div className={classes.uploadContent}>
-        <form
-          action=''
-          noValidate
-          autoComplete='off'
-          className={classes.writerForm}
-          onSubmit={handleOnSubmit}>
-          <div className={classes.formContent}>
-            <div className={classes.textFields}>
+        <div className={classes.uploadContent}>
+          <form
+            action=''
+            noValidate
+            autoComplete='off'
+            className={classes.writerForm}>
+            <div className={classes.formContent}>
+              <div className={classes.textFields}>
               <TextField
                 id='bookTitle'
                 label="Book's Title"
@@ -94,7 +94,7 @@ const Write = (props) => {
                 onChange={props.handleOnChange}
                 className={classes.textField}
               />
-              <WriteCopies
+                 <WriteCopies
                 title='Gold'
                 color='#C9B037'
                 amountName='goldAmount'
@@ -113,12 +113,12 @@ const Write = (props) => {
               <WriteCopies
                 title='Bronze'
                 color='#AD8A56'
-                amountName='bronzeAmount'
-                numberName='bronzeNumber'
+                amountName='silverAmount'
+                numberName='silverNumber'
                 onChange={props.handleOnChange}
                 initialVals={props.inputValues}
               />
-              <Typography
+               <Typography
                 style={{
                   margin: "10px 0px 0px 10px",
                   fontSize: "1rem",
@@ -162,15 +162,15 @@ const Write = (props) => {
               </div>
               <img src={preview} alt='' className={classes.uploadedImage} />
 
-              <input
+                <input
                 type='button'
                 value='Submit'
                 className={`${classes.submitButton} ${classes.chooseFile}`}
                 onClick={props.mint}
-              />
+                />
+              </div>
             </div>
-          </div>
-          <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
+            <Divider style={{ margin: "15px 0px", backgroundColor: "#fff" }} />
           <div style={{ display: "flex", alignItems: "center" }}>
             <Typography
               style={{
@@ -179,7 +179,6 @@ const Write = (props) => {
               }}>
               Upload PDF
             </Typography>
-
             <div className={classes.chooseFile} style={{ marginLeft: "30px" }}>
               CHOOSE FILE
               <input
@@ -191,13 +190,20 @@ const Write = (props) => {
                 className={classes.inputFile}
               />
             </div>
-          </div>
-          {pdfError && <span className='text-danger'>{pdfError}</span>}
-        </form>
-        {pdfFile && <PDFViewer pdfBase64={pdfFile} />}
+            </div>
+          </form>
+          {pdfFile && <PDFViewer pdfBase64={pdfFile} />}
+          <PDFViewer />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+  
+  export default Write;
 
-export default Write;
+
+
+
+
+
+

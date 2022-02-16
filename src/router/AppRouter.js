@@ -42,7 +42,7 @@ function App() {
           defaultAccount = result[0];
           bookContract.connect(defaultAccount);
           marketContract.connect(defaultAccount);
-          // mint();
+          mint();
 
         })
         .catch(error => {
@@ -119,7 +119,7 @@ function App() {
         author: "Rahul Shah",
         authorAddr: defaultAccount,
         coverImageHash: "Image",
-        descriptionHash: "description"
+        descriptionHash: inputValues.description
       }
       let NoOfgold = inputValues.goldNumber;
       let NoOfSilver = inputValues.silverNumber;
@@ -130,7 +130,7 @@ function App() {
 
       let Amount = NoOfgold*0.003+NoOfSilver*0.002+NoOfBronze*0.001+1
       console.log(defaultAccount);
-      const tx = {value: ethers.utils.parseEther(Amount), gasLimit: 5000000};
+      const tx = {value: ethers.utils.parseEther(String(Amount)), gasLimit: 5000000};
       const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
       await transaction.wait();
       console.log("transaction :", transaction);
