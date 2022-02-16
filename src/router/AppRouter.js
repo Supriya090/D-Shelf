@@ -42,8 +42,6 @@ function App() {
           defaultAccount = result[0];
           bookContract.connect(defaultAccount);
           marketContract.connect(defaultAccount);
-          mint();
-
         })
         .catch(error => {
           console.log(error);
@@ -63,9 +61,9 @@ function App() {
           const list = [defaultAccount, bookContract, marketContract, provider, signer]
           resolve(list);
         })
-      // .catch(error => {
-      //   reject(error);
-      // })
+      .catch(error => {
+        reject(error);
+      })
     })
   }
 
@@ -87,58 +85,6 @@ function App() {
         reject(Error('Need to install MetaMask'));
       }
     })
-  }
-
-  const [inputValues, setInputValues] = useState({
-    title: "",
-    description: "",
-    goldNumber: 0,
-    goldAmount: 0,
-    silverNumber: 0,
-    silverAmount: 0,
-    bronzeNumber: 0,
-    bronzeAmount: 0,
-  });
-
-  const handleOnChange = (event) => {
-    const value = event.target.value;
-    setInputValues({ ...inputValues, [event.target.name]: value });
-  };
-
-  //mint Batch as well as single book by passing values 
-  //for single mint chose one of tokentypes and pass 1 to that value making others 0
-  console.log(inputValues)
-  const mint = async () => {
-    if (defaultAccount !== null) {
-      let ContentMetadata = {
-        title:inputValues.title,
-        tokenIds: [],
-        tokenType: 1,
-        contentType: 1,
-        publicationDate: 212112,
-        author: "Rahul Shah",
-        authorAddr: defaultAccount,
-        coverImageHash: "Image",
-        descriptionHash: inputValues.description
-      }
-      let NoOfgold = inputValues.goldNumber;
-      let NoOfSilver = inputValues.silverNumber;
-      let NoOfBronze = inputValues.bronzeNumber;
-      let goldAmount = inputValues.goldAmount;
-      let silverAmount = inputValues.silverAmount;
-      let bronzeAmount = inputValues.bronzeAmount;
-
-      let Amount = NoOfgold*0.003+NoOfSilver*0.002+NoOfBronze*0.001+1
-      console.log(defaultAccount);
-      const tx = {value: ethers.utils.parseEther(String(Amount)), gasLimit: 5000000};
-      const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
-      await transaction.wait();
-      console.log("transaction :", transaction);
-      console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
-      getContentByTokenId(1);
-      getContentindexfromToken(1);
-      getContentbyitsIndices(1);
-    }
   }
 
   //get index value of the book i.e. of contents[] array from token id
@@ -212,9 +158,9 @@ function App() {
 
       <Routes>
         <Route exact path="/" element={<Home unSetup={unSetup} />}></Route>
-        <Route path="/MarketPlace" element={<MarketPlace setup={setup} />}></Route>
+        <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
-        <Route exact path="/write" element={<Write setup={setup} inputValues={inputValues} handleOnChange={handleOnChange} mint={mint}/>}></Route>
+        <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/singlePage" element={<SinglePage setup={setup} />}></Route>
       </Routes>
     </div>

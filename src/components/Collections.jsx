@@ -24,7 +24,7 @@ const Collections = (props) => {
       props.setup()
       .then(
         value => {
-          console.log(value)
+          // console.log(value)
           defaultAccount = value[0]
           bookContract = value[1] 
           marketContract = value[2] 
