@@ -49,8 +49,26 @@ function App() {
     }
     console.log(defaultAccount);
   }
+
+  const [inputValues, setInputValues] = useState({
+    title: "",
+    description: "",
+    goldNumber: 0,
+    goldAmount: 0,
+    silverNumber: 0,
+    silverAmount: 0,
+    bronzeNumber: 0,
+    bronzeAmount: 0,
+  });
+
+  const handleOnChange = (event) => {
+    const value = event.target.value;
+    setInputValues({ ...inputValues, [event.target.name]: value });
+  };
+
   //mint Batch as well as single book by passing values 
   //for single mint chose one of tokentypes and pass 1 to that value making others 0
+  console.log(inputValues)
   const mint = async (ContentMetadata, NoOfgold, NoOfSilver, NoOfBronze, Amount) => {
     ContentMetadata = {
       tokenIds: [],
@@ -62,9 +80,12 @@ function App() {
       coverImageHash: "Image",
       descriptionHash: "description"
     }
-    NoOfgold = 10;
-    NoOfSilver = 20;
-    NoOfBronze = 30;
+    NoOfgold = inputValues.goldNumber;
+    NoOfSilver = inputValues.silverNumber;
+    NoOfBronze = inputValues.bronzeNumber;
+    // goldAmount = inputValues.goldAmount
+    // silverAmount = inputValues.silverAmount
+    // bronzeAmount = inputValues.bronzeAmount
     Amount = "4.0";
     const tx = { value: ethers.utils.parseEther(Amount) }
     const transaction = await bookContract.mintBatch(ContentMetadata, NoOfgold, NoOfSilver, NoOfBronze);
@@ -191,7 +212,7 @@ function App() {
           marketContract={marketContract}
         />}></Route>
         <Route exact path="/write" element={<Write
-          mint={mint}
+          mint={mint} inputValues={inputValues} handleOnChange={handleOnChange}
         />}></Route>
         <Route exact path="/singlePage" element={<SinglePage
           bookContract={bookContract}

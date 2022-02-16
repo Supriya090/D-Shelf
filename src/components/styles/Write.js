@@ -5,6 +5,13 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         justifyContent: "space-between"
     },
+    successSubmit: {
+        display: "flex",
+        alignItems: "center",
+        "& div": {
+            color: "#fff"
+        }
+    },
     writePageContent: {
         marginTop: "110px",
         "& p": {
@@ -114,7 +121,7 @@ const useStyles = makeStyles((theme) => ({
     uploadPdf: {
         flex: "0 0 100%"
     }
-    
+
 }));
 
 export default useStyles;

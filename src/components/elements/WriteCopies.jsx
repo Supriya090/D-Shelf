@@ -1,7 +1,8 @@
 import { Typography, TextField, InputAdornment } from "@material-ui/core";
 import useStyles from "../styles/Write";
+import React from "react";
 
-function WriteCopies({ title, color }) {
+function WriteCopies(props) {
   const classes = useStyles();
   return (
     <div className={classes.moneyDiv}>
@@ -9,9 +10,9 @@ function WriteCopies({ title, color }) {
         style={{
           margin: "10px 0px 0px 10px",
           fontSize: "1.5rem",
-          color: color,
+          color: props.color,
         }}>
-        {title}
+        {props.title}
       </Typography>
       <div className={classes.money}>
         <TextField
@@ -20,6 +21,9 @@ function WriteCopies({ title, color }) {
           variant='outlined'
           className={classes.textField}
           type='number'
+          name={props.amountName}
+          value={props.initialVals.amount}
+          onChange={(e) => props.onChange(e)}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>ETH</InputAdornment>
@@ -31,7 +35,11 @@ function WriteCopies({ title, color }) {
           label='Number of Copies'
           variant='outlined'
           type='number'
+          name='number'
+          name={props.numberName}
+          value={props.initialVals.number}
           className={classes.textField}
+          onChange={(e) => props.onChange(e)}
         />
       </div>
     </div>

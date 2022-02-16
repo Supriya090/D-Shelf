@@ -44,26 +44,61 @@ const Write = (props) => {
     }
   };
 
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <div className={classes.writePageContent}>
-      <Typography>Upload Book</Typography>
+      <div className={classes.successSubmit}>
+        <Typography>Upload Book</Typography>
+        {/* <div>Successfully Submitted!</div> */}
+      </div>
       <div className={classes.uploadContent}>
         <form
           action=''
           noValidate
           autoComplete='off'
-          className={classes.writerForm}>
+          className={classes.writerForm}
+          onSubmit={handleOnSubmit}>
           <div className={classes.formContent}>
             <div className={classes.textFields}>
               <TextField
                 id='bookTitle'
                 label="Book's Title"
                 variant='outlined'
+                name='title'
+                value={props.inputValues.title}
+                onChange={props.handleOnChange}
                 className={classes.textField}
               />
-              <WriteCopies title='Gold' color='#C9B037' />
-              <WriteCopies title='Silver' color='#B4B4B4' />
-              <WriteCopies title='Bronze' color='#AD8A56' />
+              <WriteCopies
+                title='Gold'
+                color='#C9B037'
+                amountName='goldAmount'
+                numberName='goldNumber'
+                onChange={props.handleOnChange}
+                initialVals={props.inputValues}
+              />
+              <WriteCopies
+                title='Silver'
+                color='#B4B4B4'
+                amountName='silverAmount'
+                numberName='silverNumber'
+                onChange={props.handleOnChange}
+                initialVals={props.inputValues}
+              />
+              <WriteCopies
+                title='Bronze'
+                color='#AD8A56'
+                amountName='silverAmount'
+                numberName='silverNumber'
+                onChange={props.handleOnChange}
+                initialVals={props.inputValues}
+              />
               <Typography
                 style={{
                   margin: "10px 0px 0px 10px",
@@ -76,6 +111,9 @@ const Write = (props) => {
                 aria-label='Description'
                 minRows={10}
                 placeholder='A short description about your book'
+                name='description'
+                value={props.inputValues.description}
+                onChange={props.handleOnChange}
               />
             </div>
             <div>

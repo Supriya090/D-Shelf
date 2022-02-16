@@ -1,7 +1,6 @@
 import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
 import React from "react";
 import dummy from "../assets/dummy.jpg";
-import dummy2 from "../assets/dummy1.jpg";
 import { useStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
 import { content } from "./elements/dummyImages";
