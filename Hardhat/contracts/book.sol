@@ -31,6 +31,7 @@ contract book is ERC721 {
 
     //details of each contents
     struct Content{
+        string title;
         uint256[] tokenIds;
         TokenType tokenType;
         ContentType contentType;
@@ -65,7 +66,7 @@ contract book is ERC721 {
         mintingFee[TokenType.BRONZE] = 0.001 ether;
 
         developer = payable(msg.sender);
-        Content memory content = Content(new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
+        Content memory content = Content("", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
         contents.push(content);
     }
 

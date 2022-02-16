@@ -111,6 +111,7 @@ function App() {
   const mint = async () => {
     if (defaultAccount !== null) {
       let ContentMetadata = {
+        title:inputValues.title,
         tokenIds: [],
         tokenType: 1,
         contentType: 1,
@@ -126,12 +127,14 @@ function App() {
       let goldAmount = inputValues.goldAmount;
       let silverAmount = inputValues.silverAmount;
       let bronzeAmount = inputValues.bronzeAmount;
+
+      let Amount = NoOfgold*0.003+NoOfSilver*0.002+NoOfBronze*0.001+1
       console.log(defaultAccount);
-      // const tx = {value: ethers.utils.parseEther(Amount), gasLimit: 5000000};
-      // const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
-      // await transaction.wait();
-      // console.log("transaction :", transaction);
-      // console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
+      const tx = {value: ethers.utils.parseEther(Amount), gasLimit: 5000000};
+      const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
+      await transaction.wait();
+      console.log("transaction :", transaction);
+      console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
       getContentByTokenId(1);
       getContentindexfromToken(1);
       getContentbyitsIndices(1);
@@ -211,7 +214,7 @@ function App() {
         <Route exact path="/" element={<Home unSetup={unSetup} />}></Route>
         <Route path="/MarketPlace" element={<MarketPlace setup={setup} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
-        <Route exact path="/write" element={<Write setup={setup} inputValues={inputValues} handleOnChange={handleOnChange} />}></Route>
+        <Route exact path="/write" element={<Write setup={setup} inputValues={inputValues} handleOnChange={handleOnChange} mint={mint}/>}></Route>
         <Route exact path="/singlePage" element={<SinglePage setup={setup} />}></Route>
       </Routes>
     </div>
