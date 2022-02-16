@@ -58,7 +58,9 @@ describe("NFTMarket", function() {
       descriptionHash : "descriptionHash"
     }
 
-    await nft.connect(accounts[1]).mintBatch( content1, 1,0,0, { value: ethers.utils.parseEther("10.0")} );
+
+    await nft.connect(accounts[1]).mintBatch( content1, 1,0,0, { value: ethers.utils.parseEther("0.1"), gasLimit: 2000000} );
+
     await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
     expect(await nft.balanceOf(accounts[1].address)).to.equal(1);
@@ -99,23 +101,24 @@ describe("NFTMarket", function() {
       coverImageHash: "coverImage",
       descriptionHash : "descriptionHash"
     }
-  await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+
+    await nft.mintBatch(content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
     expect(await nft.balanceOf(owner.address)).to.equal(60);
-    const value = await nft.connect(owner.address).callStatic.getAllContentsOfUser(owner.address)
+    const value = await nft.connect(owner.address).getAllContentsOfUser()
     console.log("content : ", value);
     const value3 = [1,2,3]
-    const value2 = await nft.connect(owner.address).callStatic.getContentbyContentIndexArray(value3)
+    const value2 = await nft.connect(owner.address).getContentbyContentIndexArray(value3)
     expect(value.length).to.equal(3);
     console.log(value2);
-    console.log(await nft.connect(owner.address).callStatic.getTokensOwnedByUser(owner.address));
-    console.log(await nft.connect(owner.address).callStatic.getTokensOwnedByUser(accounts[1].address));
-    console.log(await nft.callStatic.getContentofToken(23));
+    console.log(await nft.connect(owner.address).getTokensOwnedByUser(owner.address));
+    console.log(await nft.connect(owner.address).getTokensOwnedByUser(accounts[1].address));
+    console.log(await nft.getContentofToken(23));
     const a = [1,5,18,40];
-    const value4 = await nft.callStatic.getContentbyTokensArray(a)
+    const value4 = await nft.getContentbyTokensArray(a)
     console.log(value4);
-    console.log(await nft.callStatic.getContentbyContentIndexArray(value4));
-    console.log(await nft.callStatic.getContentsOfEachTokenType("gold"));
-    console.log(await nft.callStatic.getContentsByTokenTypeofUser("silver",owner.address));
+    console.log(await nft.getContentbyContentIndexArray(value4));
+    console.log(await nft.getContentsOfEachTokenType("gold"));
+    console.log(await nft.getContentsByTokenTypeofUser("silver",owner.address));
 
   })
 

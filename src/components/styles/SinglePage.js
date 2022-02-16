@@ -67,6 +67,9 @@ const useStyles = makeStyles((theme) => ({
         },
         padding: "25px 40px",
         margin: "40px 130px"
+    },
+    sPViewer: {
+        margin: "40px 130px",
     }
 }));
 

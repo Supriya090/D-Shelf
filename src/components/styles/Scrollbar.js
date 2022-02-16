@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
         padding: "10px",
         backgroundColor: "#313131",
         borderRadius: "10px",
-        position: "relative"
+        position: "relative",
     },
     voteButtons: {
         display: "flex",
@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
     image: {
         borderRadius: "10px",
         height: "400px",
-        marginBottom: "15px"
+        marginBottom: "15px",
+        marginTop: "7px",
     },
     forAuthor: {
         position: "absolute",

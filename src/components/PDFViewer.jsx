@@ -12,69 +12,58 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#e4e4e4",
     overflowY: "auto",
     marginTop: "2rem",
+    height: "1000px",
   },
 }));
 
 const PDFViewer = (props) => {
   const { viewer } = useStyles();
-  //const [render, setRender] = useState(null)
-
-  //pdf file onChange state
-  const [pdfFile, setPdfFile] = useState(null);
 
   //exports pdf from prop
 
-  const {pdf} = props;
-  //console.log(pdf);
+  var {pdfBase64} = props; 
 
-  //starts reading data from the pdf and sets it after
+  //console.log(String(pdfBase64));
+  const len = pdfBase64.length;
+  const cutLen = 5000;
+  var enLen; //for 100 -> 172
 
-  function dataUrl () {
-    let reader = new FileReader();
-    reader.readAsDataURL(pdf);
-    reader.onloadend = (e) => {
-    setPdfFile(e.target.result);
-    console.log(pdfFile);
-    };
-  }
-  
-  
-  
-  var encrypted;
-  var decrypted;
+  const encrypt = () => {
+    //full pdf string encryption --->
+    //pdfBase64 = CryptoJS.AES.encrypt(pdfBase64, "1234567890");
 
-  function encrypt() {
-    const string="string can be that base64 of pdf";
-    //var string = pdfFile.substring(pdfFile.length - 100, pdfFile.length);
-    //console.log(string);
-    encrypted = CryptoJS.AES.encrypt(string, "1234567890");
-    //setPdfFile(encrypted);
-    //console.log(encrypted);
-    //setPdfFile(pdfFile.substring(0, pdfFile.length - 99) + string);
-  }
-
-  function cropTest() {
-    var len = pdfFile.length;
-    var string = pdfFile.substring(len - 10, len);
-    //console.log(pdfFile.substring(0, len - 10));
-    //console.log(string);
-    //console.log(pdfFile.substring(0, len - 10) + string);
-    setPdfFile(pdfFile.substring(0, len - 10) + string);
-  }
-  
-
-  function decrypt() {
-    var bytes = CryptoJS.AES.decrypt(encrypted, "1234567890");
-    var decrypted = bytes.toString(CryptoJS.enc.Utf8);
     
-    //setPdfFile(decrypted);
-    console.log("Decrypted message is");
-    console.log(decrypted);
-    //setPdfFile(decrypted); 
+    //last 100 character encryption--->
+    var string = pdfBase64.substring(len - cutLen,len);
+    const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
+    enLen = String(encrypted).length;
+    pdfBase64 = pdfBase64.substring(0, len - cutLen) + encrypted;
+  }
+
+
+  const decrypt = () => {
+    
+    //full pdf string decryption --->
+    var bytes = CryptoJS.AES.decrypt(pdfBase64, "1234567890");
+    pdfBase64 = bytes.toString(CryptoJS.enc.Utf8);
+    
+
+    /*
+    //last 100 character decryption--->
+    var upLen = pdfBase64.length;
+    console.log(pdfBase64);
+    console.log(enLen);
+
+
+    var bytes = CryptoJS.AES.decrypt(pdfBase64.substring(upLen - enLen,upLen), "1234567890");
+    var decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    pdfBase64 = pdfBase64.substring(0, upLen - enLen) + decrypted;
+    console.log(pdfBase64);
+    console.log(pdfBase64.length);*/
   }
   
 
-
+  
   // ****** Toolbar related codes **********
   //Disabling download and print buttons from plugin
   const transform = (slot) => ({
@@ -131,23 +120,19 @@ const PDFViewer = (props) => {
   };
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
-
   
-  pdf && dataUrl(); //sets pdfFile from DataURL of pdf
-  encrypt();
+  //encrypt();
   decrypt();
-  //pdfFile && cropTest();
 
   return (
     <div>
       {/* View PDF */}
-      <div className={viewer} style={{ height: pdfFile ? "1000px" : "0px" }}>
+      <div className={viewer}>
         {/* render this if we have a pdf file */}
-        
-        {pdfFile && (
+        {pdfBase64 && (
           <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'> 
             <Viewer
-              fileUrl={pdfFile}
+              fileUrl={pdfBase64}
               plugins={[defaultLayoutPluginInstance]}
               defaultScale={SpecialZoomLevel.PageFit}
               theme='dark'
