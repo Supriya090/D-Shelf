@@ -43,7 +43,7 @@ function App() {
           defaultAccount = result[0];
           bookContract.connect(defaultAccount);
           marketContract.connect(defaultAccount);
-          mint();
+          // mint();
 
         })
         .catch(error => {
@@ -55,6 +55,21 @@ function App() {
         setErrorMessage('Please install MetaMask browser extension to interact');
       }
   }
+
+  const setup = () => {
+    return new Promise((resolve, reject) => {
+      ConnectWalletHandler()
+      .then(() => {
+        // const list = Promise.all([ defaultAccount, bookContract, marketContract, provider, signer ])
+        const list = [ defaultAccount, bookContract, marketContract, provider, signer ]
+        resolve(list);
+      })
+      // .catch(error => {
+      //   reject(error);
+      // })
+    })
+  }
+
   //mint Batch as well as single book by passing values 
   //for single mint chose one of tokentypes and pass 1 to that value making others 0
   const mint = async()=>{
@@ -81,9 +96,7 @@ function App() {
       // console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
       getContentByTokenId(1);
       getContentindexfromToken(1);
-      getAllContentsOfUser();
       getContentbyitsIndices(1);
-      getUserDataOfTokenType();
       getDataOfTokenType();
     }
   }
@@ -129,33 +142,6 @@ function App() {
     // const contents = await bookContract.getContentbyContentIndexArray(goldContentsIndexAvailable);
   }
 
-  const getAllContentsOfUser = async()=>{
-    //depriciated because of getContentbyitsIndices()
-    console.log("From getAllContentsOfUser() / Owned Token Content : ", await bookContract.getAllContentsOfUser());
-    //can also be done using getTokensOwnedByUser
-    // const totalalltokenAvailable = await bookContract.getTokensOwnedByUser(defaultAccount); 
-    // const getContentsIndexAvailable = await bookContract.getContentbyTokensArray(totalalltokenAvailable);
-    // const contents = await bookContract.getContentbyContentIndexArray(getContentsIndexAvailable);
-  }
-
-  const getUserDataOfTokenType = async() => {
-    //depriciated because of getContentbyitsIndices()
-    console.log("From getUserDataOfTokenType() / User Data of Token Type : ");
-    let tokenType = "gold";
-    let transaction = await bookContract.getContentsByTokenTypeofUser(tokenType,  defaultAccount);
-    console.log("User Gold :", transaction);
-
-    tokenType = "silver";
-    transaction = await bookContract.getContentsByTokenTypeofUser(tokenType,  defaultAccount);
-    console.log("User Silver :", transaction);
-    
-    tokenType = "bronze";
-    transaction = await bookContract.getContentsByTokenTypeofUser(tokenType,  defaultAccount);
-    console.log("User Bronze :", transaction);
-
-    //can also be done by filtering tokens in getTokensOwnedByUser and getTotalgoldTokens
-  }
-
   const getDataOfTokenType = async() => {
     //depriciated because of getContentbyitsIndices
     console.log("From getDataOfTokenType() / Data of Token Type : ");
@@ -175,17 +161,15 @@ function App() {
 
   useEffect(() => {
     async function OnWalletChange() {
-      if(defaultAccount !== null){
-        window.ethereum.on('accountsChanged', function (accounts) {
-          // Time to reload your interface with accounts[0]!
-          // console.log("accountsChanged :", accounts[0]);
-          setConnButtonText('Wallet Changed');
-          setErrorMessage('Click button to refresh contents');
-        })
-      }
+      window.ethereum.on('accountsChanged', function (accounts) {
+        // Time to reload your interface with accounts[0]!
+        // console.log("accountsChanged :", accounts[0]);
+        setConnButtonText('Wallet Changed');
+        setErrorMessage('Click button to refresh contents');
+      })
     }
     OnWalletChange();
-    if(defaultAccount){
+    if(defaultAccount && connButtonText === 'Wallet Connected'){
     provider.getBalance(defaultAccount)
     .then(balanceResult => {
       setUserBalance(ethers.utils.formatEther(balanceResult));
@@ -198,30 +182,30 @@ function App() {
       <Header 
         userAccount={defaultAccount}
         userBalance = {userBalance}
-        ConnectWalletHandler = {ConnectWalletHandler}
+        setup = {setup}
         errorMessage = {errorMessage}
         connButtonText = {connButtonText}
-      />
+        />
       <Routes>
         <Route exact path="/" element={<Home 
-        bookContract = {bookContract}
-        marketContract = {marketContract}
-        />}></Route>
-        <Route path="/MarketPlace" element={<MarketPlace 
-        bookContract = {bookContract}
-        marketContract = {marketContract}
-        />}></Route>
-        <Route path="/myCollections" element={<Collections 
-        bookContract = {bookContract}
-        marketContract = {marketContract}
+          setup = {setup}
 
         />}></Route>
+        <Route path="/MarketPlace" element={<MarketPlace 
+        setup = {setup}
+
+        />}></Route>
+        <Route path="/myCollections" element={<Collections 
+        connButtonText = {connButtonText}
+        setup = {setup}
+        
+        />}></Route>
         <Route exact path="/write" element={<Write 
-        mint = {mint}
+        setup = {setup}
+
         />}></Route>
         <Route exact path="/singlePage" element={<SinglePage 
-        bookContract = {bookContract}
-        marketContract = {marketContract}
+        setup = {setup}
 
         />}></Route>
       </Routes>

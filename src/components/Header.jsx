@@ -88,7 +88,7 @@ const Header = (props) => {
               <div style={{ display: "flex" }}>
                 {getMenuButtons()}
                 <Button
-                  onClick={props.ConnectWalletHandler}
+                  onClick={props.setup}
                   className={headerButton}>
                   {props.connButtonText}
                 </Button>
