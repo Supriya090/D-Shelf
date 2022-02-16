@@ -74,11 +74,11 @@ function App() {
       let NoOfBronze = 3;
       let Amount = "0.1";
       console.log(defaultAccount);
-      const tx = {value: ethers.utils.parseEther(Amount), gasLimit: 5000000};
-      const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
-      await transaction.wait();
-      console.log("transaction :", transaction);
-      console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
+      // const tx = {value: ethers.utils.parseEther(Amount), gasLimit: 5000000};
+      // const transaction = await bookContract.mintBatch(ContentMetadata,NoOfgold,NoOfSilver,NoOfBronze,tx);
+      // await transaction.wait();
+      // console.log("transaction :", transaction);
+      // console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
       getContentByTokenId(1);
       getContentindexfromToken(1);
       getAllContentsOfUser();
