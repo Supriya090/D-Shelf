@@ -1,5 +1,5 @@
 import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import dummy from "../assets/dummy.jpg";
 import dummy2 from "../assets/dummy1.jpg";
 import { useStyles } from "./styles/Home";
@@ -12,6 +12,12 @@ import ReadMore from "./elements/ReadMore";
 const auctionContent = content;
 
 const Home = (props) => {
+
+  var bookContract; 
+  var marketContract;
+  var provider;
+  var signer;
+
   const classes = useStyles();
   const navigate = useNavigate();
   const marketRoute = () => {
@@ -20,6 +26,39 @@ const Home = (props) => {
   const singleRoute = () => {
     navigate("/singlePage", { replace: true });
   };
+
+  useEffect(() => {
+    props.unSetup()
+    .then(
+      value => {
+        bookContract = value[0] 
+        marketContract = value[1] 
+        provider = value[2]
+        signer = value[3]
+      })
+      .then(()=>{
+        bookContract.getContentsOfEachTokenType("gold")
+        .then(GoldContents=>{
+          console.log("All gold Content : ", GoldContents);
+          //Render Gold Content
+        })
+        bookContract.getContentsOfEachTokenType("silver")
+        .then(SilverContents=>{
+          //Render Silver Content
+          console.log("All silver Content : ", SilverContents);
+        })
+        bookContract.getContentsOfEachTokenType("bronze")
+        .then(BronzeContents=>{
+          console.log("All Bronze Content : ", BronzeContents);
+          //Render Bronze Content
+        })
+
+      })
+      .catch(err=>{
+        console.log(err);
+      })
+  }, [])
+
 
   return (
     <div className={classes.mainContent}>

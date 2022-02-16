@@ -70,6 +70,26 @@ function App() {
     })
   }
 
+  //TODO Need some work so that we can view in Home even if dont have any metamask
+  const unSetup = () => {
+    return new Promise((resolve, reject) => {
+      if (typeof window.ethereum !== undefined) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
+        marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
+        bookContract.connect("0x0");
+        marketContract.connect("0x0");
+        const list = [ bookContract, marketContract, provider, signer ]
+        resolve(list);
+      }
+      else {
+        console.log('Please install MetaMask browser extension to interact');
+        reject(Error('Need to install MetaMask'));
+      }
+    })
+  }
+
   //mint Batch as well as single book by passing values 
   //for single mint chose one of tokentypes and pass 1 to that value making others 0
   const mint = async()=>{
@@ -97,7 +117,6 @@ function App() {
       getContentByTokenId(1);
       getContentindexfromToken(1);
       getContentbyitsIndices(1);
-      getDataOfTokenType();
     }
   }
 
@@ -142,23 +161,6 @@ function App() {
     // const contents = await bookContract.getContentbyContentIndexArray(goldContentsIndexAvailable);
   }
 
-  const getDataOfTokenType = async() => {
-    //depriciated because of getContentbyitsIndices
-    console.log("From getDataOfTokenType() / Data of Token Type : ");
-    let tokenType = "gold";
-    let transaction = await bookContract.getContentsOfEachTokenType(tokenType)
-    console.log("Gold :", transaction);
-
-    tokenType = "silver";
-    transaction = await bookContract.getContentsOfEachTokenType(tokenType)
-    console.log("Silver :", transaction);
-
-    tokenType = "bronze";
-    transaction = await bookContract.getContentsOfEachTokenType(tokenType)
-    console.log("Bronze :", transaction);
-  }
-
-
   useEffect(() => {
     async function OnWalletChange() {
       window.ethereum.on('accountsChanged', function (accounts) {
@@ -188,7 +190,7 @@ function App() {
         />
       <Routes>
         <Route exact path="/" element={<Home 
-          setup = {setup}
+          unSetup = {unSetup}
 
         />}></Route>
         <Route path="/MarketPlace" element={<MarketPlace 
