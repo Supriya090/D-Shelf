@@ -1,4 +1,4 @@
-export const bookAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+export const bookAddress = "0x0d3fc928121ec8660E6E12b8EA23d2DC02Ab90d6"
 export const bookAbi = [
   {
     "inputs": [
@@ -203,6 +203,11 @@ export const bookAbi = [
     "name": "contents",
     "outputs": [
       {
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
         "internalType": "enum book.TokenType",
         "name": "tokenType",
         "type": "uint8"
@@ -247,6 +252,11 @@ export const bookAbi = [
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
           {
             "internalType": "uint256[]",
             "name": "tokenIds",
@@ -357,6 +367,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
             "internalType": "uint256[]",
             "name": "tokenIds",
             "type": "uint256[]"
@@ -437,6 +452,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
             "internalType": "uint256[]",
             "name": "tokenIds",
             "type": "uint256[]"
@@ -503,6 +523,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
             "internalType": "uint256[]",
             "name": "tokenIds",
             "type": "uint256[]"
@@ -563,6 +588,11 @@ export const bookAbi = [
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
           {
             "internalType": "uint256[]",
             "name": "tokenIds",
@@ -645,45 +675,6 @@ export const bookAbi = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getTotalbronzeTokens",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTotalgoldTokens",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTotalsilverTokens",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -730,6 +721,11 @@ export const bookAbi = [
     "inputs": [
       {
         "components": [
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
           {
             "internalType": "uint256[]",
             "name": "tokenIds",

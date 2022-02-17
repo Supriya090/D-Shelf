@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import logo from "../assets/logo.png";
 import {
@@ -88,7 +88,7 @@ const Header = (props) => {
               <div style={{ display: "flex" }}>
                 {getMenuButtons()}
                 <Button
-                  onClick={props.ConnectWalletHandler}
+                  onClick={props.setup}
                   className={headerButton}>
                   {props.connButtonText}
                 </Button>
