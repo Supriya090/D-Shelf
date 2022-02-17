@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import { makeStyles } from "@material-ui/core";
 import CryptoJS from "crypto-js";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   viewer: {
@@ -20,51 +20,16 @@ const PDFViewer = (props) => {
   const { viewer } = useStyles();
 
   //exports pdf from prop
-
   var {pdfBase64} = props; 
 
-  //console.log(String(pdfBase64));
-  const len = pdfBase64.length;
-  const cutLen = 5000;
-  var enLen; //for 100 -> 172
-
-  const encrypt = () => {
-    //full pdf string encryption --->
-    //pdfBase64 = CryptoJS.AES.encrypt(pdfBase64, "1234567890");
-
-    
-    //last 100 character encryption--->
-    var string = pdfBase64.substring(len - cutLen,len);
-    const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
-    enLen = String(encrypted).length;
-    pdfBase64 = pdfBase64.substring(0, len - cutLen) + encrypted;
-  }
-
-
   const decrypt = () => {
-    
     //full pdf string decryption --->
-    var bytes = CryptoJS.AES.decrypt(pdfBase64, "1234567890");
+    const bytes = CryptoJS.AES.decrypt(pdfBase64, "1234567890");
     pdfBase64 = bytes.toString(CryptoJS.enc.Utf8);
-    
-
-    /*
-    //last 100 character decryption--->
-    var upLen = pdfBase64.length;
-    console.log(pdfBase64);
-    console.log(enLen);
-
-
-    var bytes = CryptoJS.AES.decrypt(pdfBase64.substring(upLen - enLen,upLen), "1234567890");
-    var decrypted = bytes.toString(CryptoJS.enc.Utf8);
-    pdfBase64 = pdfBase64.substring(0, upLen - enLen) + decrypted;
-    console.log(pdfBase64);
-    console.log(pdfBase64.length);*/
   }
   
 
-  
-  // ****** Toolbar related codes **********
+  // ****** TOOLBAR RELATED CODES **********
   //Disabling download and print buttons from plugin
   const transform = (slot) => ({
     ...slot,
@@ -120,8 +85,7 @@ const PDFViewer = (props) => {
   };
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
-  
-  //encrypt();
+
   decrypt();
 
   return (
