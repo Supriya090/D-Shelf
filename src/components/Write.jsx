@@ -4,34 +4,31 @@ import {
   TextareaAutosize,
   Divider,
 } from "@material-ui/core";
-import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import React, { useEffect, useState } from "react";
-import CryptoJS from "crypto-js";
-import { ethers } from "ethers";
-import { create as ipfsHttpClient } from 'ipfs-http-client'
-
-import WriteCopies from "./elements/WriteCopies";
+import PDFViewer from "./PDFViewer";
 import useStyles from "./styles/Write";
-
-const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
-
+import WriteCopies from "./elements/WriteCopies";
+import CryptoJS from "crypto-js";
 
 const Write = (props) => {
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const classes = useStyles();
 
-  var defaultAccount;
-  var bookContract; 
-  var marketContract;
-  var provider;
-  var signer;
-  const [ImageUrl, setImageUrl] = useState(null)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [pdfUrl, setpdfUrl] = useState(null)
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfError, setPdfError] = useState(null);
+
+  useEffect(() => {
+    if (image) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(image);
+    } else {
+      setPreview(null);
+    }
+  }, [image]);
 
   const [inputValues, setInputValues] = useState({
     title: "",
@@ -49,109 +46,45 @@ const Write = (props) => {
     setInputValues({ ...inputValues, [event.target.name]: value });
   };
 
+  const encrypt = (pdf) => {
+    //full pdf string encryption --->
+    //console.log(pdf);
+    pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+    setPdfFile(pdf);
+    
+    
+    //last 100 character encryption--->
+    //var string = pdf.substring(len - 100,len);
+    //const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
+    //enLen = String(encrypted).length;
+    //pdf = pdf.substring(0, len - 100) + encrypted;
+  }
 
-  var pdf;
   const allowedFiles = ["application/pdf"];
-
-  const handleFile = async (e) => {
+  const handleFile = (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && allowedFiles.includes(selectedFile.type)) {
-    
-        let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
-        reader.onloadend = (e) => {
-          pdf = e.target.result;
-          setPdfFile(pdf);
-          pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
-          setPdfError("");
+          let reader = new FileReader();
+          reader.readAsDataURL(selectedFile);
+          reader.onloadend = (e) => {
+            encrypt(e.target.result);
+            //setPdfFile(e.target.result);
+            setPdfError("");
+          };
         };
-
-        try {
-          const addedpdf = await client.add(
-            selectedFile,
-            {
-              progress: (progress) => console.log(`Pdf received: ${progress}`)
-            }
-          )
-          const pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
-          setpdfUrl(pdfurl)
-        } catch (error) {
-          console.log('Error uploading pdf file: ', error)
-        } 
       } else {
         setPdfError("Invalid file type: Please select only PDF");
         setPdfFile(null);
-        setpdfUrl(null);
       }
-    } 
-  };
+    };
 
-  const OnhandleMint = async(e) => {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleOnSubmit = (e) => {
     e.preventDefault();
-    const { title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount } = inputValues;
-    if (!title || !description || !goldNumber || !goldAmount || !silverNumber || !silverAmount || !bronzeNumber || !bronzeAmount || !pdfUrl || !ImageUrl) return
-    console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount, pdfUrl, ImageUrl);
-    console.log("Required : ",defaultAccount, bookContract, marketContract, provider, signer);
-    let ContentMetadata = {
-      title:title,
-      tokenIds: [],
-      tokenType: 1,
-      contentType: 1,
-      publicationDate: Date.now(),
-      author: "Rahul Shah",
-      authorAddr: defaultAccount,
-      coverImageHash: ImageUrl,
-      descriptionHash: pdfUrl
-    }
-
-    let Amount = goldNumber*0.003+silverNumber*0.002+bronzeNumber*0.001+0.01
-    
-    if(defaultAccount && bookContract && marketContract && provider && signer){
-      const tx = {value: ethers.utils.parseEther(String(Amount)), gasLimit: 5000000};
-      bookContract.mintBatch(ContentMetadata,goldNumber,silverNumber,bronzeNumber,tx)
-      .then(async (transaction) => {
-        await transaction.wait();
-        console.log("transaction :", transaction);
-        console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
-        //Render Back to Home Page
-      })
-      .catch(error => {
-        console.log("Error : ", error);
-      })
-    }
-    else{
-      alert("Please connect to Metamask");
-    }
-
+    setSubmitted(true);
   };
-
-  useEffect(() => {
-    if (props.connButtonText === "Wallet Connected") {
-      props.setup()
-      .then(
-        value => {
-          defaultAccount = value[0]
-          bookContract = value[1] 
-          marketContract = value[2] 
-          provider = value[3]
-          signer = value[4]
-          // console.log(defaultAccount, bookContract, marketContract, provider, signer);
-        })
-        .catch(err=>{
-          console.log(err);
-        })
-    }
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(image);
-    } else {
-      setPreview(null);
-    }
-  }, [props.connButtonText,image]);
 
   return (
     <div className={classes.writePageContent}>
@@ -165,7 +98,7 @@ const Write = (props) => {
           noValidate
           autoComplete='off'
           className={classes.writerForm}
-          onSubmit={props.mint}>
+          onSubmit={handleOnSubmit}>
           <div className={classes.formContent}>
             <div className={classes.textFields}>
               <TextField
@@ -232,28 +165,13 @@ const Write = (props) => {
                   type='file'
                   accept='image/*'
                   required
-                  onChange={async(event) => {
+                  onChange={(event) => {
                     const file = event.target.files[0];
                     if (file && file.type.substring(0, 5) === "image") {
                       setImage(file);
-                      try{
-                        const added = await client.add(
-                          file,
-                          {
-                            progress: (progress) => console.log(`received : ${progress}`)
-                          }
-                        )
-                          const url = `https://ipfs.infura.io/ipfs/${added.path}`
-                          setImageUrl(url)
-                      }
-                      catch(error){
-                        console.log("Error Uploading Image",error);
-                      }
+                    } else {
+                      setImage(null);
                     }
-                  else {
-                    setImage(null);
-                    setImageUrl(null);
-                  }
                   }}
                   className={classes.inputFile}
                 />
@@ -264,7 +182,7 @@ const Write = (props) => {
                 type='button'
                 value='Submit'
                 className={`${classes.submitButton} ${classes.chooseFile}`}
-                onClick={OnhandleMint}
+                onClick={props.mint}
               />
             </div>
           </div>
@@ -292,17 +210,7 @@ const Write = (props) => {
           </div>
           {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
-        { pdfFile && 
-          (<div style={{height: "1000px"}}>
-              <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'> 
-                <Viewer
-                  fileUrl={pdfFile}
-                  plugins={[defaultLayoutPluginInstance]}
-                  defaultScale={SpecialZoomLevel.PageFit}
-                  theme='dark'
-                />
-              </Worker>
-          </div>)}
+        {pdfFile && <PDFViewer pdfBase64={pdfFile} />}
       </div>
     </div>
   );
