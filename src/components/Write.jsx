@@ -4,19 +4,23 @@ import {
   TextareaAutosize,
   Divider,
 } from "@material-ui/core";
+import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import React, { useEffect, useState } from "react";
-import PDFViewer from "./PDFViewer";
-import useStyles from "./styles/Write";
-import WriteCopies from "./elements/WriteCopies";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from 'ipfs-http-client'
+
+import WriteCopies from "./elements/WriteCopies";
+import useStyles from "./styles/Write";
 
 const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
 
 const Write = (props) => {
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const classes = useStyles();
+
   var defaultAccount;
   var bookContract; 
   var marketContract;
@@ -45,51 +49,43 @@ const Write = (props) => {
     setInputValues({ ...inputValues, [event.target.name]: value });
   };
 
-  const encrypt = (pdf) => {
-    //full pdf string encryption --->
-    //console.log(pdf);
-    pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
-    setPdfFile(pdf);
-    
-    
-    //last 100 character encryption--->
-    //var string = pdf.substring(len - 100,len);
-    //const encrypted = CryptoJS.AES.encrypt(string, "1234567890");
-    //enLen = String(encrypted).length;
-    //pdf = pdf.substring(0, len - 100) + encrypted;
-  }
 
+  var pdf;
   const allowedFiles = ["application/pdf"];
+
   const handleFile = async (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && allowedFiles.includes(selectedFile.type)) {
-          let reader = new FileReader();
-          reader.readAsDataURL(selectedFile);
-          reader.onloadend = (e) => {
-            encrypt(e.target.result);
-            //setPdfFile(e.target.result);
-            setPdfError("");
-          };
-          try {
-            const addedpdf = await client.add(
-              selectedFile,
-              {
-                progress: (progress) => console.log(`Pdf received: ${progress}`)
-              }
-            )
-            const pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
-            setpdfUrl(pdfurl)
-          } catch (error) {
-            console.log('Error uploading pdf file: ', error)
-          } 
+    
+        let reader = new FileReader();
+        reader.readAsDataURL(selectedFile);
+        reader.onloadend = (e) => {
+          pdf = e.target.result;
+          setPdfFile(pdf);
+          pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+          setPdfError("");
         };
+
+        try {
+          const addedpdf = await client.add(
+            selectedFile,
+            {
+              progress: (progress) => console.log(`Pdf received: ${progress}`)
+            }
+          )
+          const pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
+          setpdfUrl(pdfurl)
+        } catch (error) {
+          console.log('Error uploading pdf file: ', error)
+        } 
       } else {
         setPdfError("Invalid file type: Please select only PDF");
         setPdfFile(null);
         setpdfUrl(null);
       }
-    };
+    } 
+  };
 
   const OnhandleMint = async(e) => {
     e.preventDefault();
@@ -296,7 +292,17 @@ const Write = (props) => {
           </div>
           {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
-        {pdfFile && <PDFViewer pdfBase64={pdfFile} />}
+        { pdfFile && 
+          (<div style={{height: "1000px"}}>
+              <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'> 
+                <Viewer
+                  fileUrl={pdfFile}
+                  plugins={[defaultLayoutPluginInstance]}
+                  defaultScale={SpecialZoomLevel.PageFit}
+                  theme='dark'
+                />
+              </Worker>
+          </div>)}
       </div>
     </div>
   );
