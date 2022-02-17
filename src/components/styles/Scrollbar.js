@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core'
+import dummy from "../../assets/dummy.jpg"
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -12,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#313131",
         borderRadius: "10px",
         position: "relative",
+        maxWidth: "300px",
+        wordWrap: "break-word",
+        objectFit: "cover"
     },
     voteButtons: {
         display: "flex",
@@ -59,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
         height: "400px",
         marginBottom: "15px",
         marginTop: "7px",
+        maxWidth: "290px"
     },
     forAuthor: {
         position: "absolute",

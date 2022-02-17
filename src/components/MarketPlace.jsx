@@ -65,7 +65,7 @@ const MarketPlace = (props) => {
           {goldContents.length === 0 ? (
             <Typography>Loading</Typography>
           ) : (
-            <HorizontalScrolling getItems={goldContents} />
+            <HorizontalScrolling getItems={goldContents} isTrending={true} />
           )}
         </div>
         <div
@@ -73,7 +73,7 @@ const MarketPlace = (props) => {
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Silver"} />
           {silverContents.length !== 0 ? (
-            <HorizontalScrolling getItems={silverContents} />
+            <HorizontalScrolling getItems={silverContents} isTrending={true} />
           ) : (
             <Typography>Loading</Typography>
           )}
@@ -83,7 +83,7 @@ const MarketPlace = (props) => {
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Bronze"} />
           {bronzeContents.length !== 0 ? (
-            <HorizontalScrolling getItems={bronzeContents} />
+            <HorizontalScrolling getItems={bronzeContents} isTrending={true} />
           ) : (
             <Typography>Loading</Typography>
           )}
