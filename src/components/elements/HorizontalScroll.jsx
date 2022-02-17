@@ -19,7 +19,6 @@ function HorizontalScrolling({
   const [items, setItems] = React.useState(getItems);
   const [selected, setSelected] = React.useState([]);
   const [position, setPosition] = React.useState(0);
-
   const isItemSelected = (id) => !!selected.find((el) => el === id);
 
   const classes = useStyles();
@@ -59,7 +58,7 @@ function HorizontalScrolling({
 
   function Card({ onClick, selected, title, itemId, img }) {
     const visibility = React.useContext(VisibilityContext);
-    const { data } = usePalette(img);
+    const { data } = usePalette();
 
     return (
       <div onClick={() => onClick(visibility)}>
@@ -84,12 +83,12 @@ function HorizontalScrolling({
       LeftArrow={LeftArrow}
       RightArrow={RightArrow}
       className={classes.scrollMenu}>
-      {items.map(({ id, title, url }) => (
+      {items.map(({ id, title, coverImageHash, descriptionHash }) => (
         <Card
           itemId={id} // NOTE: itemId is required for track items
           title={title}
           key={id}
-          img={url}
+          img={coverImageHash}
           onClick={handleClick(id)}
           selected={isItemSelected(id)}
         />
