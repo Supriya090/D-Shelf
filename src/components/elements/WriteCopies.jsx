@@ -15,7 +15,7 @@ function WriteCopies(props) {
         {props.title}
       </Typography>
       <div className={classes.money}>
-        <TextField
+        {/* <TextField
           id='price'
           label='Enter Price'
           variant='outlined'
@@ -29,10 +29,10 @@ function WriteCopies(props) {
               <InputAdornment position='start'>ETH</InputAdornment>
             ),
           }}
-        />
+        /> */}
         <TextField
           id='number'
-          label='Number of Copies'
+          label='No. of Copies'
           variant='outlined'
           type='number'
           name='number'

@@ -12,6 +12,11 @@ const useStyles = makeStyles((theme) => ({
             fontWeight: 500
         },
     },
+
+    loader: {
+        height: "100px",
+        marginTop: "100px"
+    }
 }));
 
 

@@ -13,11 +13,12 @@ function SubTitle({
   onSale = false,
   isCollection = false,
   src,
+  title,
+  author,
 }) {
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
   const { data } = usePalette(src);
-
   let saleStats;
   if (onSale) {
     saleStats = (
@@ -52,11 +53,8 @@ function SubTitle({
   if (isTrending || onSale) {
     return (
       <div>
-        <Typography>
-          Learn to read Novels Like a Professor
-          <br />
-          Tips by Supriya Khadka
-        </Typography>
+        <Typography>{title}</Typography>
+        <Typography>Author: {author}</Typography>
         <div className={scrollClasses.voteButtons}>
           <Button
             variant='contained'
@@ -78,10 +76,10 @@ function SubTitle({
     return (
       <div
         className={scrollClasses.forAuthor}
-        style={{ backgroundColor: data.darkVibrant }}>
+        style={{ backgroundColor: data.darkMuted }}>
         <img src={dummy} alt='avatar' className={scrollClasses.avatar} />
         <div className={scrollClasses.authorInfo}>
-          <Typography>Rahul Shah</Typography>
+          <Typography>Author: {author}</Typography>
           <Typography style={{ marginBottom: "10px" }}>
             1000 followers
           </Typography>

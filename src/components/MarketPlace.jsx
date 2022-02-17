@@ -5,6 +5,7 @@ import { useStyles as homeStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
 import { content } from "./elements/dummyImages";
 import ListHead from "./elements/ListHead";
+import loader from "../assets/loading-yellow.gif";
 
 const MarketPlace = (props) => {
   var bookContract;
@@ -63,9 +64,13 @@ const MarketPlace = (props) => {
         <div className={homeClasses.auctions}>
           <ListHead title={""} leftButton={"Gold"} />
           {goldContents.length === 0 ? (
-            <Typography>Loading</Typography>
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           ) : (
-            <HorizontalScrolling getItems={goldContents} />
+            <HorizontalScrolling getItems={goldContents} isTrending={true} />
           )}
         </div>
         <div
@@ -73,9 +78,13 @@ const MarketPlace = (props) => {
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Silver"} />
           {silverContents.length !== 0 ? (
-            <HorizontalScrolling getItems={silverContents} />
+            <HorizontalScrolling getItems={silverContents} isTrending={true} />
           ) : (
-            <Typography>Loading</Typography>
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           )}
         </div>
         <div
@@ -83,9 +92,13 @@ const MarketPlace = (props) => {
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Bronze"} />
           {bronzeContents.length !== 0 ? (
-            <HorizontalScrolling getItems={bronzeContents} />
+            <HorizontalScrolling getItems={bronzeContents} isTrending={true} />
           ) : (
-            <Typography>Loading</Typography>
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           )}
         </div>
       </div>
