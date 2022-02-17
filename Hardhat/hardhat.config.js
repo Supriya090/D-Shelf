@@ -25,7 +25,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const PRIVATE_KEY =
   process.env.RINKEBY_PRIVATE_KEY ||
   process.env.PRIVATE_KEY ||
-  "2de3c86bea7cb71efb050e19c38e47425df45602cb726c046cd0699928ce1218";
+  "df57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e";
 module.exports = {
   solidity: {
     version: "0.8.4",
@@ -50,7 +50,7 @@ module.exports = {
     rinkeby: {
       url:
         process.env.RINKEBY_URL ||
-        "https://eth-rinkeby.alchemyapi.io/v2/d817Kizj_ytPdnaWgl84iEp3Asg0GLLk",
+        "https://eth-rinkeby.alchemyapi.io/v2/cQwQ1GuU6HfIcVaHoHMZe7dKl_ttPwGL",
       accounts: [`${PRIVATE_KEY}`],
     },
     kovan: {

@@ -40,6 +40,7 @@ contract book is ERC721 {
         address authorAddr;
         string coverImageHash;
         string descriptionHash;
+        string description;
     }
 
     //list of all the contents
@@ -66,7 +67,7 @@ contract book is ERC721 {
         mintingFee[TokenType.BRONZE] = 0.001 ether;
 
         developer = payable(msg.sender);
-        Content memory content = Content("", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
+        Content memory content = Content("", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "","");
         contents.push(content);
     }
 

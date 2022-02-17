@@ -32,13 +32,11 @@ const Write = (props) => {
 
   const [inputValues, setInputValues] = useState({
     title: "",
+    author: "",
     description: "",
     goldNumber: 0,
     goldAmount: 0,
     silverNumber: 0,
-    silverAmount: 0,
-    bronzeNumber: 0,
-    bronzeAmount: 0,
   });
 
   const handleOnChange = (event) => {
@@ -75,24 +73,19 @@ const Write = (props) => {
     e.preventDefault();
     const {
       title,
+      author,
       description,
       goldNumber,
-      goldAmount,
       silverNumber,
-      silverAmount,
       bronzeNumber,
-      bronzeAmount,
     } = inputValues;
 
     if (
       !title ||
       !description ||
       !goldNumber ||
-      !goldAmount ||
       !silverNumber ||
-      !silverAmount ||
-      !bronzeNumber ||
-      !bronzeAmount
+      !bronzeNumber
     ) {
       alert("Please fill all the fields");
       return;
@@ -122,13 +115,11 @@ const Write = (props) => {
     console.log(
       "content : ",
       title,
+      author,
       description,
       goldNumber,
-      goldAmount,
       silverNumber,
-      silverAmount,
-      bronzeNumber,
-      bronzeAmount
+      bronzeNumber
     );
     console.log(
       "Required : ",
@@ -149,6 +140,53 @@ const Write = (props) => {
         client
           .add(image, {
             progress: (progress) => console.log(`received : ${progress}`),
+          })
+          .then((addedImage) => {
+            imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
+            console.log("addedImage : ", imageurl);
+            console.log("addedpdf : ", pdfurl);
+
+            let ContentMetadata = {
+              title: title,
+              tokenIds: [],
+              tokenType: 1,
+              contentType: 1,
+              publicationDate: Date.now(),
+              author: author,
+              authorAddr: defaultAccount,
+              coverImageHash: imageurl,
+              descriptionHash: pdfurl,
+              description: description,
+            };
+
+            console.log("ContentMetadata : ", ContentMetadata);
+            const Amount =
+              goldNumber * 0.003 +
+              silverNumber * 0.002 +
+              bronzeNumber * 0.001 +
+              0.01; //0.01 is for the gas fee
+
+            const tx = {
+              value: ethers.utils.parseEther(Amount.toString()),
+              gasLimit: 5000000,
+            };
+            bookContract
+              .mintBatch(
+                ContentMetadata,
+                goldNumber,
+                silverNumber,
+                bronzeNumber,
+                tx
+              )
+              .then(async (transaction) => {
+                await transaction.wait();
+                console.log("transaction :", transaction);
+                alert("Successfully minted");
+                //Render Back to Home Page
+              })
+              .catch((error) => {
+                console.log("Error while signing: ", error);
+              });
           })
           .then((addedImage) => {
             imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
@@ -204,26 +242,7 @@ const Write = (props) => {
         console.log("Error Minting: ", error);
       });
   };
-  /*
-  useEffect(() => {
-    if (props.connButtonText === "Wallet Connected") {
-      props.setup()
-      .then(
-        value => {
-          defaultAccount = value[0]
-          bookContract = value[1] 
-          marketContract = value[2] 
-          provider = value[3]
-          signer = value[4]
-          console.log("from useEffect : ",defaultAccount, bookContract, marketContract, provider, signer);
-        })
-        .catch(err=>{
-          console.log(err);
-        })
-    }
 
-  }, [props.connButtonText]);
-*/
   return (
     <div className={classes.writePageContent}>
       <div className={classes.successSubmit}>
@@ -245,6 +264,15 @@ const Write = (props) => {
                 variant='outlined'
                 name='title'
                 value={inputValues.title}
+                onChange={handleOnChange}
+                className={classes.textField}
+              />
+              <TextField
+                id='author'
+                label="Author's Name"
+                variant='outlined'
+                name='author'
+                value={inputValues.author}
                 onChange={handleOnChange}
                 className={classes.textField}
               />
@@ -287,6 +315,7 @@ const Write = (props) => {
                 minRows={10}
                 placeholder='A short description about your book'
                 name='description'
+                style={{ overflow: "auto" }}
                 value={inputValues.description}
                 onChange={handleOnChange}
               />

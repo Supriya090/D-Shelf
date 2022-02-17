@@ -1,4 +1,4 @@
-export const bookMarketAddress = "0xFA851cb26102c20aeA0def31DED8b2bEBa53C902"
+export const bookMarketAddress = "0x41671c548FD80Ec9e69287c37EC96E5468e9534F"
 export const bookMarketAbi = [
   {
     "inputs": [],
@@ -74,7 +74,7 @@ export const bookMarketAbi = [
     ],
     "name": "createMarketItem",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -240,19 +240,6 @@ export const bookMarketAbi = [
         "internalType": "struct bookmarket.MarketItem[]",
         "name": "",
         "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getListingPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
