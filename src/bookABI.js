@@ -1,4 +1,4 @@
-export const bookAddress = "0xe25c9fbBb56ee60199f4D86dA1199FADBf0369A9"
+export const bookAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 export const bookAbi = [
   {
     "inputs": [
