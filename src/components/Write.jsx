@@ -26,10 +26,8 @@ const Write = (props) => {
   var marketContract;
   var provider;
   var signer;
-  const [ImageUrl, setImageUrl] = useState(null)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [pdfUrl, setpdfUrl] = useState(null)
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfError, setPdfError] = useState(null);
 
@@ -50,39 +48,28 @@ const Write = (props) => {
   };
 
 
-  var pdf;
   const allowedFiles = ["application/pdf"];
-
   const handleFile = async (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && allowedFiles.includes(selectedFile.type)) {
     
         let reader = new FileReader();
-        reader.readAsDataURL(selectedFile);
+        reader.readAsDataURL(selectedFile)
         reader.onloadend = (e) => {
-          pdf = e.target.result;
-          setPdfFile(pdf);
-          pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+          setPdfFile(e.target.result);
+          // let l1 = CryptoJS.AES.encrypt(e.target.result, "secret key 123").toString();
+          // let l2 = CryptoJS.AES.decrypt(l1, "secret key 123").toString(CryptoJS.enc.Utf8)
+          // console.log(l1)
+          // console.log(l2)
           setPdfError("");
         };
-
-        try {
-          const addedpdf = await client.add(
-            selectedFile,
-            {
-              progress: (progress) => console.log(`Pdf received: ${progress}`)
-            }
-          )
-          const pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
-          setpdfUrl(pdfurl)
-        } catch (error) {
-          console.log('Error uploading pdf file: ', error)
-        } 
+        reader.onerror = function(event) {
+          alert("Failed to read file!\n\n" + reader.error);
+        };
       } else {
         setPdfError("Invalid file type: Please select only PDF");
         setPdfFile(null);
-        setpdfUrl(null);
       }
     } 
   };
@@ -90,39 +77,62 @@ const Write = (props) => {
   const OnhandleMint = async(e) => {
     e.preventDefault();
     const { title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount } = inputValues;
-    if (!title || !description || !goldNumber || !goldAmount || !silverNumber || !silverAmount || !bronzeNumber || !bronzeAmount || !pdfUrl || !ImageUrl) return
-    console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount, pdfUrl, ImageUrl);
-    console.log("Required : ",defaultAccount, bookContract, marketContract, provider, signer);
-    let ContentMetadata = {
-      title:title,
-      tokenIds: [],
-      tokenType: 1,
-      contentType: 1,
-      publicationDate: Date.now(),
-      author: "Rahul Shah",
-      authorAddr: defaultAccount,
-      coverImageHash: ImageUrl,
-      descriptionHash: pdfUrl
-    }
 
-    let Amount = goldNumber*0.003+silverNumber*0.002+bronzeNumber*0.001+0.01
+    if (!title || !description || !goldNumber || !goldAmount || !silverNumber || !silverAmount || !bronzeNumber || !bronzeAmount){
+      alert("Please fill all the fields");
+      return
+    } 
+    if (!defaultAccount || !bookContract || !marketContract || !provider || !signer){
+      alert("Please connect to Metamask / Refresh page");
+      return
+    } 
+    console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount);
+    console.log("Required : ",defaultAccount, bookContract, marketContract, provider, signer);
+    let  pdfurl = null;
+    let imageurl = null;
+     client.add( CryptoJS.AES.encrypt(pdfFile, "secret key 123").toString(CryptoJS.enc.Utf8),
+        { progress: (progress) => console.log(`Pdf received: ${progress}`) })
+        .then( addedpdf => { 
+          pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
+          client.add( image, { progress: (progress) => console.log(`received : ${progress}`) })
+          .then( addedImage => {
+          imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`
+          console.log("addedImage : ",imageurl);
+          console.log("addedpdf : ",pdfurl);
+
+          let ContentMetadata = {
+            title:title,
+            tokenIds: [],
+            tokenType: 1,
+            contentType: 1,
+            publicationDate: Date.now(),
+            author: "Rahul Shah",
+            authorAddr: defaultAccount,
+            coverImageHash: imageurl,
+            descriptionHash: pdfurl
+          }
+      
+          console.log("ContentMetadata : ",ContentMetadata);
+          const Amount = (goldNumber*0.003)+(silverNumber*0.002)+(bronzeNumber*0.001)+0.01; //0.01 is for the gas fee
+          
+            const tx = {value: ethers.utils.parseEther(Amount.toString()), gasLimit: 5000000};
+            console.log("tx : ",tx);
+            bookContract.mintBatch(ContentMetadata,goldNumber,silverNumber,bronzeNumber,tx)
+            .then(async (transaction) => {
+              await transaction.wait();
+              console.log("transaction :", transaction);
+              alert("Successfully minted , Your total tokens: ", await bookContract.balanceOf(defaultAccount));
+              //Render Back to Home Page
+            })
+            .catch(error => {
+              console.log("Error while signing: ", error);
+            })
+          })
+        })
+        .catch(error => {
+          console.log('Error Minting: ', error)
+        })
     
-    if(defaultAccount && bookContract && marketContract && provider && signer){
-      const tx = {value: ethers.utils.parseEther(String(Amount)), gasLimit: 5000000};
-      bookContract.mintBatch(ContentMetadata,goldNumber,silverNumber,bronzeNumber,tx)
-      .then(async (transaction) => {
-        await transaction.wait();
-        console.log("transaction :", transaction);
-        console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
-        //Render Back to Home Page
-      })
-      .catch(error => {
-        console.log("Error : ", error);
-      })
-    }
-    else{
-      alert("Please connect to Metamask");
-    }
 
   };
 
@@ -136,22 +146,14 @@ const Write = (props) => {
           marketContract = value[2] 
           provider = value[3]
           signer = value[4]
-          // console.log(defaultAccount, bookContract, marketContract, provider, signer);
+          console.log("from useEffect : ",defaultAccount, bookContract, marketContract, provider, signer);
         })
         .catch(err=>{
           console.log(err);
         })
     }
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(image);
-    } else {
-      setPreview(null);
-    }
-  }, [props.connButtonText,image]);
+
+  }, [props.connButtonText]);
 
   return (
     <div className={classes.writePageContent}>
@@ -232,27 +234,19 @@ const Write = (props) => {
                   type='file'
                   accept='image/*'
                   required
-                  onChange={async(event) => {
+                  onChange={(event) => {
                     const file = event.target.files[0];
                     if (file && file.type.substring(0, 5) === "image") {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setPreview(reader.result);
+                      };
+                      reader.readAsDataURL(file);
                       setImage(file);
-                      try{
-                        const added = await client.add(
-                          file,
-                          {
-                            progress: (progress) => console.log(`received : ${progress}`)
-                          }
-                        )
-                          const url = `https://ipfs.infura.io/ipfs/${added.path}`
-                          setImageUrl(url)
-                      }
-                      catch(error){
-                        console.log("Error Uploading Image",error);
-                      }
                     }
                   else {
                     setImage(null);
-                    setImageUrl(null);
+                    setPreview(null);
                   }
                   }}
                   className={classes.inputFile}
