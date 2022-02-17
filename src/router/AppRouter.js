@@ -14,12 +14,13 @@ import { bookMarketAddress, bookMarketAbi } from '../bookmarketABI'
 
 
 function App() {
-
+  const privateKey = "63f2d254a4256178b90f6ed5b0830641dd1d7d7ea2dca4f618037a2597e2ed1e";
   let defaultAccount = null;
   let bookContract = null;
   let marketContract = null;
   let provider = null;
   let signer = null;
+  let list = []
   const [errorMessage, setErrorMessage] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
@@ -27,7 +28,7 @@ function App() {
   //Please connect your account to the wallet first the click the button
   //If you have changed your account from wallet the click button again to refresh the defaultAccount
   const ConnectWalletHandler = async () => {
-    if (typeof window.ethereum !== undefined) {
+    if (window.ethereum !== undefined) {
       // set ethers provider
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
@@ -48,6 +49,7 @@ function App() {
         })
 
     } else {
+      // Ethers.js
       console.log('Need to install MetaMask');
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
@@ -70,7 +72,7 @@ function App() {
   //TODO Need some work so that we can view in Home even if dont have any metamask
   const unSetup = () => {
     return new Promise((resolve, reject) => {
-      if (typeof window.ethereum !== undefined) {
+      if ( window.ethereum !== undefined) {
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
@@ -81,8 +83,13 @@ function App() {
         resolve(list);
       }
       else {
-        console.log('Please install MetaMask browser extension to interact');
-        reject(Error('Need to install MetaMask'));
+        provider = new ethers.providers.AlchemyProvider("rinkeby", "d817Kizj_ytPdnaWgl84iEp3Asg0GLLk")        
+        const wallet = new ethers.Wallet(privateKey, provider);
+        const signer = wallet.connect(provider);
+        bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
+        marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
+        list = [bookContract, marketContract, provider, signer]
+        resolve(list);
       }
     })
   }
@@ -129,7 +136,9 @@ function App() {
   }
 
   useEffect(() => {
+    
     async function OnWalletChange() {
+      if (window.ethereum !== undefined) {
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
         // console.log("accountsChanged :", accounts[0]);
@@ -137,13 +146,15 @@ function App() {
         setErrorMessage('Click button to refresh contents');
       })
     }
+    }
     OnWalletChange();
+    if (window.ethereum !== undefined) {
     if (defaultAccount && connButtonText === 'Wallet Connected') {
       provider.getBalance(defaultAccount)
         .then(balanceResult => {
           setUserBalance(ethers.utils.formatEther(balanceResult));
         })
-    };
+    };}
   }, [defaultAccount]);
 
   return (
