@@ -33,6 +33,7 @@ const Write = (props) => {
 
   const [inputValues, setInputValues] = useState({
     title: "",
+    author: "",
     description: "",
     goldNumber: 0,
     goldAmount: 0,
@@ -76,7 +77,7 @@ const Write = (props) => {
 
   const OnhandleMint = async(e) => {
     e.preventDefault();
-    const { title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount } = inputValues;
+    const { title, author, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount } = inputValues;
     
     if (!title || !description || !goldNumber || !goldAmount || !silverNumber || !silverAmount || !bronzeNumber || !bronzeAmount){
       alert("Please fill all the fields");
@@ -105,7 +106,7 @@ const Write = (props) => {
       alert("Please add Metamask extension");
       return
     } 
-      console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount);
+      console.log("content : ",title, author, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount);
     console.log("Required : ",defaultAccount, bookContract, marketContract, provider, signer);
     let  pdfurl = null;
     let imageurl = null;
@@ -125,10 +126,11 @@ const Write = (props) => {
             tokenType: 1,
             contentType: 1,
             publicationDate: Date.now(),
-            author: "Rahul Shah",
+            author: author,
             authorAddr: defaultAccount,
             coverImageHash: imageurl,
-            descriptionHash: pdfurl
+            descriptionHash: pdfurl,
+            description: description,
           }
       
           console.log("ContentMetadata : ",ContentMetadata);
@@ -139,7 +141,7 @@ const Write = (props) => {
             .then(async (transaction) => {
               await transaction.wait();
               console.log("transaction :", transaction);
-              alert("Successfully minted , Your total tokens: ", await bookContract.balanceOf(defaultAccount));
+              alert("Successfully minted");
               //Render Back to Home Page
             })
             .catch(error => {
@@ -153,26 +155,7 @@ const Write = (props) => {
     
 
   };
-/*
-  useEffect(() => {
-    if (props.connButtonText === "Wallet Connected") {
-      props.setup()
-      .then(
-        value => {
-          defaultAccount = value[0]
-          bookContract = value[1] 
-          marketContract = value[2] 
-          provider = value[3]
-          signer = value[4]
-          console.log("from useEffect : ",defaultAccount, bookContract, marketContract, provider, signer);
-        })
-        .catch(err=>{
-          console.log(err);
-        })
-    }
 
-  }, [props.connButtonText]);
-*/
   return (
     <div className={classes.writePageContent}>
       <div className={classes.successSubmit}>
@@ -194,6 +177,15 @@ const Write = (props) => {
                 variant='outlined'
                 name='title'
                 value={inputValues.title}
+                onChange={handleOnChange}
+                className={classes.textField}
+              />
+              <TextField
+                id='author'
+                label="Author Name"
+                variant='outlined'
+                name='author'
+                value={inputValues.author}
                 onChange={handleOnChange}
                 className={classes.textField}
               />
