@@ -6,7 +6,7 @@ import {
 } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from 'ipfs-http-client'
@@ -77,20 +77,39 @@ const Write = (props) => {
   const OnhandleMint = async(e) => {
     e.preventDefault();
     const { title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount } = inputValues;
-    console.log(defaultAccount, bookContract, marketContract, provider, signer)
+    
     if (!title || !description || !goldNumber || !goldAmount || !silverNumber || !silverAmount || !bronzeNumber || !bronzeAmount){
       alert("Please fill all the fields");
       return
-    } 
-    if (!defaultAccount || !bookContract || !marketContract || !provider || !signer){
-      alert("Please connect to Metamask / Refresh page");
+    }
+    if(typeof window.ethereum !== 'undefined') {
+      if(props.connButtonText === "Wallet Connected"){
+          props.setup()
+          .then(
+            value => {
+              defaultAccount = value[0]
+              bookContract = value[1] 
+              marketContract = value[2] 
+              provider = value[3]
+              signer = value[4]
+              // console.log("Account Details : ",defaultAccount, bookContract, marketContract, provider, signer);
+            })
+            .catch(err=>{
+              console.log(err);
+            })
+        }
+        else{
+          alert("Please connect to the wallet");
+        }
+    }else{
+      alert("Please add Metamask extension");
       return
     } 
-    console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount);
+      console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount);
     console.log("Required : ",defaultAccount, bookContract, marketContract, provider, signer);
     let  pdfurl = null;
     let imageurl = null;
-     client.add( CryptoJS.AES.encrypt(pdfFile, "secret key 123").toString(CryptoJS.enc.Utf8),
+     client.add( CryptoJS.AES.encrypt(pdfFile, "secret key 123").toString(),
         { progress: (progress) => console.log(`Pdf received: ${progress}`) })
         .then( addedpdf => { 
           pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
@@ -116,7 +135,6 @@ const Write = (props) => {
           const Amount = (goldNumber*0.003)+(silverNumber*0.002)+(bronzeNumber*0.001)+0.01; //0.01 is for the gas fee
           
             const tx = {value: ethers.utils.parseEther(Amount.toString()), gasLimit: 5000000};
-            console.log("tx : ",tx);
             bookContract.mintBatch(ContentMetadata,goldNumber,silverNumber,bronzeNumber,tx)
             .then(async (transaction) => {
               await transaction.wait();
@@ -135,7 +153,7 @@ const Write = (props) => {
     
 
   };
-
+/*
   useEffect(() => {
     if (props.connButtonText === "Wallet Connected") {
       props.setup()
@@ -154,7 +172,7 @@ const Write = (props) => {
     }
 
   }, [props.connButtonText]);
-
+*/
   return (
     <div className={classes.writePageContent}>
       <div className={classes.successSubmit}>
