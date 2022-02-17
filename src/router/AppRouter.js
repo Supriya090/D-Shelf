@@ -28,7 +28,7 @@ function App() {
   //Please connect your account to the wallet first the click the button
   //If you have changed your account from wallet the click button again to refresh the defaultAccount
   const ConnectWalletHandler = async () => {
-    if (window.ethereum !== undefined) {
+    if (typeof window.ethereum !== undefined) {
       // set ethers provider
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
@@ -43,6 +43,7 @@ function App() {
           defaultAccount = result[0];
           bookContract.connect(defaultAccount);
           marketContract.connect(defaultAccount);
+          console.log(defaultAccount)
         })
         .catch(error => {
           console.log(error);
@@ -138,7 +139,6 @@ function App() {
   useEffect(() => {
     
     async function OnWalletChange() {
-      if (window.ethereum !== undefined) {
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
         // console.log("accountsChanged :", accounts[0]);
@@ -146,7 +146,7 @@ function App() {
         setErrorMessage('Click button to refresh contents');
       })
     }
-    }
+    
     OnWalletChange();
     if (window.ethereum !== undefined) {
     if (defaultAccount && connButtonText === 'Wallet Connected') {
