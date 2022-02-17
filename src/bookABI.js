@@ -241,6 +241,11 @@ export const bookAbi = [
         "internalType": "string",
         "name": "descriptionHash",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -295,6 +300,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -410,6 +420,11 @@ export const bookAbi = [
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
           }
         ],
         "internalType": "struct book.Content[]",
@@ -495,6 +510,11 @@ export const bookAbi = [
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
           }
         ],
         "internalType": "struct book.Content",
@@ -566,6 +586,11 @@ export const bookAbi = [
             "internalType": "string",
             "name": "descriptionHash",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
           }
         ],
         "internalType": "struct book.Content[]",
@@ -631,6 +656,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -764,6 +794,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],

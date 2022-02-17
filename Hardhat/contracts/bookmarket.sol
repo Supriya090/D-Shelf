@@ -17,7 +17,6 @@ contract bookmarket is ReentrancyGuard {
 
   address payable owner;
   //Required price to list an item for sale in marketplace
-  uint256 listingPrice = 0.005 ether;
 
   constructor() {
     owner = payable(msg.sender);
@@ -45,19 +44,14 @@ contract bookmarket is ReentrancyGuard {
     bool sold
   );
 
-  /* Returns the listing price of the contract */
-  function getListingPrice() public view returns (uint256) {
-    return listingPrice;
-  }
   
   /* Places an item for sale on the marketplace */
   function createMarketItem(
     address nftContract,
     uint256 tokenId,
     uint256 price
-  ) public payable nonReentrant {
+  ) public nonReentrant {
     require(price > 0, "Price must be at least 1 wei");
-    require(msg.value == listingPrice, "Price must be equal to listing price");
 
     _itemIds.increment();
     uint256 itemId = _itemIds.current();
@@ -101,8 +95,7 @@ contract bookmarket is ReentrancyGuard {
     idToMarketItem[itemId].owner = payable(msg.sender);
     idToMarketItem[itemId].sold = true;
     _itemsSold.increment();
-    payable(owner).transfer(listingPrice);
-
+    
     Ibook book = Ibook(nftContract);
     book.addtoken(tokenId, msg.sender);
     book.removetoken(tokenId, idToMarketItem[itemId].seller);
