@@ -5,6 +5,7 @@ import { useStyles as homeStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
 import { content } from "./elements/dummyImages";
 import ListHead from "./elements/ListHead";
+import loader from "../assets/loading-yellow.gif";
 
 const MarketPlace = (props) => {
   var bookContract;
@@ -63,7 +64,11 @@ const MarketPlace = (props) => {
         <div className={homeClasses.auctions}>
           <ListHead title={""} leftButton={"Gold"} />
           {goldContents.length === 0 ? (
-            <Typography>Loading</Typography>
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           ) : (
             <HorizontalScrolling getItems={goldContents} isTrending={true} />
           )}
@@ -75,7 +80,11 @@ const MarketPlace = (props) => {
           {silverContents.length !== 0 ? (
             <HorizontalScrolling getItems={silverContents} isTrending={true} />
           ) : (
-            <Typography>Loading</Typography>
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           )}
         </div>
         <div
@@ -85,7 +94,11 @@ const MarketPlace = (props) => {
           {bronzeContents.length !== 0 ? (
             <HorizontalScrolling getItems={bronzeContents} isTrending={true} />
           ) : (
-            <Typography>Loading</Typography>
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           )}
         </div>
       </div>

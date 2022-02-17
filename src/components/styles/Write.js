@@ -113,10 +113,10 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "1.2rem"
     },
     uploadedImage: {
-        height: "450px",
+        height: "330px",
         position: "absolute",
-        right: 205,
-        bottom: -170
+        right: "22%",
+        top: "47%"
     },
     uploadPdf: {
         flex: "0 0 100%"

@@ -57,7 +57,7 @@ function HorizontalScrolling({
     );
   }
 
-  function Card({ onClick, selected, title, itemId, img, description }) {
+  function Card({ onClick, selected, title, itemId, img, author }) {
     const visibility = React.useContext(VisibilityContext);
     const { data } = usePalette(img);
 
@@ -65,7 +65,7 @@ function HorizontalScrolling({
       <div onClick={() => onClick(visibility)}>
         <div
           className={classes.card}
-          style={{ backgroundColor: data.darkVibrant }}>
+          style={{ backgroundColor: data.darkMuted }}>
           <img
             src={img}
             alt={title}
@@ -81,7 +81,8 @@ function HorizontalScrolling({
             onSale={onSale}
             isCollection={isCollection}
             src={img}
-            description={description}
+            title={title}
+            author={author}
           />
         </div>
       </div>
@@ -93,13 +94,14 @@ function HorizontalScrolling({
       LeftArrow={LeftArrow}
       RightArrow={RightArrow}
       className={classes.scrollMenu}>
-      {items.map(({ id, title, coverImageHash, descriptionHash }) => (
+      {items.map(({ id, title, coverImageHash, descriptionHash, author }) => (
         <Card
           itemId={id} // NOTE: itemId is required for track items
           title={title}
           key={id}
           img={coverImageHash}
           description={descriptionHash}
+          author={author}
           onClick={handleClick(id)}
           selected={isItemSelected(id)}
         />

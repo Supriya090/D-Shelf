@@ -13,7 +13,8 @@ function SubTitle({
   onSale = false,
   isCollection = false,
   src,
-  description,
+  title,
+  author,
 }) {
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
@@ -52,7 +53,8 @@ function SubTitle({
   if (isTrending || onSale) {
     return (
       <div>
-        <Typography>{description}</Typography>
+        <Typography>{title}</Typography>
+        <Typography>Author: {author}</Typography>
         <div className={scrollClasses.voteButtons}>
           <Button
             variant='contained'
@@ -74,10 +76,10 @@ function SubTitle({
     return (
       <div
         className={scrollClasses.forAuthor}
-        style={{ backgroundColor: data.darkVibrant }}>
+        style={{ backgroundColor: data.darkMuted }}>
         <img src={dummy} alt='avatar' className={scrollClasses.avatar} />
         <div className={scrollClasses.authorInfo}>
-          <Typography>Rahul Shah</Typography>
+          <Typography>Author: {author}</Typography>
           <Typography style={{ marginBottom: "10px" }}>
             1000 followers
           </Typography>
