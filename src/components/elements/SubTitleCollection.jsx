@@ -10,7 +10,7 @@ import { usePalette } from "react-palette";
 import Popup from "reactjs-popup";
 import { bookAddress } from "../../bookABI.js";
 
-function SubTitle (props) {
+function SubTitleCollection (props) {
   const homeClasses = HomeStyles();
   const popClasses = PopStyles();
   const scrollClasses = useStyles();
@@ -19,7 +19,7 @@ function SubTitle (props) {
   const [price, setPrice] = React.useState(null);
   let saleStats;
   let marketContract;
-
+/*
   const CreateMarketItem = async() => {
     if (price != null) {
       props
@@ -43,11 +43,10 @@ function SubTitle (props) {
       .catch((err) => {
         console.log(err);
       });
-    }else{
-      alert("Please enter a valid price!");
     }
+    alert("Please enter a valid price!");
   }
-
+*/
   if (props.onSale) {
     saleStats = (
       <div>
@@ -157,7 +156,6 @@ function SubTitle (props) {
             </div>
             <button
               className={`${scrollClasses.followButton} ${homeClasses.exploreButton}`}
-              onClick={CreateMarketItem}
             >
               Create Listing
             </button>
@@ -171,4 +169,4 @@ function SubTitle (props) {
   }
 }
 
-export default SubTitle;
+export default SubTitleCollection;

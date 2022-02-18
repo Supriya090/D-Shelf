@@ -4,13 +4,13 @@ import { Arrow } from "./Arrow";
 import useStyles from "../styles/Scrollbar";
 import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
-import SubTitle from "./SubTitle";
+import SubTitleCollection from "./SubTitleCollection";
 import { usePalette } from "react-palette";
 import alt from "../../assets/alt.png";
 
 // const getItems = content;
 
-function HorizontalScrolling(props) {
+function HorizontalScrollingCollection(props) {
   let isTrending=false;
   let isAuthor=false;
   let onSale = false;
@@ -72,7 +72,7 @@ function HorizontalScrolling(props) {
               e.target.onerror = null; // prevents looping
             }}
           />
-          <SubTitle
+          <SubTitleCollection
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
@@ -108,4 +108,4 @@ function HorizontalScrolling(props) {
   );
 }
 
-export default HorizontalScrolling;
+export default HorizontalScrollingCollection;
