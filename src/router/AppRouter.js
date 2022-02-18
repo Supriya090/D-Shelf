@@ -29,7 +29,7 @@ function App() {
   //If you have changed your account from wallet the click button again to refresh the defaultAccount
 
   const ConnectWalletHandler = async () => {
-    if (typeof window.ethereum !== undefined) {
+    if (window.ethereum) {
       // set ethers provider
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
@@ -37,48 +37,40 @@ function App() {
       marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
 
       // connect to metamask
-      if(!checkIfWalletIsConnected){
-        const account = await window.ethereum.request({ method: 'wallet_requestPermissions',
-            params: [{
-              eth_accounts: {}
-            }]
-        }).then(() => window.ethereum.request({ method: 'eth_requestAccounts' }))
-        
-          setErrorMessage(null);
-          defaultAccount = account[0];
-          setConnButtonText('Wallet Connected');
-          bookContract.connect(defaultAccount);
-          marketContract.connect(defaultAccount);
-          console.log(defaultAccount)
-        
+      // if(!checkIfWalletIsConnected){
+        window.ethereum.request({
+          method: "eth_accounts",
+        })
+        .then(async(account) => {
+          if (account.length > 0) {} //do nothing 
+          else{
+            const account = await window.ethereum.request({ method: 'wallet_requestPermissions',
+                params: [{
+                  eth_accounts: {}
+                }] 
+              })
+            }
+        })
+        .then(() => {
+          window.ethereum.request({ method: 'eth_requestAccounts' })
+          .then((account) => {
+            setErrorMessage(null);
+            defaultAccount = account[0];
+            setConnButtonText('Wallet Connected');
+            bookContract.connect(defaultAccount);
+            marketContract.connect(defaultAccount);
+            console.log(defaultAccount)
+          })
         .catch(error => {
           console.log(error);
         })
-      }
-        
-
+      })
     } else {
       // Ethers.js
-      console.log('Need to install MetaMask');
+      alert('Need to install MetaMask');
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
   }
-
-  const checkIfWalletIsConnected =  async() => {
-    if (window.ethereum) {
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-  
-      if (accounts.length > 0) {
-        const account = accounts[0];
-        defaultAccount=account;
-        setConnButtonText('Wallet Connected');
-        return true;
-      }
-    }
-  }
-  
 
   const setup = () => {
     return new Promise((resolve, reject) => {
@@ -159,10 +151,6 @@ function App() {
     // const goldContentsIndexAvailable = await bookContract.getContentbyTokensArray(totalgoldtokenAvailable);
     // const contents = await bookContract.getContentbyContentIndexArray(goldContentsIndexAvailable);
   }
-
-  useEffect(() => {
-    checkIfWalletIsConnected();
-  }, []);
 
   useEffect(() => {
     
