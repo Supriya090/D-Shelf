@@ -27,6 +27,7 @@ function App() {
 
   //Please connect your account to the wallet first the click the button
   //If you have changed your account from wallet the click button again to refresh the defaultAccount
+
   const ConnectWalletHandler = async () => {
     if (typeof window.ethereum !== undefined) {
       // set ethers provider
@@ -36,18 +37,25 @@ function App() {
       marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
 
       // connect to metamask
-      await window.ethereum.request({ method: 'eth_requestAccounts' })
-        .then(function (result) {
+      if(!checkIfWalletIsConnected){
+        const account = await window.ethereum.request({ method: 'wallet_requestPermissions',
+            params: [{
+              eth_accounts: {}
+            }]
+        }).then(() => window.ethereum.request({ method: 'eth_requestAccounts' }))
+        
           setErrorMessage(null);
+          defaultAccount = account[0];
           setConnButtonText('Wallet Connected');
-          defaultAccount = result[0];
           bookContract.connect(defaultAccount);
           marketContract.connect(defaultAccount);
           console.log(defaultAccount)
-        })
+        
         .catch(error => {
           console.log(error);
         })
+      }
+        
 
     } else {
       // Ethers.js
@@ -55,6 +63,22 @@ function App() {
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
   }
+
+  const checkIfWalletIsConnected =  async() => {
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
+  
+      if (accounts.length > 0) {
+        const account = accounts[0];
+        defaultAccount=account;
+        setConnButtonText('Wallet Connected');
+        return true;
+      }
+    }
+  }
+  
 
   const setup = () => {
     return new Promise((resolve, reject) => {
@@ -135,6 +159,10 @@ function App() {
     // const goldContentsIndexAvailable = await bookContract.getContentbyTokensArray(totalgoldtokenAvailable);
     // const contents = await bookContract.getContentbyContentIndexArray(goldContentsIndexAvailable);
   }
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
 
   useEffect(() => {
     
