@@ -38,21 +38,23 @@ function App() {
 
       // connect to metamask
       // if(!checkIfWalletIsConnected){
-        window.ethereum.request({
+        await window.ethereum.request({
           method: "eth_accounts",
         })
         .then(async(account) => {
-          if (account.length > 0) {} //do nothing 
+          if (account.length > 0) {
+            defaultAccount = account[0];
+          }
           else{
-            const account = await window.ethereum.request({ method: 'wallet_requestPermissions',
+            await window.ethereum.request({ method: 'wallet_requestPermissions',
                 params: [{
                   eth_accounts: {}
                 }] 
               })
             }
         })
-        .then(() => {
-          window.ethereum.request({ method: 'eth_requestAccounts' })
+        .then(async() => {
+          await window.ethereum.request({ method: 'eth_requestAccounts' })
           .then((account) => {
             setErrorMessage(null);
             defaultAccount = account[0];
@@ -78,6 +80,7 @@ function App() {
         .then(() => {
           // const list = Promise.all([ defaultAccount, bookContract, marketContract, provider, signer ])
           const list = [defaultAccount, bookContract, marketContract, provider, signer]
+          console.log(list)
           resolve(list);
         })
       .catch(error => {
