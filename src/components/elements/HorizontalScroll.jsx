@@ -15,21 +15,11 @@ function HorizontalScrolling(props) {
   let isAuthor=false;
   let onSale = false;
   const [items, setItems] = React.useState(props.getItems);
-  const [selected, setSelected] = React.useState([]);
-  const [position, setPosition] = React.useState(0);
-  const isItemSelected = (id) => !!selected.find((el) => el === id);
 
   const classes = useStyles();
-  const handleClick =
-    (id) =>
-    ({ getItemById, scrollToItem }) => {
-      const itemSelected = isItemSelected(id);
-
-      setSelected((currentSelected) =>
-        itemSelected
-          ? currentSelected.filter((el) => el !== id)
-          : currentSelected.concat(id)
-      );
+  const handleClick = (index, author, authorAddr, contentType, coverImageHash, description, 
+    descriptionHash, publicationDate, title, tokenIds, tokenType) => () => {
+      //Load single page View
     };
 
   function LeftArrow() {
@@ -54,9 +44,10 @@ function HorizontalScrolling(props) {
     );
   }
 
-  function Card({ onClick, selected, title, itemId, img, author }) {
+  function Card({ onClick, author, authorAddr, contentType, coverImageHash, description, 
+       descriptionHash, publicationDate, title, tokenIds, tokenType }) {
     const visibility = React.useContext(VisibilityContext);
-    const { data } = usePalette(img);
+    const { data } = usePalette(coverImageHash);
 
     return (
       <div onClick={() => onClick(visibility)}>
@@ -64,7 +55,7 @@ function HorizontalScrolling(props) {
           className={classes.card}
           style={{ backgroundColor: data.darkMuted }}>
           <img
-            src={img}
+            src={coverImageHash}
             alt={title}
             className={classes.image}
             onError={(e) => {
@@ -77,7 +68,7 @@ function HorizontalScrolling(props) {
             isAuthor={isAuthor}
             onSale={onSale}
             isCollection={props.isCollection}
-            src={img}
+            src={coverImageHash}
             title={title}
             author={author}
             setup={props.setup}
@@ -92,16 +83,22 @@ function HorizontalScrolling(props) {
       LeftArrow={LeftArrow}
       RightArrow={RightArrow}
       className={classes.scrollMenu}>
-      {items.map(({ id, title, coverImageHash, descriptionHash, author }) => (
+      {items.map((value, index) => (
         <Card
-          itemId={id} // NOTE: itemId is required for track items
-          title={title}
-          key={id}
-          img={coverImageHash}
-          description={descriptionHash}
-          author={author}
-          onClick={handleClick(id)}
-          selected={isItemSelected(id)}
+          itemId={index} // NOTE: itemId is required for track items
+          key={index}
+          author = {value.author}
+          authorAddr = {value.authorAddr}
+          contentType = {value.contentType}
+          coverImageHash = {value.coverImageHash}
+          description = {value.description} 
+          descriptionHash = {value.descriptionHash} 
+          publicationDate = {value.publicationDate} 
+          title = {value.title} 
+          tokenIds = {value.tokenIds} 
+          tokenType = {value.tokenType}
+          onClick={handleClick(index, value.author, value.authorAddr, value.contentType, value.coverImageHash, value.description, 
+            value.descriptionHash, value.publicationDate, value.title, value.tokenIds, value.tokenType)}
         />
       ))}
     </ScrollMenu>

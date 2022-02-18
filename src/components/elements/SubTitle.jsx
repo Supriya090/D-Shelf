@@ -20,6 +20,8 @@ function SubTitle (props) {
   let saleStats;
   let marketContract;
 
+    // Need to get the total token ids of user for that specific content
+    // Done by filtering common number of array tokenids and user owned token ids
   const CreateMarketItem = async() => {
     if (price != null) {
       props

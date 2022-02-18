@@ -56,7 +56,7 @@ const Home = (props) => {
       .catch(err=>{
         console.log(err);
       })
-  }, [])
+  }, [props.connButtonText])
 
 
   return (

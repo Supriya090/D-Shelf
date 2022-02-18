@@ -184,7 +184,7 @@ function App() {
       />
 
       <Routes>
-        <Route exact path="/" element={<Home unSetup={unSetup} />}></Route>
+        <Route exact path="/" element={<Home connButtonText={connButtonText} unSetup={unSetup} />}></Route>
         <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>
