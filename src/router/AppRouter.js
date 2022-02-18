@@ -191,7 +191,7 @@ function App() {
         <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>
-        <Route exact path="/singlePage" element={<SinglePage setup={setup} />}></Route>
+        <Route exact path="/singlePage/:id" element={<SinglePage setup={setup} />}></Route>
       </Routes>
     </div>
   );

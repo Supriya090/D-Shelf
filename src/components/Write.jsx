@@ -147,6 +147,7 @@ const Write = (props) => {
             console.log("addedpdf : ", pdfurl);
 
             let ContentMetadata = {
+              cid: 0,
               title: title,
               tokenIds: [],
               tokenType: 1,

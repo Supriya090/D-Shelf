@@ -24,7 +24,7 @@ const PDFViewer = (props) => {
 
   const decrypt = () => {
     //full pdf string decryption --->
-    const bytes = CryptoJS.AES.decrypt(pdfBase64, "1234567890");
+    const bytes = CryptoJS.AES.decrypt(pdfBase64, "secret key 123");
     pdfBase64 = bytes.toString(CryptoJS.enc.Utf8);
   }
   

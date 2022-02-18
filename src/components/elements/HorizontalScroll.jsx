@@ -7,19 +7,20 @@ import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounde
 import SubTitle from "./SubTitle";
 import { usePalette } from "react-palette";
 import alt from "../../assets/alt.png";
-
-// const getItems = content;
+import { useNavigate } from "react-router";
 
 function HorizontalScrolling(props) {
   let isTrending=false;
   let isAuthor=false;
   let onSale = false;
   const [items, setItems] = React.useState(props.getItems);
-
+  const navigate = useNavigate();
+  
   const classes = useStyles();
-  const handleClick = (index, author, authorAddr, contentType, coverImageHash, description, 
-    descriptionHash, publicationDate, title, tokenIds, tokenType) => () => {
-      //Load single page View
+  const handleClick = (cid) => () => {
+    const id = cid.toNumber();
+    //Load Single page view
+    navigate(`/singlePage/${id}`);
     };
 
   function LeftArrow() {
@@ -44,7 +45,7 @@ function HorizontalScrolling(props) {
     );
   }
 
-  function Card({ onClick, author, authorAddr, contentType, coverImageHash, description, 
+  function Card({ onClick, cid, author, authorAddr, contentType, coverImageHash, description, 
        descriptionHash, publicationDate, title, tokenIds, tokenType }) {
     const visibility = React.useContext(VisibilityContext);
     const { data } = usePalette(coverImageHash);
@@ -85,8 +86,9 @@ function HorizontalScrolling(props) {
       className={classes.scrollMenu}>
       {items.map((value, index) => (
         <Card
-          itemId={index} // NOTE: itemId is required for track items
-          key={index}
+          itemId={value.cid} // NOTE: itemId is required for track items
+          key={value.cid}
+          cid={value.cid}
           author = {value.author}
           authorAddr = {value.authorAddr}
           contentType = {value.contentType}
@@ -97,8 +99,7 @@ function HorizontalScrolling(props) {
           title = {value.title} 
           tokenIds = {value.tokenIds} 
           tokenType = {value.tokenType}
-          onClick={handleClick(index, value.author, value.authorAddr, value.contentType, value.coverImageHash, value.description, 
-            value.descriptionHash, value.publicationDate, value.title, value.tokenIds, value.tokenType)}
+          onClick={handleClick(value.cid)}
         />
       ))}
     </ScrollMenu>

@@ -31,6 +31,7 @@ contract book is ERC721 {
 
     //details of each contents
     struct Content{
+        uint256 cid;
         string title;
         uint256[] tokenIds;
         TokenType tokenType;
@@ -67,7 +68,7 @@ contract book is ERC721 {
         mintingFee[TokenType.BRONZE] = 0.001 ether;
 
         developer = payable(msg.sender);
-        Content memory content = Content("", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "","");
+        Content memory content = Content(0,"", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "","");
         contents.push(content);
     }
 
@@ -114,16 +115,19 @@ contract book is ERC721 {
         }
         content.authorAddr=msg.sender;
         if(gold>0){
+            content.cid=contents.length;
             content.tokenType=TokenType.GOLD;
             content.tokenIds=tokenIdsGold;
             contents.push(content);
         }
         if(silver>0){
+            content.cid=contents.length;
             content.tokenType=TokenType.SILVER;
             content.tokenIds=tokenIdsSilver;
             contents.push(content);
         }
         if(bronze>0){
+            content.cid=contents.length;
             content.tokenType=TokenType.BRONZE;
             content.tokenIds=tokenIdsBronze;
             contents.push(content);
@@ -161,16 +165,19 @@ contract book is ERC721 {
         return (0,0,false);
     }
 
+    function getContentbyCID(uint256 cid) external view returns (Content memory content){
+        require(cid > 0 && cid < contents.length, "Content ID is not valid");
+        return contents[cid];
+    }
 
-    function getTokensOwnedByUser(address addr) public view returns (uint256[] memory){
+
+    function getTokensOwnedByUser(address addr) external view returns (uint256[] memory){
         return userOwnedTokens[addr];
     }
 
     function getTotalContents() external view returns (uint256){
         return contents.length;
     } 
-
-/*
 
     function getTotalgoldTokens() external view returns (uint256[] memory){
         return goldTokenIds;
@@ -181,8 +188,6 @@ contract book is ERC721 {
     function getTotalbronzeTokens() external view returns (uint256[] memory){
         return bronzeTokenIds;
     }
-
-*/
 
     function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;
