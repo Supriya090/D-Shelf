@@ -33,7 +33,7 @@ function SinglePage(props) {
         props.unsetup()
         .then(
           value => {
-            bookContract = value[1]
+            bookContract = value[0]
             console.log("bookContract", bookContract);
             resolve(bookContract);
         })
@@ -46,23 +46,30 @@ function SinglePage(props) {
     getContent()
     .then( async(bookContract) => {
       console.log("bookContract", bookContract)
+      var url;
     await bookContract.getContentbyCID(id)
     .then(content=>  {
+      url = content.descriptionHash
       setContent(content)
       console.log(content)
     })
     .then(async()=>{
-      await fetch(content.descriptionHash)
-      .then(async(raw) => {
-        await raw.text()
-        .then(text => {
-          console.log("text", text);
-          // var encrypted = CryptoJS.AES.decrypt(text, "secret key 123");
-          // var decrypted = encrypted.toString(CryptoJS.enc.Utf8);
-          setpdf(text);
+      await fetch(url)
+      .then((raw) => {
+        return raw.blob()
+      })
+        .then(blob => {
+          var reader = new FileReader();
+          reader.readAsText(blob); 
+          reader.onloadend = function() {
+              var base64data = reader.result;                
+              console.log(base64data);
+              var encrypted = CryptoJS.AES.decrypt(base64data, "secret key 123");
+              var decrypted = encrypted.toString(CryptoJS.enc.Utf8);
+              setpdf(decrypted);
+          }
         })
       })
-    })
     .catch(err=>{
       console.log("Fetch Error",err);
     })

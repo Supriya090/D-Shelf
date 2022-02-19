@@ -156,7 +156,27 @@ function App() {
   }
 
   useEffect(() => {
-    
+
+    async function GetConnected(){
+      if(window.ethereum){
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
+        });
+        if (accounts.length > 0) {
+        setup()
+        }else{
+          await window.ethereum.request({ method: 'wallet_requestPermissions',
+          params: [{
+            eth_accounts: {}
+          }] 
+        })
+        }
+      }else{
+        unSetup()
+      }
+    }
+    GetConnected();
+  
     async function OnWalletChange() {
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
