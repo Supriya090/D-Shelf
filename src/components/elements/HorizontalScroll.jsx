@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import { Arrow } from "./Arrow";
 import useStyles from "../styles/Scrollbar";
@@ -8,6 +8,7 @@ import SubTitle from "./SubTitle";
 import { usePalette } from "react-palette";
 import alt from "../../assets/alt.png";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 function HorizontalScrolling(props) {
   let isTrending=false;
@@ -45,9 +46,37 @@ function HorizontalScrolling(props) {
       </Arrow>
     );
   }
+  console.log("items", items.length);
+  // const [CollectiontokenIds, setCollectiontokenIds] = useState([[]]);
+  var CollectiontokenIds = [];
+  useEffect(() => {
+    if (props.isCollection) {
+    items.map((content,index) => {
+      var CtokenIds = [];
+      for(var i=0;i<content.tokenIds.length;i++){
+        CtokenIds.push(content.tokenIds[i].toNumber());
+      }
+      if(content.tokenType === 0){
+        const filtered = props.TotalGoldIds.filter(value => CtokenIds.includes(value));
+        CollectiontokenIds.push(filtered);
+      }
+      else if(content.tokenType === 1){
+        const filtered = props.TotalSilverIds.filter(value => CtokenIds.includes(value));
+        CollectiontokenIds.push(filtered);
+      }
+      else if(content.tokenType === 2){
+        const filtered = props.TotalBronzeIds.filter(value => CtokenIds.includes(value));
+        CollectiontokenIds.push(filtered);
+      }
+    })
+    console.log("CollectiontokenIds", CollectiontokenIds);
 
+  }
+  }, [CollectiontokenIds]);
+  
+    
   function Card({ onClick, cid, author, authorAddr, contentType, coverImageHash, description, 
-       descriptionHash, publicationDate, title, tokenIds, tokenType }) {
+       descriptionHash, publicationDate, title, tokenIds, tokenType, OwnedCollectionIds, index }) {
     const visibility = React.useContext(VisibilityContext);
     const { data } = usePalette(coverImageHash);
 
@@ -74,6 +103,8 @@ function HorizontalScrolling(props) {
             title={title}
             author={author}
             setup={props.setup}
+            UserCollectiontokenIds={CollectiontokenIds}
+            OwnedCollectionIds={OwnedCollectionIds[index]}
           />
         </div>
       </div>
@@ -81,11 +112,13 @@ function HorizontalScrolling(props) {
   }
 
   return (
+    <>
+    {/* {CollectiontokenIds.length > 0 ? ( */}
     <ScrollMenu
       LeftArrow={LeftArrow}
       RightArrow={RightArrow}
-      className={classes.scrollMenu}>
-      {items.map((value, index) => (
+      className={classes.scrollMenu}>{
+      items.map((value, index) => (
         <Card
           itemId={value.cid} // NOTE: itemId is required for track items
           key={value.cid}
@@ -100,10 +133,14 @@ function HorizontalScrolling(props) {
           title = {value.title} 
           tokenIds = {value.tokenIds} 
           tokenType = {value.tokenType}
+          OwnedCollectionIds = {CollectiontokenIds}
+          index = {index}
           onClick={handleClick(value.cid)}
         />
       ))}
     </ScrollMenu>
+    {/* ) : (<div>No</div>)}  */}
+    </>
   );
 }
 

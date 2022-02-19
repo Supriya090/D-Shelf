@@ -24,6 +24,10 @@ const Collections = (props) => {
   const [UsergoldContents, setGoldContents] = useState([]);
   const [UsersilverContents, setSilverContents] = useState([]);
   const [UserbronzeContents, setBronzeContents] = useState([]);
+  const [TotalBronzeIds, setTotalBronzeIds] = useState(null);
+  const [TotalSilverIds, setTotalSilverIds] = useState(null);
+  const [TotalGoldIds, setTotalGoldIds] = useState(null);
+  const [TotalIds, setTotalIds] = useState(null);
 
 
   useEffect(() => {
@@ -39,26 +43,49 @@ const Collections = (props) => {
           signer = value[4]
           // console.log(defaultAccount, bookContract, marketContract, provider, signer);
         })
-        .then(()=>{
-          bookContract.getAllContentsOfUser()
+        .then(async()=>{
+          await bookContract.getTotalgoldTokens()
+          .then(totalTokens=>{ setTotalIds(totalTokens)})
+          await bookContract.getAllContentsOfUser()
           .then(UserContents=>{
             console.log("User owned Content : ", UserContents);
             //Render User Contents
             setContents(UserContents);
           })
-          bookContract.getContentsByTokenTypeofUser("gold",  defaultAccount)
+          await bookContract.getTotalgoldTokens()
+          .then(totalGoldTokens=>{ 
+            var TotalGoldIds = [];
+            for(var i=0;i<totalGoldTokens.length;i++){
+              TotalGoldIds.push(totalGoldTokens[i].toNumber());
+            }
+            setTotalGoldIds(TotalGoldIds)})
+          await bookContract.getContentsByTokenTypeofUser("gold",  defaultAccount)
           .then(UserGoldContents=>{
             console.log("User owned gold Content : ", UserGoldContents);
             //Render User Gold Content
             setGoldContents(UserGoldContents);
           })
-          bookContract.getContentsByTokenTypeofUser("silver",  defaultAccount)
+          await bookContract.getTotalsilverTokens()
+          .then(totalSilverTokens=>{ 
+            var TotalSilverIds = [];
+            for(var i=0;i<totalSilverTokens.length;i++){
+              TotalSilverIds.push(totalSilverTokens[i].toNumber());
+            }
+            setTotalSilverIds(TotalSilverIds)})
+          await bookContract.getContentsByTokenTypeofUser("silver",  defaultAccount)
           .then(UserSilverContents=>{
             //Render User Silver Content
             console.log("User owned silver Content : ", UserSilverContents);
             setSilverContents(UserSilverContents);
           })
-          bookContract.getContentsByTokenTypeofUser("bronze",  defaultAccount)
+          await bookContract.getTotalbronzeTokens()
+          .then(totalBronzeTokens=>{ 
+            var TotalBronzeIds = [];
+            for(var i=0;i<totalBronzeTokens.length;i++){
+              TotalBronzeIds.push(totalBronzeTokens[i].toNumber());
+            }
+            setTotalBronzeIds(TotalBronzeIds)})
+          await bookContract.getContentsByTokenTypeofUser("bronze",  defaultAccount)
           .then(UserBronzeContents=>{
             console.log("User owned Bronze Content : ", UserBronzeContents);
             //Render User Bronze Content
@@ -81,22 +108,22 @@ const Collections = (props) => {
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>
           <ListHead title={""} leftButton={"Total Owned"} />
-          {UserContents.length === 0 ? (
+          {(UserContents.length === 0 && TotalIds === 0) ? (
             <img
               src={loader}
               alt='loading...'
               className={marketClasses.loader}
             />
-          ) : (
-            <HorizontalScrolling getItems={UserContents} isCollection={true} setup={props.setup} />
+          ) : (<></>
+            // <HorizontalScrolling getItems={UserContents} isCollection={true} setup={props.setup} TotalIds={TotalIds} />
           )}
         </div>
         <div
           className={homeClasses.notableContents}
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Gold"} />
-          {UsergoldContents.length !== 0 ? (
-            <HorizontalScrolling getItems={UsergoldContents} isCollection={true} setup={props.setup} />
+          {(UsergoldContents.length !== 0 && TotalGoldIds !== 0) ? (
+            <HorizontalScrolling getItems={UsergoldContents} isCollection={true} setup={props.setup} TotalGoldIds={TotalGoldIds}/>
           ) : (
             <img
               src={loader}
@@ -109,8 +136,8 @@ const Collections = (props) => {
           className={homeClasses.notableContents}
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Silver"} />
-          {UsersilverContents.length !== 0 ? (
-            <HorizontalScrolling getItems={UsersilverContents} isCollection={true} setup={props.setup} />
+          {(UsersilverContents.length !== 0 && TotalSilverIds !== 0) ? (
+            <HorizontalScrolling getItems={UsersilverContents} isCollection={true} setup={props.setup} TotalSilverIds={TotalSilverIds} />
           ) : (
             <img
               src={loader}
@@ -123,8 +150,8 @@ const Collections = (props) => {
           className={homeClasses.notableCreators}
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Bronze"} />
-          {UserbronzeContents.length !== 0 ? (
-            <HorizontalScrolling getItems={UserbronzeContents} isCollection={true} setup={props.setup} />
+          {(UserbronzeContents.length !== 0 && TotalBronzeIds !== 0) ? (
+            <HorizontalScrolling getItems={UserbronzeContents} isCollection={true} TotalBronzeIds={TotalBronzeIds} />
           ) : (
             <img
               src={loader}

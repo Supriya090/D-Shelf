@@ -9,13 +9,18 @@ import dummy from "../../assets/dummy.jpg";
 import { usePalette } from "react-palette";
 import Popup from "reactjs-popup";
 import { bookAddress } from "../../bookABI.js";
+import { useState } from "react";
+import { ethers } from "ethers"
 
 function SubTitle (props) {
   const homeClasses = HomeStyles();
   const popClasses = PopStyles();
   const scrollClasses = useStyles();
   const { data } = usePalette(props.src);
+  // const options = props.OwnedCollectionIds
+  // console.log(options);
 
+  const [selectedToken, setSelectedToken] = useState(null)
   const [price, setPrice] = React.useState(null);
   let saleStats;
   let marketContract;
@@ -23,14 +28,16 @@ function SubTitle (props) {
     // Need to get the total token ids of user for that specific content
     // Done by filtering common number of array tokenids and user owned token ids
   const CreateMarketItem = async() => {
-    if (price != null) {
+    if (price != null && selectedToken != null) {
       props
       .setup()
       .then((value) => {
         marketContract = value[2];
-        //need to get token id
-        const tokenId = 1;
-        marketContract.createMarketItem(bookAddress, tokenId, price)
+        const pricing = ethers.BigNumber.from(price)
+        console.log(selectedToken);
+        // console.log(tokenId);
+        console.log(pricing);
+        marketContract.createMarketItem(bookAddress, selectedToken, pricing)
         .then(async(transaction) => {
           console.log(transaction);
           const receipt = await transaction.wait();
@@ -126,7 +133,7 @@ function SubTitle (props) {
         </div>
       </div>
     );
-  } else if (props.isCollection) {
+  } else if (props.isCollection && props.OwnedCollectionIds) {
     return (
       <>
         <Typography>
@@ -150,6 +157,17 @@ function SubTitle (props) {
               &times;
             </button>
             <div >
+            <select
+              // value={props.OwnedCollectionIds}
+              onChange={(e) => setSelectedToken(e.target.value)}
+            >
+              {props.OwnedCollectionIds.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {/* <span>Selected option: {selectedToken}</span> */}
               <input
                 type='text'
                 placeholder='Price'
