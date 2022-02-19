@@ -103,7 +103,7 @@ function App() {
         resolve(list);
       }
       else {
-        provider = new ethers.providers.AlchemyProvider("rinkeby", "d817Kizj_ytPdnaWgl84iEp3Asg0GLLk")        
+        provider = new ethers.providers.AlchemyProvider("rinkeby", "cQwQ1GuU6HfIcVaHoHMZe7dKl_ttPwGL")        
         const wallet = new ethers.Wallet(privateKey, provider);
         const signer = wallet.connect(provider);
         bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
@@ -191,7 +191,7 @@ function App() {
         <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>
-        <Route exact path="/singlePage/:id" element={<SinglePage setup={setup} />}></Route>
+        <Route exact path="/singlePage/:id" element={<SinglePage setup={setup} unsetup={unSetup} connButtonText={connButtonText} />}></Route>
       </Routes>
     </div>
   );

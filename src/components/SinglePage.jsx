@@ -19,38 +19,62 @@ function SinglePage(props) {
   const [pdf, setpdf] = useState(null);
   var bookContract;
 
+    function getContent() {
+     return new Promise( (resolve, reject) => {
+      if(props.connButtonText === "Wallet Connected"){
+        props.setup()
+        .then(
+          value => {
+            bookContract = value[1]
+            console.log("bookContract", bookContract);
+            resolve(bookContract);
+        })
+      }else{
+        props.unsetup()
+        .then(
+          value => {
+            bookContract = value[1]
+            console.log("bookContract", bookContract);
+            resolve(bookContract);
+        })
+      }
+    })
+  }
+
   useEffect(() => {
-    props.setup()
-    .then(
-      value => {
-        bookContract = value[1]
+    function Get(){
+    getContent()
+    .then( async(bookContract) => {
+      console.log("bookContract", bookContract)
+    await bookContract.getContentbyCID(id)
+    .then(content=>  {
+      setContent(content)
+      console.log(content)
     })
     .then(async()=>{
-      await bookContract.getContentbyCID(id)
-      .then(content=>{
-        console.log("Content : ", content);
-        setContent(content);
-      })
-      .then(async()=>{
-        await fetch(String(content.descriptionHash))
-        .then(encryptedpdf=>{
-            setpdf(encryptedpdf);
+      await fetch(content.descriptionHash)
+      .then(async(raw) => {
+        await raw.text()
+        .then(text => {
+          console.log("text", text);
+          // var encrypted = CryptoJS.AES.decrypt(text, "secret key 123");
+          // var decrypted = encrypted.toString(CryptoJS.enc.Utf8);
+          setpdf(text);
         })
-      })
-      .catch(err=>{
-        console.log("Fetch Error",err);
       })
     })
     .catch(err=>{
-      console.log("Loging Error",err);
+      console.log("Fetch Error",err);
     })
-  }, [])
+  })}
+  Get()
+  }, [props.connButtonText])
 
   const { cid, author, authorAddr, contentType, coverImageHash, description, 
           descriptionHash, publicationDate, title, tokenIds, tokenType } = content
   const date = new Date(publicationDate).toString();
 
-  console.log("encryptedPdf : ", pdf);
+  console.log("encryptedPdf 2 : ", pdf);
   return (
     <div className={classes.singleContent}>
       <div className={classes.bookDetails}>
@@ -129,9 +153,10 @@ function SinglePage(props) {
               {description}
             </Typography>
           </div>
+          {pdf ? (
           <div className={classes.sPViewer}>
               <PDFViewer pdfBase64={pdf} />
-          </div>
+          </div>) : (<div>Loading ...</div>)}
         </>
         )}
       </div>

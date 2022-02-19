@@ -18,6 +18,7 @@ function HorizontalScrolling(props) {
   
   const classes = useStyles();
   const handleClick = (cid) => () => {
+    console.log("cid", cid);
     const id = cid.toNumber();
     //Load Single page view
     navigate(`/singlePage/${id}`);

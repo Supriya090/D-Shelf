@@ -1,5 +1,5 @@
 import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import dummy from "../assets/dummy.jpg";
 import { useStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
@@ -18,6 +18,10 @@ const Home = (props) => {
   var signer;
 
   const classes = useStyles();
+  const [goldContents, setGoldContents] = useState([]);
+  const [silverContents, setSilverContents] = useState([]);
+  const [bronzeContents, setBronzeContents] = useState([]);
+
   const navigate = useNavigate();
   const marketRoute = () => {
     navigate("/marketplace", { replace: true });
@@ -39,17 +43,20 @@ const Home = (props) => {
         bookContract.getContentsOfEachTokenType("gold")
         .then(GoldContents=>{
           console.log("All gold Content : ", GoldContents);
+          setGoldContents(GoldContents);
           //Render Gold Content
         })
         bookContract.getContentsOfEachTokenType("silver")
         .then(SilverContents=>{
           //Render Silver Content
           console.log("All silver Content : ", SilverContents);
+          setSilverContents(SilverContents);
         })
         bookContract.getContentsOfEachTokenType("bronze")
         .then(BronzeContents=>{
-          console.log("All Bronze Content : ", BronzeContents);
           //Render Bronze Content
+          console.log("All Bronze Content : ", BronzeContents);
+          setBronzeContents(BronzeContents);
         })
 
       })
