@@ -1,5 +1,5 @@
 import { Typography, TextField, InputAdornment } from "@material-ui/core";
-import useStyles from "../styles/Write";
+import { useStyles } from "../styles/Write";
 import React from "react";
 
 function WriteCopies(props) {

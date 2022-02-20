@@ -123,6 +123,7 @@ function HorizontalScrolling({
             setup={props.setup}
             UserCollectiontokenIds={CollectiontokenIds}
             OwnedCollectionIds={OwnedCollectionIds[index]}
+            tokenType={tokenType}
           />
         </div>
       </div>

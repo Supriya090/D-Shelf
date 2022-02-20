@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Typography, Button } from "@material-ui/core";
+import { TextField, Typography, Button, Badge } from "@material-ui/core";
 import useStyles from "../styles/Scrollbar";
 import { useStyles as HomeStyles } from "../styles/Home";
 import { useStyles as PopStyles } from "../styles/Popup";
@@ -7,56 +7,16 @@ import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
 import { usePalette } from "react-palette";
-import Popup from "reactjs-popup";
-import { bookAddress } from "../../bookABI.js";
-import { useState } from "react";
-import { ethers } from "ethers";
+import PopupBox from "./Popup";
 
 function SubTitle(props) {
   const homeClasses = HomeStyles();
-  const popClasses = PopStyles();
   const scrollClasses = useStyles();
   const { data } = usePalette(props.src);
   // const options = props.OwnedCollectionIds
   // console.log(options);
-
-  const [selectedToken, setSelectedToken] = useState(null);
-  const [price, setPrice] = React.useState(null);
+  console.log(props);
   let saleStats;
-  let marketContract;
-
-  // Need to get the total token ids of user for that specific content
-  // Done by filtering common number of array tokenids and user owned token ids
-  const CreateMarketItem = async () => {
-    if (price != null && selectedToken != null) {
-      props
-        .setup()
-        .then((value) => {
-          marketContract = value[2];
-          const pricing = ethers.BigNumber.from(price);
-          console.log(selectedToken);
-          // console.log(tokenId);
-          console.log(pricing);
-          marketContract
-            .createMarketItem(bookAddress, selectedToken, pricing)
-            .then(async (transaction) => {
-              console.log(transaction);
-              const receipt = await transaction.wait();
-              console.log(receipt);
-              alert("Successfully listed for sale!");
-            })
-            .catch((err) => {
-              console.log(err);
-              alert("Failed to list for sale!");
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      alert("Please enter a valid price!");
-    }
-  };
 
   if (props.onSale) {
     saleStats = (
@@ -70,17 +30,21 @@ function SubTitle(props) {
             </div>
             ($10000)
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}>
+            <Badge
+              className={scrollClasses.badge}
+              style={{ backgroundColor: "#C9B037" }}>
+              Gold
+            </Badge>
             <Button
               variant='contained'
               className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
               Buy Now
-            </Button>
-            <Button
-              variant='contained'
-              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}
-              style={{ backgroundColor: "#C9B037" }}>
-              Gold
             </Button>
           </div>
         </div>
@@ -141,49 +105,13 @@ function SubTitle(props) {
         <Typography style={{ marginTop: "10px" }}>
           Author: {props.author}
         </Typography>
-        <Popup
-          trigger={
-            <Button
-              variant='contained'
-              className={`${scrollClasses.voteButton} ${homeClasses.exploreButton}`}>
-              List For Sale
-            </Button>
-          }
-          modal>
-          {(close) => (
-            <div>
-              <button className={popClasses.close} onClick={close}>
-                &times;
-              </button>
-              <div>
-                <select
-                  // value={props.OwnedCollectionIds}
-                  onChange={(e) => setSelectedToken(e.target.value)}>
-                  {props.OwnedCollectionIds.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                {console.log(selectedToken)}
-                {/* <span>Selected option: {selectedToken}</span> */}
-                <input
-                  type='text'
-                  placeholder='Price'
-                  autoFocus='autofocus'
-                  onChange={(event) => {
-                    setPrice(event.target.value);
-                  }}
-                />
-              </div>
-              <button
-                className={`${scrollClasses.followButton} ${homeClasses.exploreButton}`}
-                onClick={CreateMarketItem}>
-                Create Listing
-              </button>
-            </div>
-          )}
-        </Popup>
+        <PopupBox
+          author={props.author}
+          setup={props.setup}
+          OwnedCollectionIds={props.OwnedCollectionIds}
+          title={props.title}
+          tokenType={props.tokenType}
+        />
       </>
     );
   } else {
