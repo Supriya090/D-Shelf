@@ -10,9 +10,9 @@ import { usePalette } from "react-palette";
 import Popup from "reactjs-popup";
 import { bookAddress } from "../../bookABI.js";
 import { useState } from "react";
-import { ethers } from "ethers"
+import { ethers } from "ethers";
 
-function SubTitle (props) {
+function SubTitle(props) {
   const homeClasses = HomeStyles();
   const popClasses = PopStyles();
   const scrollClasses = useStyles();
@@ -20,42 +20,43 @@ function SubTitle (props) {
   // const options = props.OwnedCollectionIds
   // console.log(options);
 
-  const [selectedToken, setSelectedToken] = useState(null)
+  const [selectedToken, setSelectedToken] = useState(null);
   const [price, setPrice] = React.useState(null);
   let saleStats;
   let marketContract;
 
-    // Need to get the total token ids of user for that specific content
-    // Done by filtering common number of array tokenids and user owned token ids
-  const CreateMarketItem = async() => {
+  // Need to get the total token ids of user for that specific content
+  // Done by filtering common number of array tokenids and user owned token ids
+  const CreateMarketItem = async () => {
     if (price != null && selectedToken != null) {
       props
-      .setup()
-      .then((value) => {
-        marketContract = value[2];
-        const pricing = ethers.BigNumber.from(price)
-        console.log(selectedToken);
-        // console.log(tokenId);
-        console.log(pricing);
-        marketContract.createMarketItem(bookAddress, selectedToken, pricing)
-        .then(async(transaction) => {
-          console.log(transaction);
-          const receipt = await transaction.wait();
-          console.log(receipt);
-          alert("Successfully listed for sale!");
+        .setup()
+        .then((value) => {
+          marketContract = value[2];
+          const pricing = ethers.BigNumber.from(price);
+          console.log(selectedToken);
+          // console.log(tokenId);
+          console.log(pricing);
+          marketContract
+            .createMarketItem(bookAddress, selectedToken, pricing)
+            .then(async (transaction) => {
+              console.log(transaction);
+              const receipt = await transaction.wait();
+              console.log(receipt);
+              alert("Successfully listed for sale!");
+            })
+            .catch((err) => {
+              console.log(err);
+              alert("Failed to list for sale!");
+            });
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-          alert("Failed to list for sale!");
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    }else{
+    } else {
       alert("Please enter a valid price!");
     }
-  }
+  };
 
   if (props.onSale) {
     saleStats = (
@@ -136,54 +137,53 @@ function SubTitle (props) {
   } else if (props.isCollection && props.OwnedCollectionIds) {
     return (
       <>
-        <Typography>
-          Learn to read Novels Like a Professor
-          <br />
-          Tips by Supriya Khadka
+        <Typography style={{ marginBottom: "10px" }}>{props.title}</Typography>
+        <Typography style={{ marginTop: "10px" }}>
+          Author: {props.author}
         </Typography>
-
         <Popup
-          trigger={<Button
+          trigger={
+            <Button
               variant='contained'
               className={`${scrollClasses.voteButton} ${homeClasses.exploreButton}`}>
               List For Sale
             </Button>
           }
-          modal
-        >
-        {close => (
-          <div >
-            <button  className={popClasses.close} onClick={close}>
-              &times;
-            </button>
-            <div >
-            <select
-              // value={props.OwnedCollectionIds}
-              onChange={(e) => setSelectedToken(e.target.value)}
-            >
-              {props.OwnedCollectionIds.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            {/* <span>Selected option: {selectedToken}</span> */}
-              <input
-                type='text'
-                placeholder='Price'
-                autofocus='autofocus'
-                onChange={ event => { setPrice(event.target.value) }}
+          modal>
+          {(close) => (
+            <div>
+              <button className={popClasses.close} onClick={close}>
+                &times;
+              </button>
+              <div>
+                <select
+                  // value={props.OwnedCollectionIds}
+                  onChange={(e) => setSelectedToken(e.target.value)}>
+                  {props.OwnedCollectionIds.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {console.log(selectedToken)}
+                {/* <span>Selected option: {selectedToken}</span> */}
+                <input
+                  type='text'
+                  placeholder='Price'
+                  autoFocus='autofocus'
+                  onChange={(event) => {
+                    setPrice(event.target.value);
+                  }}
                 />
+              </div>
+              <button
+                className={`${scrollClasses.followButton} ${homeClasses.exploreButton}`}
+                onClick={CreateMarketItem}>
+                Create Listing
+              </button>
             </div>
-            <button
-              className={`${scrollClasses.followButton} ${homeClasses.exploreButton}`}
-              onClick={CreateMarketItem}
-            >
-              Create Listing
-            </button>
-          </div>
-        )}
-      </Popup>
+          )}
+        </Popup>
       </>
     );
   } else {
