@@ -235,6 +235,7 @@ const Collections = (props) => {
           <ListHead title={""} leftButton={"Bronze"} />
           {UserbronzeContents.length !== 0 && TotalBronzeIds !== 0 ? (
             <HorizontalScrolling
+              setup = {props.setup}
               getItems={UserbronzeContents}
               isCollection={true}
               TotalBronzeIds={TotalBronzeIds}

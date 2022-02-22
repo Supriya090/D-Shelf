@@ -73,11 +73,11 @@ function App() {
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
   }
-  const buyContent = async(tokenId) => { 
-        const amount = 1;
+  const buyContent = async(tokenId,amount) => { 
+        // const amount = 1;
         const tx = {
           value: ethers.utils.parseEther(amount.toString()),
-          gasLimit: 5000000,
+          gasLimit: 10000000,
         };
         marketContract.createMarketSale(bookAddress, tokenId,tx)
         .then(async(transaction) => {

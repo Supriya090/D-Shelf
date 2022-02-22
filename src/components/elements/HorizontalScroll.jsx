@@ -23,7 +23,8 @@ function HorizontalScrolling({
   const handleClick = (cid,itemId,price) => () => {
     console.log("cid", itemId);
     const id = cid.toNumber();
-    itemId = itemId.toNumber();
+
+    // itemId = itemId.toNumber();
     
     //Load Single page view
     navigate(`/singlePage/${id}/${itemId}/${price}`);
@@ -82,6 +83,8 @@ function HorizontalScrolling({
   }, [CollectiontokenIds]);
 
   function Card({
+    price,
+    itemId,
     onClick,
     cid,
     author,
@@ -115,6 +118,8 @@ function HorizontalScrolling({
             }}
           />
           <SubTitle
+          price = {price}
+          itemId = {itemId}
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
@@ -127,6 +132,7 @@ function HorizontalScrolling({
             UserCollectiontokenIds={CollectiontokenIds}
             OwnedCollectionIds={OwnedCollectionIds[index]}
             tokenType={tokenType}
+            setup = {props.setup}
           />
 
         </div>

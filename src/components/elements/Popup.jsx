@@ -46,11 +46,12 @@ const PopupBox = (props) => {
           if (selectedToken === null) {
             setSelectedToken(props.OwnedCollectionIds[0]);
           }
-          console.log(selectedToken);
+          
+          console.log("selected token",props.OwnedCollectionIds[0]);
           // console.log(tokenId);
           console.log(pricing);
           marketContract
-            .createMarketItem(bookAddress, selectedToken, pricing)
+            .createMarketItem(bookAddress, props.OwnedCollectionIds[0], pricing)
             .then(async (transaction) => {
               console.log(transaction);
               const receipt = await transaction.wait();
