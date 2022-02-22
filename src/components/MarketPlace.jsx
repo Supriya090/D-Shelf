@@ -21,7 +21,24 @@ const MarketPlace = (props) => {
   const [bronzeContents, setBronzeContents] = useState([]);
 
   useEffect(() => {
-   
+    const addContent = (content,item={tokenId:"a",itemId:"b"}) => {
+      let listed = {
+        tokenId : item.tokenId,
+        tokenIds : content.tokenIds,
+        itemId : item.itemId,
+        title : content.title,
+        tokenType : content.tokenType,
+        cid : content.cid,
+        publicationDate : content.publicationDate,
+        author : content.author,
+        authorAddr: content.authorAddr,
+        coverImageHash: content.coverImageHash,
+        descriptionHash: content.descriptionHash,
+        description: content.description,
+        price:item.price
+        }
+        return listed
+    }
     props
       .unSetup()
       .then((value) => {
@@ -40,22 +57,8 @@ const MarketPlace = (props) => {
         for(const item of items){
           const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
           const content =  await bookContract.getContentbyCID(cid)
-          let listed = {
-            tokenId : item.tokenId,
-            tokenIds : content.tokenIds,
-            itemId : item.itemId,
-            title : content.title,
-            tokenType : content.tokenType,
-            cid : content.cid,
-            publicationDate : content.publicationDate,
-            author : content.author,
-            authorAddr: content.authorAddr,
-            coverImageHash: content.coverImageHash,
-            descriptionHash: content.descriptionHash,
-            description: content.description,
-            price : item.price
-          }
-          listedcontent.push(listed)
+         
+          listedcontent.push(addContent(content,item))
           
         }
         let gold = [], silver = [], bronze =[]

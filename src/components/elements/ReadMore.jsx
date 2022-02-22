@@ -16,10 +16,10 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Rubik, sans-serif",
   },
 }));
-function ReadMore({ children }) {
+function ReadMore({ children,content }) {
   const navigate = useNavigate();
   const singleRoute = () => {
-    navigate("/singlePage", { replace: true });
+    navigate(`/singlePage/${content.cid}/${content.itemId}/${content.price}`);
   };
   const classes = useStyles();
   const [isHidden, setIsHidden] = useState(true);
