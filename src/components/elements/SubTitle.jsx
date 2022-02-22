@@ -43,7 +43,7 @@ function SubTitle(props) {
             </Badge>
             <Button
               variant='contained'
-              onClick={props.buyContent.bind(this,props.itemId,props.price)}
+              onClick={props.buyContent}
               className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
               Buy Now
             </Button>
