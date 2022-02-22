@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Typography, Button } from "@material-ui/core";
+import { TextField, Typography, Button, Badge } from "@material-ui/core";
 import useStyles from "../styles/Scrollbar";
 import { useStyles as HomeStyles } from "../styles/Home";
 import { useStyles as PopStyles } from "../styles/Popup";
@@ -7,48 +7,16 @@ import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
 import { usePalette } from "react-palette";
-import Popup from "reactjs-popup";
-import { bookAddress } from "../../bookABI.js";
+import PopupBox from "./Popup";
 
-function SubTitle (props) {
+function SubTitle(props) {
   const homeClasses = HomeStyles();
-  const popClasses = PopStyles();
   const scrollClasses = useStyles();
   const { data } = usePalette(props.src);
-
-  const [price, setPrice] = React.useState(null);
+  // const options = props.OwnedCollectionIds
+  // console.log(options);
+  console.log(props);
   let saleStats;
-  let marketContract;
-
-    // Need to get the total token ids of user for that specific content
-    // Done by filtering common number of array tokenids and user owned token ids
-  const CreateMarketItem = async() => {
-    if (price != null) {
-      props
-      .setup()
-      .then((value) => {
-        marketContract = value[2];
-        //need to get token id
-        const tokenId = 1;
-        marketContract.createMarketItem(bookAddress, tokenId, price)
-        .then(async(transaction) => {
-          console.log(transaction);
-          const receipt = await transaction.wait();
-          console.log(receipt);
-          alert("Successfully listed for sale!");
-        })
-        .catch(err => {
-          console.log(err);
-          alert("Failed to list for sale!");
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    }else{
-      alert("Please enter a valid price!");
-    }
-  }
 
   if (props.onSale) {
     saleStats = (
@@ -62,18 +30,22 @@ function SubTitle (props) {
             </div>
             ($10000)
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}>
+            <Badge
+              className={scrollClasses.badge}
+              style={{ backgroundColor: "#C9B037" }}>
+              Gold
+            </Badge>
             <Button
               variant='contained'
               onClick={props.buyContent}
               className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
               Buy Now
-            </Button>
-            <Button
-              variant='contained'
-              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}
-              style={{ backgroundColor: "#C9B037" }}>
-              Gold
             </Button>
           </div>
         </div>
@@ -127,46 +99,20 @@ function SubTitle (props) {
         </div>
       </div>
     );
-  } else if (props.isCollection) {
+  } else if (props.isCollection && props.OwnedCollectionIds) {
     return (
       <>
-        <Typography>
-          Learn to read Novels Like a Professor
-          <br />
-          Tips by Supriya Khadka
+        <Typography style={{ marginBottom: "10px" }}>{props.title}</Typography>
+        <Typography style={{ marginTop: "10px" }}>
+          Author: {props.author}
         </Typography>
-
-        <Popup
-          trigger={<Button
-              variant='contained'
-              className={`${scrollClasses.voteButton} ${homeClasses.exploreButton}`}>
-              List For Sale
-            </Button>
-          }
-          modal
-        >
-        {close => (
-          <div >
-            <button  className={popClasses.close} onClick={close}>
-              &times;
-            </button>
-            <div >
-              <input
-                type='text'
-                placeholder='Price'
-                autofocus='autofocus'
-                onChange={ event => { setPrice(event.target.value) }}
-                />
-            </div>
-            <button
-              className={`${scrollClasses.followButton} ${homeClasses.exploreButton}`}
-              onClick={CreateMarketItem}
-            >
-              Create Listing
-            </button>
-          </div>
-        )}
-      </Popup>
+        <PopupBox
+          author={props.author}
+          setup={props.setup}
+          OwnedCollectionIds={props.OwnedCollectionIds}
+          title={props.title}
+          tokenType={props.tokenType}
+        />
       </>
     );
   } else {

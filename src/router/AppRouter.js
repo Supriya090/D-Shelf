@@ -75,19 +75,68 @@ function App() {
   }
   const buyContent = async() => { 
     // console.log("called")
-        const tokenId = 1;
-        marketContract.createMarketSale(bookAddress, tokenId)
-        .then(async(transaction) => {
-          console.log(transaction);
-          const receipt = await transaction.wait();
-          console.log(receipt);
-          alert("Content Bought");
-        })
-        .catch(err => {
-          console.log(err);
-          alert("Some error occured");
-        });
+        // const tokenId = 1;
+        // const amount = 1;
+        // const tx = {
+        //   value: ethers.utils.parseEther(amount.toString()),
+        //   gasLimit: 5000000,
+        // };
+        // marketContract.createMarketSale(bookAddress, tokenId,tx)
+        // .then(async(transaction) => {
+        //   console.log(transaction);
+        //   const receipt = await transaction.wait();
+        //   console.log(receipt);
+        //   alert("Content Bought");
+        // })
+        // .catch(err => {
+        //   console.log(err);
+        //   alert("Some error occured");
+        // });
+
+    
+      
        
+  }
+
+  const fetchMarketContent = async() => { 
+    const items = await marketContract.fetchMarketItems()
+    console.log(items[0].tokenId)
+    let listedcontent = []
+
+    
+    for(const item of items){
+      const cid = (await bookContract.getContentIndexByID(item.tokenId))[0]
+      const content = await bookContract.getContentbyCID(cid)
+      let listed = {
+        tokenId : item.tokenId,
+        itemId : item.itemId,
+        content : content
+      }
+      listedcontent.push(listed)
+      
+    }
+    console.log(listedcontent)
+    return listedcontent
+  }
+
+  const fetchOwnContent = async() => { 
+    const items = await marketContract.fetchMyNFTs()
+    console.log(items[0].tokenId)
+    let listedcontent = []
+
+    
+    for(const item of items){
+      const cid = (await bookContract.getContentIndexByID(item.tokenId))[0]
+      const content = await bookContract.getContentbyCID(cid)
+      let listed = {
+        tokenId : item.tokenId,
+        itemId : item.itemId,
+        content : content
+      }
+      listedcontent.push(listed)  
+    }
+    console.log(listedcontent)
+    return listedcontent
   }
 
   const setup = () => {
@@ -172,7 +221,27 @@ function App() {
   }
 
   useEffect(() => {
-    
+
+    async function GetConnected(){
+      if(window.ethereum){
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
+        });
+        if (accounts.length > 0) {
+        setup()
+        }else{
+          await window.ethereum.request({ method: 'wallet_requestPermissions',
+          params: [{
+            eth_accounts: {}
+          }] 
+        })
+        }
+      }else{
+        unSetup()
+      }
+    }
+    GetConnected();
+  
     async function OnWalletChange() {
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!

@@ -99,7 +99,13 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "auto",
         marginRight: "auto",
     },
-
+    badge: {
+        padding: "5px 15px",
+        borderRadius: "5px",
+        fontSize: "0.8rem",
+        fontWeight: 500,
+        color: "#000"
+    }
 }));
 
 export default useStyles;
