@@ -26,6 +26,7 @@ const Collections = (props) => {
   const [TotalGoldIds, setTotalGoldIds] = useState(null);
   const [TotalIds, setTotalIds] = useState(null);
   const [listedContents,setListedContents] = useState([])
+  const [purchasedContents,setPurchasedContents] = useState([])
 
   useEffect(() => {
     if (props.connButtonText === "Wallet Connected") {
@@ -41,12 +42,13 @@ const Collections = (props) => {
           // console.log(defaultAccount, bookContract, marketContract, provider, signer);
         })
         .then(async () => {
-          const items =  await marketContract.fetchMyNFTs()
-          console.log(items)
+          const items =  await marketContract.fetchItemsCreated()
+          console.log("listed..........",items)
           let listedcontent = []
           for(const item of items){
             const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
             const content =  await bookContract.getContentbyCID(cid)
+            console.log(content)
             let listed = {
             tokenId : item.tokenId,
             tokenIds : content.tokenIds,
@@ -64,7 +66,33 @@ const Collections = (props) => {
             listedcontent.push(listed) 
         }
         setListedContents(listedcontent)
-        console.log("Listed Contents",listedContents)
+        console.log("Listed Contents",listedcontent)
+
+        const myitems =  await marketContract.fetchMyNFTs()
+        console.log("purchased..........",myitems)
+        const mycontent = []
+        for(const item of myitems){
+          const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
+          const content =  await bookContract.getContentbyCID(cid)
+          let listed = {
+          tokenId : item.tokenId,
+          tokenIds : content.tokenIds,
+          itemId : item.itemId,
+          title : content.title,
+          tokenType : content.tokenType,
+          cid : content.cid,
+          publicationDate : content.publicationDate,
+          author : content.author,
+          authorAddr: content.authorAddr,
+          coverImageHash: content.coverImageHash,
+          descriptionHash: content.descriptionHash,
+          description: content.description
+          }
+          mycontent.push(listed) 
+      }
+      setPurchasedContents(mycontent)
+      console.log("Purchased Contents",mycontent)
+
           await bookContract.getTotalgoldTokens().then((totalTokens) => {
             setTotalIds(totalTokens);
           });
