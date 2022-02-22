@@ -10,7 +10,7 @@ import CryptoJS from "crypto-js";
 import alt from "../assets/alt.png";
 
 function SinglePage(props) {
-  const { id } = useParams();
+  const { id, itemId, price } = useParams();
   const homeClasses = homeStyles();
   const classes = useStyles();
   const [content, setContent] = useState({});
@@ -112,12 +112,12 @@ function SinglePage(props) {
               <div className={classes.buyDetails}>
                 <div>
                   Current Value
-                  <div className={homeClasses.bidNumStyle}>4 ETH </div>
+                  <div className={homeClasses.bidNumStyle}>{price} ETH </div>
                   ($10000)
                 </div>
                 <Button
                   variant='contained'
-                  onClick={props.buyContent}
+                  onClick={props.buyContent.bind(itemId,price+1)}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now

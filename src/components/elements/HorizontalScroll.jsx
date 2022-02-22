@@ -20,11 +20,13 @@ function HorizontalScrolling({
   const navigate = useNavigate();
 
   const classes = useStyles();
-  const handleClick = (cid) => () => {
-    console.log("cid", cid);
+  const handleClick = (cid,itemId,price) => () => {
+    console.log("cid", itemId);
     const id = cid.toNumber();
+    itemId = itemId.toNumber();
+    
     //Load Single page view
-    navigate(`/singlePage/${id}`);
+    navigate(`/singlePage/${id}/${itemId}/${price}`);
   };
 
   function LeftArrow() {
@@ -141,9 +143,10 @@ function HorizontalScrolling({
         className={classes.scrollMenu}>
         {items.map((value, index) => (
           <Card
-            itemId={value.cid} // NOTE: itemId is required for track items
+            itemId={value.itemId} // NOTE: itemId is required for track items
             key={value.cid}
             cid={value.cid}
+            price={value.price}
             author={value.author}
             authorAddr={value.authorAddr}
             contentType={value.contentType}
@@ -156,7 +159,7 @@ function HorizontalScrolling({
             tokenType={value.tokenType}
             OwnedCollectionIds={CollectiontokenIds}
             index={index}
-            onClick={handleClick(value.cid)}
+            onClick={handleClick(value.cid,value.itemId,value.price)}
           />
         ))}
       </ScrollMenu>

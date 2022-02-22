@@ -29,6 +29,50 @@ const Collections = (props) => {
   const [purchasedContents,setPurchasedContents] = useState([])
 
   useEffect(() => {
+
+    const addContent = (content,item={tokenId:"a",itemId:"b"}) => {
+      let listed = {
+        tokenId : item.tokenId,
+        tokenIds : content.tokenIds,
+        itemId : item.itemId,
+        title : content.title,
+        tokenType : content.tokenType,
+        cid : content.cid,
+        publicationDate : content.publicationDate,
+        author : content.author,
+        authorAddr: content.authorAddr,
+        coverImageHash: content.coverImageHash,
+        descriptionHash: content.descriptionHash,
+        description: content.description,
+        price:item.price
+        }
+        return listed
+    }
+
+    const addItemId = (contentArray,item={tokenId:-1,itemId:-1}) => {
+      const array = []
+      for (const content of contentArray) {
+        let listed = {
+          tokenId : item.tokenId,
+          tokenIds : content.tokenIds,
+          itemId : item.itemId,
+          title : content.title,
+          tokenType : content.tokenType,
+          cid : content.cid,
+          publicationDate : content.publicationDate,
+          author : content.author,
+          authorAddr: content.authorAddr,
+          coverImageHash: content.coverImageHash,
+          descriptionHash: content.descriptionHash,
+          description: content.description,
+          price:0,
+          }
+        array.push(listed)
+      }
+      return array
+    }
+
+
     if (props.connButtonText === "Wallet Connected") {
       props
         .setup()
@@ -48,22 +92,8 @@ const Collections = (props) => {
           for(const item of items){
             const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
             const content =  await bookContract.getContentbyCID(cid)
-            console.log(content)
-            let listed = {
-            tokenId : item.tokenId,
-            tokenIds : content.tokenIds,
-            itemId : item.itemId,
-            title : content.title,
-            tokenType : content.tokenType,
-            cid : content.cid,
-            publicationDate : content.publicationDate,
-            author : content.author,
-            authorAddr: content.authorAddr,
-            coverImageHash: content.coverImageHash,
-            descriptionHash: content.descriptionHash,
-            description: content.description
-            }
-            listedcontent.push(listed) 
+           
+            listedcontent.push(addContent(content,item)) 
         }
         setListedContents(listedcontent)
         console.log("Listed Contents",listedcontent)
@@ -74,21 +104,7 @@ const Collections = (props) => {
         for(const item of myitems){
           const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
           const content =  await bookContract.getContentbyCID(cid)
-          let listed = {
-          tokenId : item.tokenId,
-          tokenIds : content.tokenIds,
-          itemId : item.itemId,
-          title : content.title,
-          tokenType : content.tokenType,
-          cid : content.cid,
-          publicationDate : content.publicationDate,
-          author : content.author,
-          authorAddr: content.authorAddr,
-          coverImageHash: content.coverImageHash,
-          descriptionHash: content.descriptionHash,
-          description: content.description
-          }
-          mycontent.push(listed) 
+          listedcontent.push(addContent(content,item)) 
       }
       setPurchasedContents(mycontent)
       console.log("Purchased Contents",mycontent)
@@ -99,21 +115,21 @@ const Collections = (props) => {
           await bookContract.getAllContentsOfUser().then((UserContents) => {
             console.log("User owned Content : ", UserContents);
             //Render User Contents
-            setContents(UserContents);
+            setContents(addItemId(UserContents));
           });
           await bookContract.getTotalgoldTokens().then((totalGoldTokens) => {
             var TotalGoldIds = [];
             for (var i = 0; i < totalGoldTokens.length; i++) {
               TotalGoldIds.push(totalGoldTokens[i].toNumber());
             }
-            setTotalGoldIds(TotalGoldIds);
+            setTotalGoldIds((TotalGoldIds));
           });
           await bookContract
             .getContentsByTokenTypeofUser("gold", defaultAccount)
             .then((UserGoldContents) => {
               console.log("User owned gold Content : ", UserGoldContents);
               //Render User Gold Content
-              setGoldContents(UserGoldContents);
+              setGoldContents(addItemId(UserGoldContents));
             });
           await bookContract
             .getTotalsilverTokens()
@@ -129,7 +145,7 @@ const Collections = (props) => {
             .then((UserSilverContents) => {
               //Render User Silver Content
               console.log("User owned silver Content : ", UserSilverContents);
-              setSilverContents(UserSilverContents);
+              setSilverContents(addItemId(UserSilverContents));
             });
           await bookContract
             .getTotalbronzeTokens()
@@ -145,7 +161,7 @@ const Collections = (props) => {
             .then((UserBronzeContents) => {
               console.log("User owned Bronze Content : ", UserBronzeContents);
               //Render User Bronze Content
-              setBronzeContents(UserBronzeContents);
+              setBronzeContents(addItemId(UserBronzeContents));
             });
         })
         .catch((err) => {

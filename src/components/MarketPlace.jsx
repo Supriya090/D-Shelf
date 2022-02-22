@@ -52,7 +52,8 @@ const MarketPlace = (props) => {
             authorAddr: content.authorAddr,
             coverImageHash: content.coverImageHash,
             descriptionHash: content.descriptionHash,
-            description: content.description
+            description: content.description,
+            price : item.price
           }
           listedcontent.push(listed)
           
