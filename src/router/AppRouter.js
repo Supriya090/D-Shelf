@@ -74,28 +74,25 @@ function App() {
     }
   }
   const buyContent = async() => { 
-    // console.log("called")
-        // const tokenId = 1;
-        // const amount = 1;
-        // const tx = {
-        //   value: ethers.utils.parseEther(amount.toString()),
-        //   gasLimit: 5000000,
-        // };
-        // marketContract.createMarketSale(bookAddress, tokenId,tx)
-        // .then(async(transaction) => {
-        //   console.log(transaction);
-        //   const receipt = await transaction.wait();
-        //   console.log(receipt);
-        //   alert("Content Bought");
-        // })
-        // .catch(err => {
-        //   console.log(err);
-        //   alert("Some error occured");
-        // });
-
+    console.log("called")
+        const tokenId = 1;
+        const amount = 1;
+        const tx = {
+          value: ethers.utils.parseEther(amount.toString()),
+          gasLimit: 5000000,
+        };
+        marketContract.createMarketSale(bookAddress, tokenId,tx)
+        .then(async(transaction) => {
+          console.log(transaction);
+          const receipt = await transaction.wait();
+          console.log(receipt);
+          alert("Content Bought");
+        })
+        .catch(err => {
+          console.log(err);
+          alert("Some error occured");
+        });
     
-      
-       
   }
 
   const fetchMarketContent = async() => { 

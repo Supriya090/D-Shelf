@@ -21,38 +21,55 @@ const MarketPlace = (props) => {
   const [bronzeContents, setBronzeContents] = useState([]);
 
   useEffect(() => {
-    props
-      .unSetup()
-      .then((value) => {
-        bookContract = value[0];
-        marketContract = value[1];
-        provider = value[2];
-        signer = value[3];
-      })
-      .then(() => {
-        bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
-          console.log("All gold Content : ", GoldContents);
-          //Render Gold Content
-          setGoldContents(GoldContents);
-        });
-        bookContract
-          .getContentsOfEachTokenType("silver")
-          .then((SilverContents) => {
-            console.log("All silver Content : ", SilverContents);
-            //Render Silver Content
-            setSilverContents(SilverContents);
-          });
-        bookContract
-          .getContentsOfEachTokenType("bronze")
-          .then((BronzeContents) => {
-            console.log("All Bronze Content : ", BronzeContents);
-            //Render Bronze Content
-            setBronzeContents(BronzeContents);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const listedItems = props.fetchMarketContent()
+    let gold = [], silver = [], bronze =[]
+    for(const items in listedItems){
+      const content = items.content
+      if(content.tokenType == 0){
+        gold.push(listedItems)
+      }
+      if(content.tokenType == 1){
+        silver.push(listedItems)
+      }
+      if(content.tokenType == 2){
+        bronze.push(listedItems)
+      }
+    }
+    setGoldContents(gold)
+    setSilverContents(silver)
+    setBronzeContents(bronze)
+    // props
+    //   .unSetup()
+    //   .then((value) => {
+    //     bookContract = value[0];
+    //     marketContract = value[1];
+    //     provider = value[2];
+    //     signer = value[3];
+    //   })
+    //   .then(() => {
+    //     bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
+    //       console.log("All gold Content : ", GoldContents);
+    //       //Render Gold Content
+    //       setGoldContents(GoldContents);
+    //     });
+    //     bookContract
+    //       .getContentsOfEachTokenType("silver")
+    //       .then((SilverContents) => {
+    //         console.log("All silver Content : ", SilverContents);
+    //         //Render Silver Content
+    //         setSilverContents(SilverContents);
+    //       });
+    //     bookContract
+    //       .getContentsOfEachTokenType("bronze")
+    //       .then((BronzeContents) => {
+    //         console.log("All Bronze Content : ", BronzeContents);
+    //         //Render Bronze Content
+    //         setBronzeContents(BronzeContents);
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }, []);
 
   return (
