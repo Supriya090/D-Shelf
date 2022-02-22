@@ -15,7 +15,7 @@ function SinglePage(props) {
   const { id } = useParams();
   const homeClasses = homeStyles();
   const classes = useStyles();
-  const [content, setContent] = useState([]);
+  const [content, setContent] = useState({});
   const [pdf, setpdf] = useState(null);
   var bookContract;
 
@@ -33,7 +33,7 @@ function SinglePage(props) {
         props.unsetup()
         .then(
           value => {
-            bookContract = value[1]
+            bookContract = value[0]
             console.log("bookContract", bookContract);
             resolve(bookContract);
         })
@@ -47,11 +47,8 @@ function SinglePage(props) {
     .then( async(bookContract) => {
       console.log("bookContract", bookContract)
     await bookContract.getContentbyCID(id)
-    .then(content=>  {
+    .then(async(content)=>  {
       setContent(content)
-      console.log(content)
-    })
-    .then(async()=>{
       await fetch(content.descriptionHash)
       .then(async(raw) => {
         await raw.text()
@@ -96,6 +93,7 @@ function SinglePage(props) {
                 </div>
                 <Button
                   variant='contained'
+                  onClick={props.buyContent}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now

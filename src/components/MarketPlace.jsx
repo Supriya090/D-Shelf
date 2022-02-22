@@ -70,7 +70,7 @@ const MarketPlace = (props) => {
               className={marketClasses.loader}
             />
           ) : (
-            <HorizontalScrolling getItems={goldContents} isTrending={true} />
+            <HorizontalScrolling getItems={goldContents} isTrending={true} buyContent={props.buyContent} />
           )}
         </div>
         <div
@@ -78,7 +78,7 @@ const MarketPlace = (props) => {
           style={{ marginTop: "80px" }}>
           <ListHead title={""} leftButton={"Silver"} />
           {silverContents.length !== 0 ? (
-            <HorizontalScrolling getItems={silverContents} isTrending={true} />
+            <HorizontalScrolling getItems={silverContents} isTrending={true} buyContent={props.buyContent} />
           ) : (
             <img
               src={loader}

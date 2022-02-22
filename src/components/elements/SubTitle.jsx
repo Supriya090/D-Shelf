@@ -65,6 +65,7 @@ function SubTitle (props) {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <Button
               variant='contained'
+              onClick={props.buyContent}
               className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
               Buy Now
             </Button>

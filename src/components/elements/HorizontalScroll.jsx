@@ -74,7 +74,9 @@ function HorizontalScrolling(props) {
             title={title}
             author={author}
             setup={props.setup}
+            buyContent={props.buyContent}
           />
+
         </div>
       </div>
     );
