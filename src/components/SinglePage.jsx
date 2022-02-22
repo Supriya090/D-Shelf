@@ -86,7 +86,7 @@ function SinglePage(props) {
     publicationDate,
     title,
     tokenIds,
-    tokenType,
+    tokenType
   } = content;
   const date = new Date(publicationDate).toString();
 

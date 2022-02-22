@@ -21,55 +21,62 @@ const MarketPlace = (props) => {
   const [bronzeContents, setBronzeContents] = useState([]);
 
   useEffect(() => {
-    const listedItems = props.fetchMarketContent()
-    let gold = [], silver = [], bronze =[]
-    for(const items in listedItems){
-      const content = items.content
-      if(content.tokenType == 0){
-        gold.push(listedItems)
-      }
-      if(content.tokenType == 1){
-        silver.push(listedItems)
-      }
-      if(content.tokenType == 2){
-        bronze.push(listedItems)
-      }
-    }
-    setGoldContents(gold)
-    setSilverContents(silver)
-    setBronzeContents(bronze)
-    // props
-    //   .unSetup()
-    //   .then((value) => {
-    //     bookContract = value[0];
-    //     marketContract = value[1];
-    //     provider = value[2];
-    //     signer = value[3];
-    //   })
-    //   .then(() => {
-    //     bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
-    //       console.log("All gold Content : ", GoldContents);
-    //       //Render Gold Content
-    //       setGoldContents(GoldContents);
-    //     });
-    //     bookContract
-    //       .getContentsOfEachTokenType("silver")
-    //       .then((SilverContents) => {
-    //         console.log("All silver Content : ", SilverContents);
-    //         //Render Silver Content
-    //         setSilverContents(SilverContents);
-    //       });
-    //     bookContract
-    //       .getContentsOfEachTokenType("bronze")
-    //       .then((BronzeContents) => {
-    //         console.log("All Bronze Content : ", BronzeContents);
-    //         //Render Bronze Content
-    //         setBronzeContents(BronzeContents);
-    //       });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+   
+    props
+      .unSetup()
+      .then((value) => {
+        bookContract = value[0];
+        marketContract = value[1];
+        provider = value[2];
+        signer = value[3];
+      })
+      .then(async() => {
+        console.log(marketContract)
+        const items =  await marketContract.fetchMarketItems()
+        console.log(items)
+        let listedcontent = []
+    
+        
+        for(const item of items){
+          const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
+          const content =  await bookContract.getContentbyCID(cid)
+          let listed = {
+            tokenId : item.tokenId,
+            tokenIds : content.tokenIds,
+            itemId : item.itemId,
+            title : content.title,
+            tokenType : content.tokenType,
+            cid : content.cid,
+            publicationDate : content.publicationDate,
+            author : content.author,
+            authorAddr: content.authorAddr,
+            coverImageHash: content.coverImageHash,
+            descriptionHash: content.descriptionHash,
+            description: content.description
+          }
+          listedcontent.push(listed)
+          
+        }
+        let gold = [], silver = [], bronze =[]
+        for(const content of listedcontent){
+        
+          if(content.tokenType == 0){
+            gold.push(content)
+          }
+          if(content.tokenType == 1){
+            silver.push(content)
+          }
+          if(content.tokenType == 2){
+            bronze.push(content)
+          }
+        }
+        setGoldContents(gold)
+        setSilverContents(silver)
+        setBronzeContents(bronze)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (

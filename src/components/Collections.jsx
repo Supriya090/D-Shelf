@@ -25,6 +25,7 @@ const Collections = (props) => {
   const [TotalSilverIds, setTotalSilverIds] = useState(null);
   const [TotalGoldIds, setTotalGoldIds] = useState(null);
   const [TotalIds, setTotalIds] = useState(null);
+  const [listedContents,setListedContents] = useState([])
 
   useEffect(() => {
     if (props.connButtonText === "Wallet Connected") {
@@ -40,6 +41,30 @@ const Collections = (props) => {
           // console.log(defaultAccount, bookContract, marketContract, provider, signer);
         })
         .then(async () => {
+          const items =  await marketContract.fetchMyNFTs()
+          console.log(items)
+          let listedcontent = []
+          for(const item of items){
+            const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
+            const content =  await bookContract.getContentbyCID(cid)
+            let listed = {
+            tokenId : item.tokenId,
+            tokenIds : content.tokenIds,
+            itemId : item.itemId,
+            title : content.title,
+            tokenType : content.tokenType,
+            cid : content.cid,
+            publicationDate : content.publicationDate,
+            author : content.author,
+            authorAddr: content.authorAddr,
+            coverImageHash: content.coverImageHash,
+            descriptionHash: content.descriptionHash,
+            description: content.description
+            }
+            listedcontent.push(listed) 
+        }
+        setListedContents(listedcontent)
+        console.log("Listed Contents",listedContents)
           await bookContract.getTotalgoldTokens().then((totalTokens) => {
             setTotalIds(totalTokens);
           });

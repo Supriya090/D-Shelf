@@ -73,9 +73,7 @@ function App() {
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
   }
-  const buyContent = async() => { 
-    console.log("called")
-        const tokenId = 1;
+  const buyContent = async(tokenId) => { 
         const amount = 1;
         const tx = {
           value: ethers.utils.parseEther(amount.toString()),
@@ -92,28 +90,8 @@ function App() {
           console.log(err);
           alert("Some error occured");
         });
+   
     
-  }
-
-  const fetchMarketContent = async() => { 
-    const items = await marketContract.fetchMarketItems()
-    console.log(items[0].tokenId)
-    let listedcontent = []
-
-    
-    for(const item of items){
-      const cid = (await bookContract.getContentIndexByID(item.tokenId))[0]
-      const content = await bookContract.getContentbyCID(cid)
-      let listed = {
-        tokenId : item.tokenId,
-        itemId : item.itemId,
-        content : content
-      }
-      listedcontent.push(listed)
-      
-    }
-    console.log(listedcontent)
-    return listedcontent
   }
 
   const fetchOwnContent = async() => { 
@@ -270,7 +248,7 @@ function App() {
 
       <Routes>
         <Route exact path="/" element={<Home connButtonText={connButtonText} unSetup={unSetup} />}></Route>
-        <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} buyContent={buyContent}/>}></Route>
+        <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} buyContent={buyContent} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/singlePage/:id" element={<SinglePage setup={setup} unsetup={unSetup} connButtonText={connButtonText} buyContent={buyContent} />}></Route>
