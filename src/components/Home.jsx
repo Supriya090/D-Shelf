@@ -11,8 +11,7 @@ import ReadMore from "./elements/ReadMore";
 const auctionContent = content;
 
 const Home = (props) => {
-
-  var bookContract; 
+  var bookContract;
   var marketContract;
   var provider;
   var signer;
@@ -21,7 +20,7 @@ const Home = (props) => {
   const [goldContents, setGoldContents] = useState([]);
   const [silverContents, setSilverContents] = useState([]);
   const [bronzeContents, setBronzeContents] = useState([]);
-  const [featuredContent, setFeaturedContent] = useState({})
+  const [featuredContent, setFeaturedContent] = useState({});
 
   const navigate = useNavigate();
   const marketRoute = () => {
@@ -32,67 +31,65 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    const addContent = (content,item={tokenId:"a",itemId:"b"}) => {
+    const addContent = (content, item = { tokenId: "a", itemId: "b" }) => {
       let listed = {
-        tokenId : item.tokenId,
-        tokenIds : content.tokenIds,
-        itemId : item.itemId,
-        title : content.title,
-        tokenType : content.tokenType,
-        cid : content.cid,
-        publicationDate : content.publicationDate,
-        author : content.author,
+        tokenId: item.tokenId,
+        tokenIds: content.tokenIds,
+        itemId: item.itemId,
+        title: content.title,
+        tokenType: content.tokenType,
+        cid: content.cid,
+        publicationDate: content.publicationDate,
+        author: content.author,
         authorAddr: content.authorAddr,
         coverImageHash: content.coverImageHash,
         descriptionHash: content.descriptionHash,
         description: content.description,
-        price:item.price
-        }
-        return listed
-    }
-    props.unSetup()
-    .then(
-      value => {
-        bookContract = value[0] 
-        marketContract = value[1] 
-        provider = value[2]
-        signer = value[3]
+        price: item.price,
+      };
+      return listed;
+    };
+    props
+      .unSetup()
+      .then((value) => {
+        bookContract = value[0];
+        marketContract = value[1];
+        provider = value[2];
+        signer = value[3];
       })
-      .then(async()=>{
-        const items =  await marketContract.fetchMarketItems()
-        console.log(items)
-        const tokenId = items[(items.length - 1)].tokenId
-        const cid = ( await bookContract.getContentIndexByID(tokenId))[0]
-        const content =  await bookContract.getContentbyCID(cid)
-        console.log("Feature content:",content)
-        setFeaturedContent(addContent(content,items[(items.length - 1)]))
+      .then(async () => {
+        const items = await marketContract.fetchMarketItems();
+        console.log(items);
+        const tokenId = items[items.length - 1].tokenId;
+        const cid = (await bookContract.getContentIndexByID(tokenId))[0];
+        const content = await bookContract.getContentbyCID(cid);
+        console.log("Feature content:", content);
+        setFeaturedContent(addContent(content, items[items.length - 1]));
 
-        bookContract.getContentsOfEachTokenType("gold")
-        .then(GoldContents=>{
+        bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
           console.log("All gold Content : ", GoldContents);
           setGoldContents(GoldContents);
           //Render Gold Content
-        })
-        bookContract.getContentsOfEachTokenType("silver")
-        .then(SilverContents=>{
-          //Render Silver Content
-          console.log("All silver Content : ", SilverContents);
-          setSilverContents(SilverContents);
-        })
-        bookContract.getContentsOfEachTokenType("bronze")
-        .then(BronzeContents=>{
-          //Render Bronze Content
-          console.log("All Bronze Content : ", BronzeContents);
-          setBronzeContents(BronzeContents);
-        })
-        
-
+        });
+        bookContract
+          .getContentsOfEachTokenType("silver")
+          .then((SilverContents) => {
+            //Render Silver Content
+            console.log("All silver Content : ", SilverContents);
+            setSilverContents(SilverContents);
+          });
+        bookContract
+          .getContentsOfEachTokenType("bronze")
+          .then((BronzeContents) => {
+            //Render Bronze Content
+            console.log("All Bronze Content : ", BronzeContents);
+            setBronzeContents(BronzeContents);
+          });
       })
-      .catch(err=>{
+      .catch((err) => {
         console.log(err);
-      })
-  }, [props.connButtonText])
-
+      });
+  }, [props.connButtonText]);
 
   return (
     <div className={classes.mainContent}>
@@ -103,8 +100,9 @@ const Home = (props) => {
             <div>
               <div className={classes.owner}>
                 <Typography>
-                  Title : {featuredContent.title} <br /> Owner : {featuredContent.author} (
-                  {featuredContent.authorAddr} ) <br />
+                  Title : {featuredContent.title} <br /> Owner :{" "}
+                  {featuredContent.author} ({featuredContent.authorAddr} ){" "}
+                  <br />
                   Author : {featuredContent.author} <br />
                 </Typography>
                 <Tooltip title='$10000'>
@@ -117,16 +115,14 @@ const Home = (props) => {
                       fontWeight: 500,
                       cursor: "default",
                     }}>
-                    1 ETH
+                    {console.log("Price: ", featuredContent.authorAddr)}2 ETH
                   </Button>
                 </Tooltip>
               </div>
               <Divider />
               <ReadMore content={featuredContent}>
                 <div className={classes.description}>
-                  <Typography>
-                    {featuredContent.description}
-                  </Typography>
+                  <Typography>{featuredContent.description}</Typography>
                 </div>
               </ReadMore>
             </div>
@@ -139,11 +135,13 @@ const Home = (props) => {
           </Button>
         </div>
         <div className={classes.currentBid}>
-          <img src={featuredContent.coverImageHash}
-              className={classes.NFTImage}
-              onError={(e) => {
-                e.target.onerror = null; // prevents looping
-              }} />
+          <img
+            src={featuredContent.coverImageHash}
+            className={classes.NFTImage}
+            onError={(e) => {
+              e.target.onerror = null; // prevents looping
+            }}
+          />
         </div>
       </div>
       <div className={classes.itemsList}>

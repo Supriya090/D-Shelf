@@ -46,8 +46,8 @@ const PopupBox = (props) => {
           if (selectedToken === null) {
             setSelectedToken(props.OwnedCollectionIds[0]);
           }
-          
-          console.log("selected token",props.OwnedCollectionIds[0]);
+
+          console.log("selected token", props.OwnedCollectionIds[0]);
           // console.log(tokenId);
           console.log(pricing);
           marketContract
@@ -127,6 +127,7 @@ const PopupBox = (props) => {
                 onChange={(event) => {
                   setPrice(event.target.value);
                 }}
+                className={popClasses.textField}
               />
             </div>
           </div>

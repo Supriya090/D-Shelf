@@ -15,7 +15,6 @@ function SubTitle(props) {
   const { data } = usePalette(props.src);
   // const options = props.OwnedCollectionIds
   // console.log(options);
-  console.log(props);
   let saleStats;
 
   if (props.onSale) {
