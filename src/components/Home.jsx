@@ -117,7 +117,7 @@ const Home = (props) => {
                       fontWeight: 500,
                       cursor: "default",
                     }}>
-                    1 ETH
+                    2 ETH
                   </Button>
                 </Tooltip>
               </div>

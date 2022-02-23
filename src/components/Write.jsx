@@ -193,45 +193,11 @@ const Write = (props) => {
             imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
             console.log("addedImage : ", imageurl);
             console.log("addedpdf : ", pdfurl);
-
-            let ContentMetadata = {
-              title: title,
-              tokenIds: [],
-              tokenType: 1,
-              contentType: 1,
-              publicationDate: Date.now(),
-              author: "Rahul Shah",
-              authorAddr: defaultAccount,
-              coverImageHash: imageurl,
-              descriptionHash: pdfurl,
-            };
-
-            console.log("ContentMetadata : ", ContentMetadata);
-            const Amount =
-              goldNumber * 0.003 +
-              silverNumber * 0.002 +
-              bronzeNumber * 0.001 +
-              0.01; //0.01 is for the gas fee
-
-            const tx = {
-              value: ethers.utils.parseEther(Amount.toString()),
-              gasLimit: 5000000,
-            };
+            
             bookContract
-              .mintBatch(
-                ContentMetadata,
-                goldNumber,
-                silverNumber,
-                bronzeNumber,
-                tx
-              )
               .then(async (transaction) => {
                 await transaction.wait();
                 console.log("transaction :", transaction);
-                alert(
-                  "Successfully minted , Your total tokens: ",
-                  await bookContract.balanceOf(defaultAccount)
-                );
                 //Render Back to Home Page
               })
               .catch((error) => {
