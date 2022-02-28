@@ -170,9 +170,6 @@ contract book is ERC721 {
         return contents[cid];
     }
 
-    function getAllContentsbyTokenId(uint256 tokenId) public view returns (Content memory content){
-        return(getContentbyCID(getContentIndexByID(tokenId)[0]));
-    }
 
 
     function getTokensOwnedByUser(address addr) external view returns (uint256[] memory){
