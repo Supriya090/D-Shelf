@@ -6,10 +6,11 @@ import {
 } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import React, { useState } from "react";
+import { create as ipfsHttpClient } from 'ipfs-http-client'
+import React, { useEffect, useState } from "react";
+import ComputeHash from "./ComputeHash";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
-import { create as ipfsHttpClient } from "ipfs-http-client";
 
 import WriteCopies from "./elements/WriteCopies";
 import {useStyles} from "./styles/Write";
@@ -44,6 +45,9 @@ const Write = (props) => {
     setInputValues({ ...inputValues, [event.target.name]: value });
   };
 
+  //const encryptKey = ComputeHash("1234567890");
+
+  var pdf;
   const allowedFiles = ["application/pdf"];
   const handleFile = async (e) => {
     let selectedFile = e.target.files[0];
@@ -131,8 +135,13 @@ const Write = (props) => {
     );
     let pdfurl = null;
     let imageurl = null;
+
+    const goldEncryptionKey = ComputeHash(description);
+    const silverEncryptionKey = ComputeHash(description);
+    const bronzeEncryptionKey = ComputeHash(description);
+
     client
-      .add(CryptoJS.AES.encrypt(pdfFile, "secret key 123").toString(), {
+      .add(CryptoJS.AES.encrypt(pdfFile, goldEncryptionKey).toString(), {
         progress: (progress) => console.log(`Pdf received: ${progress}`),
       })
       .then((addedpdf) => {
@@ -174,6 +183,9 @@ const Write = (props) => {
             bookContract
               .mintBatch(
                 ContentMetadata,
+                goldEncryptionKey,
+                silverEncryptionKey,
+                bronzeEncryptionKey,
                 goldNumber,
                 silverNumber,
                 bronzeNumber,
