@@ -20,11 +20,11 @@ const PDFViewer = (props) => {
   const { viewer } = useStyles();
 
   //exports pdf from prop
-  var {pdfBase64} = props; 
+  var {pdfBase64, decryptKey} = props; 
 
   const decrypt = () => {
     //full pdf string decryption --->
-    const bytes = CryptoJS.AES.decrypt(pdfBase64, "secret key 123");
+    const bytes = CryptoJS.AES.decrypt(pdfBase64, decryptKey);
     pdfBase64 = bytes.toString(CryptoJS.enc.Utf8);
   }
   

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router";
 import logo from "../assets/logo.png";
 import {
   AppBar,
@@ -47,6 +48,11 @@ const Header = (props) => {
     inputRoot,
   } = useStyles();
 
+  const navigate = useNavigate();
+  const logoClick = () => {
+    navigate("/", { replace: true });
+  }
+
   const displayHeader = () => {
     let walletDetails;
     if (props.connButtonText === "Wallet Connected") {
@@ -66,7 +72,7 @@ const Header = (props) => {
             marginRight={4}
             marginLeft={4}>
             <Toolbar className={toolbar}>
-              <div className={logoName}>
+              <div className={logoName} onClick={logoClick}>
                 <img src={logo} alt='logo' className={img} />
                 <Typography variant='h6' component='h1' className={headerTitle}>
                   D-Shelf

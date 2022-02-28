@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { useStyles as homeStyles } from "./styles/Home";
 import { Typography, Button } from "@material-ui/core";
 import { useStyles } from "./styles/SinglePage";
+import dummy from "../assets/dummy.jpg";
+import ComputeHash from "./ComputeHash";
 import PDFViewer from "./PDFViewer";
 import { useParams } from "react-router-dom";
 import loader from "../assets/loading-yellow.gif";
 import { useEffect } from "react";
 import CryptoJS from "crypto-js";
 import alt from "../assets/alt.png";
+import { size } from "draft-js/lib/DefaultDraftBlockRenderMap";
 
 function SinglePage(props) {
   const { id, itemId, price } = useParams();
@@ -185,9 +188,10 @@ function SinglePage(props) {
         </Typography>
         <Typography>{description}</Typography>
       </div>
+
       {pdf ? (
         <div className={classes.sPViewer}>
-          <PDFViewer pdfBase64={pdf} />
+          <PDFViewer pdfBase64={pdf} decryptKey={ComputeHash("1234567890")}/>
         </div>
       ) : (
         <div>Loading ...</div>
