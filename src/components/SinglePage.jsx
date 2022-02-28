@@ -1,8 +1,9 @@
 import React from "react";
 import { useStyles as homeStyles } from "./styles/Home";
 import { Typography, Button } from "@material-ui/core";
-import dummy from "../assets/dummy.jpg";
 import { useStyles } from "./styles/SinglePage";
+import dummy from "../assets/dummy.jpg";
+import ComputeHash from "./ComputeHash";
 import PDFViewer from "./PDFViewer";
 import pdf from "../assets/pdf";
 
@@ -77,7 +78,7 @@ function SinglePage(props) {
         </Typography>
       </div>
       <div className={classes.sPViewer}>
-          <PDFViewer pdfBase64={pdf} />
+          <PDFViewer pdfBase64={pdf} decryptKey={ComputeHash("1234567890")}/>
       </div>
     </div>
   );

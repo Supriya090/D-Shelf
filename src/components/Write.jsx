@@ -6,10 +6,11 @@ import {
 } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { create as ipfsHttpClient } from 'ipfs-http-client'
 import React, { useEffect, useState } from "react";
+import ComputeHash from "./ComputeHash";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
-import { create as ipfsHttpClient } from 'ipfs-http-client'
 
 import WriteCopies from "./elements/WriteCopies";
 import useStyles from "./styles/Write";
@@ -49,6 +50,7 @@ const Write = (props) => {
     setInputValues({ ...inputValues, [event.target.name]: value });
   };
 
+  const encryptKey = ComputeHash("1234567890");
 
   var pdf;
   const allowedFiles = ["application/pdf"];
@@ -63,7 +65,8 @@ const Write = (props) => {
         reader.onloadend = (e) => {
           pdf = e.target.result;
           setPdfFile(pdf);
-          pdf = CryptoJS.AES.encrypt(pdf, "1234567890");
+          pdf = CryptoJS.AES.encrypt(pdf, encryptKey);
+          console.log(pdf.toString());
           setPdfError("");
         };
 
