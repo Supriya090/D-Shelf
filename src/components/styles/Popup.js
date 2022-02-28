@@ -39,8 +39,10 @@ const useStyles = makeStyles((theme) => ({
       marginRight: "20px"
     },
   },
-  "& input": {
-    color: "#fff"
+  textField: {
+    "& input": {
+      color: "#fff"
+    }
   },
 }));
 

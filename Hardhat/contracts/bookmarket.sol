@@ -179,4 +179,27 @@ contract bookmarket is ReentrancyGuard {
         return items;
     }
 
+  /* Returns total tokens items a user has created */
+  function fetchTotalUserTokens() public view returns (uint256[] memory) {
+    uint totalItemCount = _itemIds.current();
+    uint256 itemCount = 0;
+    uint currentIndex = 0;
+
+    for (uint i = 0; i < totalItemCount; i++) {
+      if (idToMarketItem[i + 1].seller == msg.sender) {
+        itemCount += 1;
+      }
+    }
+
+    uint256[] memory tokenIds = new uint256[](itemCount);
+    for (uint i = 0; i < totalItemCount; i++) {
+      if (idToMarketItem[i + 1].seller == msg.sender) {
+        uint currentId = i + 1;
+        uint256 currenttoken = idToMarketItem[currentId].tokenId;
+        tokenIds[currentIndex] = currenttoken;
+        currentIndex += 1;
+      }
+    }
+    return tokenIds;
+  }
 }

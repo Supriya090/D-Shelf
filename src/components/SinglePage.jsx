@@ -86,10 +86,13 @@ function SinglePage(props) {
     publicationDate,
     title,
     tokenIds,
-    tokenType
+    tokenType,
   } = content;
   const date = new Date(publicationDate).toString();
 
+  console.log(publicationDate);
+
+  const inDollars = price * 2663;
   console.log("encryptedPdf 2 : ", pdf);
   return (
     <div className={classes.singleContent}>
@@ -112,12 +115,12 @@ function SinglePage(props) {
               <div className={classes.buyDetails}>
                 <div>
                   Current Value
-                  <div className={homeClasses.bidNumStyle}>{price} ETH </div>
-                  ($10000)
+                  <div className={homeClasses.bidNumStyle}>{price} ETH </div>$
+                  {inDollars}
                 </div>
                 <Button
                   variant='contained'
-                  onClick={props.buyContent.bind(this,itemId,price)}
+                  onClick={props.buyContent.bind(this, itemId, price)}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now
@@ -154,7 +157,7 @@ function SinglePage(props) {
                 <div className={classes.right}>
                   {title}
                   <br />
-                  {date}
+                  {publicationDate}
                   <br />
                   On Sale
                   <div style={{ marginTop: "50px" }}>

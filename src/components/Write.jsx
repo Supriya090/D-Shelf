@@ -12,7 +12,7 @@ import { ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 
 import WriteCopies from "./elements/WriteCopies";
-import { useStyles } from "./styles/Write";
+import {useStyles} from "./styles/Write";
 
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 

@@ -50,7 +50,7 @@ module.exports = {
     rinkeby: {
       url:
         process.env.RINKEBY_URL ||
-        "https://eth-ropsten.alchemyapi.io/v2/d817Kizj_ytPdnaWgl84iEp3Asg0GLLk",
+        "https://eth-rinkeby.alchemyapi.io/v2/d817Kizj_ytPdnaWgl84iEp3Asg0GLLk",
       accounts: [`${PRIVATE_KEY}`],
     },
     kovan: {
