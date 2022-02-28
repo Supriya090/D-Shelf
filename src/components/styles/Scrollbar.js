@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core'
+import dummy from "../../assets/dummy.jpg"
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -8,10 +9,11 @@ const useStyles = makeStyles((theme) => ({
             textAlign: "center",
             marginBottom: "25px"
         },
-        padding: "10px",
+        padding: "15px",
         backgroundColor: "#313131",
         borderRadius: "10px",
         position: "relative",
+        maxWidth: "300px",
     },
     voteButtons: {
         display: "flex",
@@ -59,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
         height: "400px",
         marginBottom: "15px",
         marginTop: "7px",
+        maxWidth: "300px",
     },
     forAuthor: {
         position: "absolute",
@@ -96,7 +99,13 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: "auto",
         marginRight: "auto",
     },
-
+    badge: {
+        padding: "5px 15px",
+        borderRadius: "5px",
+        fontSize: "0.8rem",
+        fontWeight: 500,
+        color: "#000"
+    }
 }));
 
 export default useStyles;

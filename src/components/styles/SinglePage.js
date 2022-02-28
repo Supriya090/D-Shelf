@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: "450px",
         marginTop: "30px",
         borderRadius: "20px",
-        boxShadow: "3px 3px 1px #313131"
+        boxShadow: "3px 3px 1px #313131",
+        minWidth: "280px"
     },
     buyDetails: {
         display: "flex",
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sPViewer: {
         margin: "40px 130px",
+        maxHeight: "500px"
     }
 }));
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import { Arrow } from "./Arrow";
 import useStyles from "../styles/Scrollbar";
@@ -6,34 +6,29 @@ import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
 import SubTitle from "./SubTitle";
 import { usePalette } from "react-palette";
-
-// const getItems = content;
+import alt from "../../assets/alt.png";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 function HorizontalScrolling({
-  getItems,
-  isTrending,
-  isAuthor,
-  onSale,
-  isCollection,
+  isTrending = false,
+  isAuthor = false,
+  onSale = false,
+  ...props
 }) {
-  const [items, setItems] = React.useState(getItems);
-  const [selected, setSelected] = React.useState([]);
-  const [position, setPosition] = React.useState(0);
-
-  const isItemSelected = (id) => !!selected.find((el) => el === id);
+  const [items, setItems] = React.useState(props.getItems);
+  const navigate = useNavigate();
 
   const classes = useStyles();
-  const handleClick =
-    (id) =>
-    ({ getItemById, scrollToItem }) => {
-      const itemSelected = isItemSelected(id);
+  const handleClick = (cid,itemId,price) => () => {
+    console.log("cid", itemId);
+    const id = cid.toNumber();
 
-      setSelected((currentSelected) =>
-        itemSelected
-          ? currentSelected.filter((el) => el !== id)
-          : currentSelected.concat(id)
-      );
-    };
+    // itemId = itemId.toNumber();
+    
+    //Load Single page view
+    navigate(`/singlePage/${id}/${itemId}/${price}`);
+  };
 
   function LeftArrow() {
     const { isFirstItemVisible, scrollPrev } =
@@ -56,45 +51,126 @@ function HorizontalScrolling({
       </Arrow>
     );
   }
+  console.log("items", items.length);
+  // const [CollectiontokenIds, setCollectiontokenIds] = useState([[]]);
+  var CollectiontokenIds = [];
+  useEffect(() => {
+    if (props.isCollection) {
+      items.map((content, index) => {
+        var CtokenIds = [];
+        for (var i = 0; i < content.tokenIds.length; i++) {
+          CtokenIds.push(content.tokenIds[i].toNumber());
+        }
+        if (content.tokenType === 0) {
+          const filtered = props.TotalGoldIds.filter((value) =>
+            CtokenIds.includes(value)
+          );
+          CollectiontokenIds.push(filtered);
+        } else if (content.tokenType === 1) {
+          const filtered = props.TotalSilverIds.filter((value) =>
+            CtokenIds.includes(value)
+          );
+          CollectiontokenIds.push(filtered);
+        } else if (content.tokenType === 2) {
+          const filtered = props.TotalBronzeIds.filter((value) =>
+            CtokenIds.includes(value)
+          );
+          CollectiontokenIds.push(filtered);
+        }
+      });
+      console.log("CollectiontokenIds", CollectiontokenIds);
+    }
+  }, [CollectiontokenIds]);
 
-  function Card({ onClick, selected, title, itemId, img }) {
+  function Card({
+    price,
+    itemId,
+    onClick,
+    cid,
+    author,
+    authorAddr,
+    contentType,
+    coverImageHash,
+    description,
+    descriptionHash,
+    publicationDate,
+    title,
+    tokenIds,
+    tokenType,
+    OwnedCollectionIds,
+    index,
+  }) {
     const visibility = React.useContext(VisibilityContext);
-    const { data } = usePalette(img);
+    const { data } = usePalette(coverImageHash);
 
     return (
       <div onClick={() => onClick(visibility)}>
         <div
           className={classes.card}
-          style={{ backgroundColor: data.darkVibrant }}>
-          <img src={img} alt={title} className={classes.image} />
+          style={{ backgroundColor: data.darkMuted }}>
+          <img
+            src={coverImageHash}
+            alt={title}
+            className={classes.image}
+            onError={(e) => {
+              e.target.src = alt;
+              e.target.onerror = null; // prevents looping
+            }}
+          />
           <SubTitle
+          price = {price}
+          itemId = {itemId}
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
-            isCollection={isCollection}
-            src={img}
+            isCollection={props.isCollection}
+            src={coverImageHash}
+            title={title}
+            author={author}
+            setup={props.setup}
+            buyContent={props.buyContent}
+            UserCollectiontokenIds={CollectiontokenIds}
+            OwnedCollectionIds={OwnedCollectionIds[index]}
+            tokenType={tokenType}
+            setup = {props.setup}
           />
+
         </div>
       </div>
     );
   }
 
   return (
-    <ScrollMenu
-      LeftArrow={LeftArrow}
-      RightArrow={RightArrow}
-      className={classes.scrollMenu}>
-      {items.map(({ id, title, url }) => (
-        <Card
-          itemId={id} // NOTE: itemId is required for track items
-          title={title}
-          key={id}
-          img={url}
-          onClick={handleClick(id)}
-          selected={isItemSelected(id)}
-        />
-      ))}
-    </ScrollMenu>
+    <>
+      {/* {CollectiontokenIds.length > 0 ? ( */}
+      <ScrollMenu
+        LeftArrow={LeftArrow}
+        RightArrow={RightArrow}
+        className={classes.scrollMenu}>
+        {items.map((value, index) => (
+          <Card
+            itemId={value.itemId} // NOTE: itemId is required for track items
+            key={value.cid}
+            cid={value.cid}
+            price={value.price}
+            author={value.author}
+            authorAddr={value.authorAddr}
+            contentType={value.contentType}
+            coverImageHash={value.coverImageHash}
+            description={value.description}
+            descriptionHash={value.descriptionHash}
+            publicationDate={value.publicationDate}
+            title={value.title}
+            tokenIds={value.tokenIds}
+            tokenType={value.tokenType}
+            OwnedCollectionIds={CollectiontokenIds}
+            index={index}
+            onClick={handleClick(value.cid,value.itemId,value.price)}
+          />
+        ))}
+      </ScrollMenu>
+      {/* ) : (<div>No</div>)}  */}
+    </>
   );
 }
 

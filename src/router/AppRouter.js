@@ -14,20 +14,22 @@ import { bookMarketAddress, bookMarketAbi } from '../bookmarketABI'
 
 
 function App() {
-
+  const privateKey = "63f2d254a4256178b90f6ed5b0830641dd1d7d7ea2dca4f618037a2597e2ed1e";
   let defaultAccount = null;
   let bookContract = null;
   let marketContract = null;
   let provider = null;
   let signer = null;
+  let list = []
   const [errorMessage, setErrorMessage] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
 
   //Please connect your account to the wallet first the click the button
   //If you have changed your account from wallet the click button again to refresh the defaultAccount
+
   const ConnectWalletHandler = async () => {
-    if (typeof window.ethereum !== undefined) {
+    if (window.ethereum) {
       // set ethers provider
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
@@ -35,22 +37,81 @@ function App() {
       marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
 
       // connect to metamask
-      await window.ethereum.request({ method: 'eth_requestAccounts' })
-        .then(function (result) {
-          setErrorMessage(null);
-          setConnButtonText('Wallet Connected');
-          defaultAccount = result[0];
-          bookContract.connect(defaultAccount);
-          marketContract.connect(defaultAccount);
+      // if(!checkIfWalletIsConnected){
+        await window.ethereum.request({
+          method: "eth_accounts",
         })
+        .then(async(account) => {
+          if (account.length > 0) {
+            defaultAccount = account[0];
+          }
+          else{
+            await window.ethereum.request({ method: 'wallet_requestPermissions',
+                params: [{
+                  eth_accounts: {}
+                }] 
+              })
+            }
+        })
+        .then(async() => {
+          await window.ethereum.request({ method: 'eth_requestAccounts' })
+          .then((account) => {
+            setErrorMessage(null);
+            defaultAccount = account[0];
+            setConnButtonText('Wallet Connected');
+            bookContract.connect(defaultAccount);
+            marketContract.connect(defaultAccount);
+            console.log(defaultAccount)
+          })
         .catch(error => {
           console.log(error);
         })
-
+      })
     } else {
-      console.log('Need to install MetaMask');
+      // Ethers.js
+      alert('Need to install MetaMask');
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
+  }
+  const buyContent = async(tokenId,amount) => { 
+        // const amount = 1;
+        const tx = {
+          value: ethers.utils.parseEther(amount.toString()),
+          gasLimit: 10000000,
+        };
+        marketContract.createMarketSale(bookAddress, tokenId,tx)
+        .then(async(transaction) => {
+          console.log(transaction);
+          const receipt = await transaction.wait();
+          console.log(receipt);
+          alert("Content Bought");
+        })
+        .catch(err => {
+          console.log(err);
+          alert("Some error occured");
+        });
+   
+    
+  }
+
+  const fetchOwnContent = async() => { 
+    const items = await marketContract.fetchMyNFTs()
+    console.log(items[0].tokenId)
+    let listedcontent = []
+
+    
+    for(const item of items){
+      const cid = (await bookContract.getContentIndexByID(item.tokenId))[0]
+      const content = await bookContract.getContentbyCID(cid)
+      let listed = {
+        tokenId : item.tokenId,
+        itemId : item.itemId,
+        content : content
+      }
+      listedcontent.push(listed)  
+    }
+    console.log(listedcontent)
+    return listedcontent
   }
 
   const setup = () => {
@@ -59,6 +120,7 @@ function App() {
         .then(() => {
           // const list = Promise.all([ defaultAccount, bookContract, marketContract, provider, signer ])
           const list = [defaultAccount, bookContract, marketContract, provider, signer]
+          console.log(list)
           resolve(list);
         })
       .catch(error => {
@@ -70,7 +132,7 @@ function App() {
   //TODO Need some work so that we can view in Home even if dont have any metamask
   const unSetup = () => {
     return new Promise((resolve, reject) => {
-      if (typeof window.ethereum !== undefined) {
+      if ( window.ethereum !== undefined) {
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner();
         bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
@@ -81,8 +143,13 @@ function App() {
         resolve(list);
       }
       else {
-        console.log('Please install MetaMask browser extension to interact');
-        reject(Error('Need to install MetaMask'));
+        provider = new ethers.providers.AlchemyProvider("rinkeby", "cQwQ1GuU6HfIcVaHoHMZe7dKl_ttPwGL")        
+        const wallet = new ethers.Wallet(privateKey, provider);
+        const signer = wallet.connect(provider);
+        bookContract = new ethers.Contract(bookAddress, bookAbi, signer);
+        marketContract = new ethers.Contract(bookMarketAddress, bookMarketAbi, signer);
+        list = [bookContract, marketContract, provider, signer]
+        resolve(list);
       }
     })
   }
@@ -129,6 +196,27 @@ function App() {
   }
 
   useEffect(() => {
+
+    async function GetConnected(){
+      if(window.ethereum){
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
+        });
+        if (accounts.length > 0) {
+        setup()
+        }else{
+          await window.ethereum.request({ method: 'wallet_requestPermissions',
+          params: [{
+            eth_accounts: {}
+          }] 
+        })
+        }
+      }else{
+        unSetup()
+      }
+    }
+    GetConnected();
+  
     async function OnWalletChange() {
       window.ethereum.on('accountsChanged', function (accounts) {
         // Time to reload your interface with accounts[0]!
@@ -137,13 +225,15 @@ function App() {
         setErrorMessage('Click button to refresh contents');
       })
     }
+    
     OnWalletChange();
+    if (window.ethereum !== undefined) {
     if (defaultAccount && connButtonText === 'Wallet Connected') {
       provider.getBalance(defaultAccount)
         .then(balanceResult => {
           setUserBalance(ethers.utils.formatEther(balanceResult));
         })
-    };
+    };}
   }, [defaultAccount]);
 
   return (
@@ -157,11 +247,11 @@ function App() {
       />
 
       <Routes>
-        <Route exact path="/" element={<Home unSetup={unSetup} />}></Route>
-        <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} />}></Route>
+        <Route exact path="/" element={<Home connButtonText={connButtonText} unSetup={unSetup} />}></Route>
+        <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} buyContent={buyContent} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>
-        <Route exact path="/singlePage" element={<SinglePage setup={setup} />}></Route>
+        <Route exact path="/singlePage/:id/:itemId/:price" element={<SinglePage setup={setup} unsetup={unSetup} connButtonText={connButtonText} buyContent={buyContent} />}></Route>
       </Routes>
     </div>
   );

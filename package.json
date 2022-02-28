@@ -2,6 +2,7 @@
   "name": "patra-fe",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
@@ -25,7 +26,8 @@
     "react-palette": "^1.0.2",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0"
+    "react-scripts": "5.0.0",
+    "reactjs-popup": "^2.0.5"
   },
   "scripts": {
     "start": "react-scripts start",

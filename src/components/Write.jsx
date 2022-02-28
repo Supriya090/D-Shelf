@@ -13,36 +13,31 @@ import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
 
 import WriteCopies from "./elements/WriteCopies";
-import useStyles from "./styles/Write";
+import {useStyles} from "./styles/Write";
 
-const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
-
+const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 const Write = (props) => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const classes = useStyles();
 
   var defaultAccount;
-  var bookContract; 
+  var bookContract;
   var marketContract;
   var provider;
   var signer;
-  const [ImageUrl, setImageUrl] = useState(null)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [pdfUrl, setpdfUrl] = useState(null)
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfError, setPdfError] = useState(null);
 
   const [inputValues, setInputValues] = useState({
     title: "",
+    author: "",
     description: "",
     goldNumber: 0,
     goldAmount: 0,
     silverNumber: 0,
-    silverAmount: 0,
-    bronzeNumber: 0,
-    bronzeAmount: 0,
   });
 
   const handleOnChange = (event) => {
@@ -50,111 +45,182 @@ const Write = (props) => {
     setInputValues({ ...inputValues, [event.target.name]: value });
   };
 
-  const encryptKey = ComputeHash("1234567890");
+  //const encryptKey = ComputeHash("1234567890");
 
   var pdf;
   const allowedFiles = ["application/pdf"];
-
   const handleFile = async (e) => {
     let selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile && allowedFiles.includes(selectedFile.type)) {
-    
         let reader = new FileReader();
         reader.readAsDataURL(selectedFile);
         reader.onloadend = (e) => {
-          pdf = e.target.result;
-          setPdfFile(pdf);
-          pdf = CryptoJS.AES.encrypt(pdf, encryptKey);
-          console.log(pdf.toString());
+          setPdfFile(e.target.result);
+          // let l1 = CryptoJS.AES.encrypt(e.target.result, "secret key 123").toString();
+          // let l2 = CryptoJS.AES.decrypt(l1, "secret key 123").toString(CryptoJS.enc.Utf8)
+          // console.log(l1)
+          // console.log(l2)
           setPdfError("");
         };
-
-        try {
-          const addedpdf = await client.add(
-            selectedFile,
-            {
-              progress: (progress) => console.log(`Pdf received: ${progress}`)
-            }
-          )
-          const pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`
-          setpdfUrl(pdfurl)
-        } catch (error) {
-          console.log('Error uploading pdf file: ', error)
-        } 
+        reader.onerror = function (event) {
+          alert("Failed to read file!\n\n" + reader.error);
+        };
       } else {
         setPdfError("Invalid file type: Please select only PDF");
         setPdfFile(null);
-        setpdfUrl(null);
       }
-    } 
+    }
   };
 
-  const OnhandleMint = async(e) => {
+  const OnhandleMint = async (e) => {
     e.preventDefault();
-    const { title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount } = inputValues;
-    if (!title || !description || !goldNumber || !goldAmount || !silverNumber || !silverAmount || !bronzeNumber || !bronzeAmount || !pdfUrl || !ImageUrl) return
-    console.log("content : ",title, description, goldNumber, goldAmount, silverNumber, silverAmount, bronzeNumber, bronzeAmount, pdfUrl, ImageUrl);
-    console.log("Required : ",defaultAccount, bookContract, marketContract, provider, signer);
-    let ContentMetadata = {
-      title:title,
-      tokenIds: [],
-      tokenType: 1,
-      contentType: 1,
-      publicationDate: Date.now(),
-      author: "Rahul Shah",
-      authorAddr: defaultAccount,
-      coverImageHash: ImageUrl,
-      descriptionHash: pdfUrl
-    }
+    const {
+      title,
+      author,
+      description,
+      goldNumber,
+      silverNumber,
+      bronzeNumber,
+    } = inputValues;
 
-    let Amount = goldNumber*0.003+silverNumber*0.002+bronzeNumber*0.001+0.01
-    
-    if(defaultAccount && bookContract && marketContract && provider && signer){
-      const tx = {value: ethers.utils.parseEther(String(Amount)), gasLimit: 5000000};
-      bookContract.mintBatch(ContentMetadata,goldNumber,silverNumber,bronzeNumber,tx)
-      .then(async (transaction) => {
-        await transaction.wait();
-        console.log("transaction :", transaction);
-        console.log("Minted Successfully : ", await bookContract.balanceOf(defaultAccount));
-        //Render Back to Home Page
-      })
-      .catch(error => {
-        console.log("Error : ", error);
-      })
+    if (
+      !title ||
+      !description ||
+      !goldNumber ||
+      !silverNumber ||
+      !bronzeNumber
+    ) {
+      alert("Please fill all the fields");
+      return;
     }
-    else{
-      alert("Please connect to Metamask");
-    }
-
-  };
-
-  useEffect(() => {
-    if (props.connButtonText === "Wallet Connected") {
-      props.setup()
-      .then(
-        value => {
-          defaultAccount = value[0]
-          bookContract = value[1] 
-          marketContract = value[2] 
-          provider = value[3]
-          signer = value[4]
-          // console.log(defaultAccount, bookContract, marketContract, provider, signer);
-        })
-        .catch(err=>{
-          console.log(err);
-        })
-    }
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(image);
+    if (typeof window.ethereum !== "undefined") {
+      if (props.connButtonText === "Wallet Connected") {
+        props
+          .setup()
+          .then((value) => {
+            defaultAccount = value[0];
+            bookContract = value[1];
+            marketContract = value[2];
+            provider = value[3];
+            signer = value[4];
+            // console.log("Account Details : ",defaultAccount, bookContract, marketContract, provider, signer);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        alert("Please connect to the wallet");
+      }
     } else {
-      setPreview(null);
+      alert("Please add Metamask extension");
+      return;
     }
-  }, [props.connButtonText,image]);
+    console.log(
+      "content : ",
+      title,
+      author,
+      description,
+      goldNumber,
+      silverNumber,
+      bronzeNumber
+    );
+    console.log(
+      "Required : ",
+      defaultAccount,
+      bookContract,
+      marketContract,
+      provider,
+      signer
+    );
+    let pdfurl = null;
+    let imageurl = null;
+
+    const goldEncryptionKey = ComputeHash(description);
+    const silverEncryptionKey = ComputeHash(description);
+    const bronzeEncryptionKey = ComputeHash(description);
+
+    client
+      .add(CryptoJS.AES.encrypt(pdfFile, goldEncryptionKey).toString(), {
+        progress: (progress) => console.log(`Pdf received: ${progress}`),
+      })
+      .then((addedpdf) => {
+        pdfurl = `https://ipfs.infura.io/ipfs/${addedpdf.path}`;
+        client
+          .add(image, {
+            progress: (progress) => console.log(`received : ${progress}`),
+          })
+          .then((addedImage) => {
+            imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
+            console.log("addedImage : ", imageurl);
+            console.log("addedpdf : ", pdfurl);
+
+            let ContentMetadata = {
+              cid: 0,
+              title: title,
+              tokenIds: [],
+              tokenType: 1,
+              contentType: 1,
+              publicationDate: Date.now(),
+              author: author,
+              authorAddr: defaultAccount,
+              coverImageHash: imageurl,
+              descriptionHash: pdfurl,
+              description: description,
+            };
+
+            console.log("ContentMetadata : ", ContentMetadata);
+            const Amount =
+              goldNumber * 0.003 +
+              silverNumber * 0.002 +
+              bronzeNumber * 0.001 +
+              0.01; //0.01 is for the gas fee
+
+            const tx = {
+              value: ethers.utils.parseEther(Amount.toString()),
+              gasLimit: 5000000,
+            };
+            bookContract
+              .mintBatch(
+                ContentMetadata,
+                goldEncryptionKey,
+                silverEncryptionKey,
+                bronzeEncryptionKey,
+                goldNumber,
+                silverNumber,
+                bronzeNumber,
+                tx
+              )
+              .then(async (transaction) => {
+                await transaction.wait();
+                console.log("transaction :", transaction);
+                alert("Successfully minted");
+                //Render Back to Home Page
+              })
+              .catch((error) => {
+                console.log("Error while signing: ", error);
+              });
+          })
+          .then((addedImage) => {
+            imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
+            console.log("addedImage : ", imageurl);
+            console.log("addedpdf : ", pdfurl);
+            
+            bookContract
+              .then(async (transaction) => {
+                await transaction.wait();
+                console.log("transaction :", transaction);
+                //Render Back to Home Page
+              })
+              .catch((error) => {
+                console.log("Error while signing: ", error);
+              });
+          });
+      })
+      .catch((error) => {
+        console.log("Error Minting: ", error);
+      });
+  };
 
   return (
     <div className={classes.writePageContent}>
@@ -180,30 +246,41 @@ const Write = (props) => {
                 onChange={handleOnChange}
                 className={classes.textField}
               />
-              <WriteCopies
-                title='Gold'
-                color='#C9B037'
-                amountName='goldAmount'
-                numberName='goldNumber'
+              <TextField
+                id='author'
+                label="Author's Name"
+                variant='outlined'
+                name='author'
+                value={inputValues.author}
                 onChange={handleOnChange}
-                initialVals={inputValues}
+                className={classes.textField}
               />
-              <WriteCopies
-                title='Silver'
-                color='#B4B4B4'
-                amountName='silverAmount'
-                numberName='silverNumber'
-                onChange={handleOnChange}
-                initialVals={inputValues}
-              />
-              <WriteCopies
-                title='Bronze'
-                color='#AD8A56'
-                amountName='bronzeAmount'
-                numberName='bronzeNumber'
-                onChange={handleOnChange}
-                initialVals={inputValues}
-              />
+              <div style={{ display: "flex" }}>
+                <WriteCopies
+                  title='Gold'
+                  color='#C9B037'
+                  amountName='goldAmount'
+                  numberName='goldNumber'
+                  onChange={handleOnChange}
+                  initialVals={inputValues}
+                />
+                <WriteCopies
+                  title='Silver'
+                  color='#B4B4B4'
+                  amountName='silverAmount'
+                  numberName='silverNumber'
+                  onChange={handleOnChange}
+                  initialVals={inputValues}
+                />
+                <WriteCopies
+                  title='Bronze'
+                  color='#AD8A56'
+                  amountName='bronzeAmount'
+                  numberName='bronzeNumber'
+                  onChange={handleOnChange}
+                  initialVals={inputValues}
+                />
+              </div>
               <Typography
                 style={{
                   margin: "10px 0px 0px 10px",
@@ -217,6 +294,7 @@ const Write = (props) => {
                 minRows={10}
                 placeholder='A short description about your book'
                 name='description'
+                style={{ overflow: "auto" }}
                 value={inputValues.description}
                 onChange={handleOnChange}
               />
@@ -224,7 +302,7 @@ const Write = (props) => {
             <div>
               <Typography
                 style={{
-                  margin: "80px 150px 0px 0px",
+                  margin: "0px 150px 0px 0px",
                   fontSize: "2rem",
                 }}>
                 Upload Book Cover
@@ -235,28 +313,19 @@ const Write = (props) => {
                   type='file'
                   accept='image/*'
                   required
-                  onChange={async(event) => {
+                  onChange={(event) => {
                     const file = event.target.files[0];
                     if (file && file.type.substring(0, 5) === "image") {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setPreview(reader.result);
+                      };
+                      reader.readAsDataURL(file);
                       setImage(file);
-                      try{
-                        const added = await client.add(
-                          file,
-                          {
-                            progress: (progress) => console.log(`received : ${progress}`)
-                          }
-                        )
-                          const url = `https://ipfs.infura.io/ipfs/${added.path}`
-                          setImageUrl(url)
-                      }
-                      catch(error){
-                        console.log("Error Uploading Image",error);
-                      }
+                    } else {
+                      setImage(null);
+                      setPreview(null);
                     }
-                  else {
-                    setImage(null);
-                    setImageUrl(null);
-                  }
                   }}
                   className={classes.inputFile}
                 />
@@ -295,17 +364,18 @@ const Write = (props) => {
           </div>
           {pdfError && <span className='text-danger'>{pdfError}</span>}
         </form>
-        { pdfFile && 
-          (<div style={{height: "1000px"}}>
-              <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'> 
-                <Viewer
-                  fileUrl={pdfFile}
-                  plugins={[defaultLayoutPluginInstance]}
-                  defaultScale={SpecialZoomLevel.PageFit}
-                  theme='dark'
-                />
-              </Worker>
-          </div>)}
+        {pdfFile && (
+          <div style={{ height: "1000px" }}>
+            <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.12.313/build/pdf.worker.min.js'>
+              <Viewer
+                fileUrl={pdfFile}
+                plugins={[defaultLayoutPluginInstance]}
+                defaultScale={SpecialZoomLevel.PageFit}
+                theme='dark'
+              />
+            </Worker>
+          </div>
+        )}
       </div>
     </div>
   );

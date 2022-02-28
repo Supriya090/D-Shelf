@@ -1,4 +1,4 @@
-export const bookAddress = "0x0d3fc928121ec8660E6E12b8EA23d2DC02Ab90d6"
+export const bookAddress = "0x54fEd3541139310F980029528fA1baEf76f70aDC"
 export const bookAbi = [
   {
     "inputs": [
@@ -203,6 +203,11 @@ export const bookAbi = [
     "name": "contents",
     "outputs": [
       {
+        "internalType": "uint256",
+        "name": "cid",
+        "type": "uint256"
+      },
+      {
         "internalType": "string",
         "name": "title",
         "type": "string"
@@ -241,6 +246,11 @@ export const bookAbi = [
         "internalType": "string",
         "name": "descriptionHash",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -252,6 +262,11 @@ export const bookAbi = [
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
           {
             "internalType": "string",
             "name": "title",
@@ -295,6 +310,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -357,15 +377,20 @@ export const bookAbi = [
   {
     "inputs": [
       {
-        "internalType": "uint256[]",
-        "name": "contentIDs",
-        "type": "uint256[]"
+        "internalType": "uint256",
+        "name": "cid",
+        "type": "uint256"
       }
     ],
-    "name": "getContentbyContentIndexArray",
+    "name": "getContentbyCID",
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
           {
             "internalType": "string",
             "name": "title",
@@ -409,6 +434,87 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct book.Content",
+        "name": "content",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "contentIDs",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "getContentbyContentIndexArray",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "tokenIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "enum book.TokenType",
+            "name": "tokenType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum book.ContentType",
+            "name": "contentType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "publicationDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "author",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "authorAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "coverImageHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -452,6 +558,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "title",
             "type": "string"
@@ -494,6 +605,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -523,6 +639,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "title",
             "type": "string"
@@ -565,6 +686,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -589,6 +715,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "title",
             "type": "string"
@@ -631,6 +762,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],
@@ -669,6 +805,45 @@ export const bookAbi = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalbronzeTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalgoldTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalsilverTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -722,6 +897,11 @@ export const bookAbi = [
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
             "name": "title",
             "type": "string"
@@ -764,6 +944,11 @@ export const bookAbi = [
           {
             "internalType": "string",
             "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           }
         ],

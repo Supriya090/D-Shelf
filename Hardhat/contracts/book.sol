@@ -18,6 +18,9 @@ contract book is ERC721 {
 
     //mint fee of the tokens for each category
     mapping(TokenType=>uint256) internal mintingFee;
+
+    //For Encyption key
+    mapping(uint => bytes32) public  ContentEncryptionKey;
    
     //list of gold tokens
     uint256[] public goldTokenIds;
@@ -31,6 +34,7 @@ contract book is ERC721 {
 
     //details of each contents
     struct Content{
+        uint256 cid;
         string title;
         uint256[] tokenIds;
         TokenType tokenType;
@@ -40,6 +44,7 @@ contract book is ERC721 {
         address authorAddr;
         string coverImageHash;
         string descriptionHash;
+        string description;
     }
 
     //list of all the contents
@@ -66,11 +71,11 @@ contract book is ERC721 {
         mintingFee[TokenType.BRONZE] = 0.001 ether;
 
         developer = payable(msg.sender);
-        Content memory content = Content("", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "");
+        Content memory content = Content(0,"", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "","");
         contents.push(content);
     }
 
-    function mintBatch(Content memory content,uint gold, uint silver, uint bronze) external payable {
+    function mintBatch(Content memory content, bytes32 GoldEncryptionKey, bytes32 SilverEncryptionKey, bytes32 BronzeEncryptionKey, uint gold, uint silver, uint bronze) external payable {
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
                             mintingFee[TokenType.SILVER]*silver+
                             mintingFee[TokenType.BRONZE]*bronze;
@@ -113,19 +118,25 @@ contract book is ERC721 {
         }
         content.authorAddr=msg.sender;
         if(gold>0){
+            content.cid=contents.length;
             content.tokenType=TokenType.GOLD;
             content.tokenIds=tokenIdsGold;
             contents.push(content);
+            ContentEncryptionKey[contents.length]=GoldEncryptionKey;
         }
         if(silver>0){
+            content.cid=contents.length;
             content.tokenType=TokenType.SILVER;
             content.tokenIds=tokenIdsSilver;
             contents.push(content);
+            ContentEncryptionKey[contents.length]=SilverEncryptionKey;
         }
         if(bronze>0){
+            content.cid=contents.length;
             content.tokenType=TokenType.BRONZE;
             content.tokenIds=tokenIdsBronze;
             contents.push(content);
+            ContentEncryptionKey[contents.length]=BronzeEncryptionKey;
         }
     }
 
@@ -160,16 +171,25 @@ contract book is ERC721 {
         return (0,0,false);
     }
 
+    function getContentbyCID(uint256 cid) external view returns (Content memory content){
+        require(cid > 0 && cid < contents.length, "Content ID is not valid");
+        return contents[cid];
+    }
 
-    function getTokensOwnedByUser(address addr) public view returns (uint256[] memory){
-        return userOwnedTokens[addr];
+    //Similar is done in getContentofToken() with additional checking
+    /*
+    function getAllContentsbyTokenId(uint256 tokenId) public view returns (Content memory content){
+        return(getContentbyCID(getContentIndexByID(tokenId)[0]));
+    }
+    */
+    
+    function getTokensOwnedByUser() external view returns (uint256[] memory){
+        return userOwnedTokens[msg.sender];
     }
 
     function getTotalContents() external view returns (uint256){
         return contents.length;
     } 
-
-/*
 
     function getTotalgoldTokens() external view returns (uint256[] memory){
         return goldTokenIds;
@@ -180,8 +200,20 @@ contract book is ERC721 {
     function getTotalbronzeTokens() external view returns (uint256[] memory){
         return bronzeTokenIds;
     }
-
-*/
+ 
+    function getEncryptionKey(uint cid) external view returns (bytes32 encryptedKey){
+        require(cid > 0 && cid < contents.length, "Invalid cid");
+        for (uint256 id = 0; id < contents[cid].tokenIds.length; id++) {
+            if(ownerOf(contents[cid].tokenIds[id]) == msg.sender){
+                return ContentEncryptionKey[cid];
+            }
+        }
+    }
+    
+    function getContentList() external view returns (Content[] memory){
+        return contents;
+        //need efficient searching in frontend
+    }
 
     function getContentofToken(uint256 tokenId) public view returns (Content memory content){
         uint256 contentID;

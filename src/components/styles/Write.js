@@ -72,7 +72,6 @@ const useStyles = makeStyles((theme) => ({
             padding: "10px",
             fontFamily: "Rubik, sans-serif",
             fontSize: "0.9rem"
-
         }
     },
     textField: {
@@ -113,10 +112,10 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "1.2rem"
     },
     uploadedImage: {
-        height: "450px",
+        height: "420px",
         position: "absolute",
-        right: 205,
-        bottom: -170
+        right: "18%",
+        top: "46%"
     },
     uploadPdf: {
         flex: "0 0 100%"
@@ -124,4 +123,4 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default useStyles;
+export { useStyles }

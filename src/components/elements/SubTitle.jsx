@@ -1,25 +1,23 @@
 import React from "react";
-import { Typography, Button } from "@material-ui/core";
+import { TextField, Typography, Button, Badge } from "@material-ui/core";
 import useStyles from "../styles/Scrollbar";
 import { useStyles as HomeStyles } from "../styles/Home";
+import { useStyles as PopStyles } from "../styles/Popup";
 import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
 import { usePalette } from "react-palette";
+import PopupBox from "./Popup";
 
-function SubTitle({
-  isTrending = false,
-  isAuthor = false,
-  onSale = false,
-  isCollection = false,
-  src,
-}) {
+function SubTitle(props) {
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
-  const { data } = usePalette(src);
-
+  const { data } = usePalette(props.src);
+  // const options = props.OwnedCollectionIds
+  // console.log(options);
   let saleStats;
-  if (onSale) {
+
+  if (props.onSale) {
     saleStats = (
       <div>
         <div className={`${scrollClasses.biddings} ${homeClasses.biddings}`}>
@@ -31,17 +29,22 @@ function SubTitle({
             </div>
             ($10000)
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Button
-              variant='contained'
-              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
-              Buy Now
-            </Button>
-            <Button
-              variant='contained'
-              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}>
+            <Badge
+              className={scrollClasses.badge}
               style={{ backgroundColor: "#C9B037" }}>
               Gold
+            </Badge>
+            <Button
+              variant='contained'
+              onClick={props.buyContent}
+              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
+              Buy Now
             </Button>
           </div>
         </div>
@@ -49,14 +52,11 @@ function SubTitle({
     );
   }
 
-  if (isTrending || onSale) {
+  if (props.isTrending || props.onSale) {
     return (
       <div>
-        <Typography>
-          Learn to read Novels Like a Professor
-          <br />
-          Tips by Supriya Khadka
-        </Typography>
+        <Typography>{props.title}</Typography>
+        <Typography>Author: {props.author}</Typography>
         <div className={scrollClasses.voteButtons}>
           <Button
             variant='contained'
@@ -74,14 +74,14 @@ function SubTitle({
         {saleStats}
       </div>
     );
-  } else if (isAuthor) {
+  } else if (props.isAuthor) {
     return (
       <div
         className={scrollClasses.forAuthor}
-        style={{ backgroundColor: data.darkVibrant }}>
+        style={{ backgroundColor: data.darkMuted }}>
         <img src={dummy} alt='avatar' className={scrollClasses.avatar} />
         <div className={scrollClasses.authorInfo}>
-          <Typography>Rahul Shah</Typography>
+          <Typography>Author: {props.author}</Typography>
           <Typography style={{ marginBottom: "10px" }}>
             1000 followers
           </Typography>
@@ -98,19 +98,20 @@ function SubTitle({
         </div>
       </div>
     );
-  } else if (isCollection) {
+  } else if (props.isCollection && props.OwnedCollectionIds) {
     return (
       <>
-        <Typography>
-          Learn to read Novels Like a Professor
-          <br />
-          Tips by Supriya Khadka
+        <Typography style={{ marginBottom: "10px" }}>{props.title}</Typography>
+        <Typography style={{ marginTop: "10px" }}>
+          Author: {props.author}
         </Typography>
-        <Button
-          variant='contained'
-          className={`${scrollClasses.voteButton} ${homeClasses.exploreButton}`}>
-          List For Sale
-        </Button>
+        <PopupBox
+          author={props.author}
+          setup={props.setup}
+          OwnedCollectionIds={props.OwnedCollectionIds}
+          title={props.title}
+          tokenType={props.tokenType}
+        />
       </>
     );
   } else {

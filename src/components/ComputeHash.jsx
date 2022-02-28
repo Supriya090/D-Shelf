@@ -123,8 +123,10 @@ const ComputeHash = (M) => {
     }
     
     if (result.length !== 64)
-        throw new Error("Hash result is not 64bytes");
-    return result;
+        throw new Error("Hash result is not 64 bytes");
+
+    const cut = result.slice(0, result.length / 2);
+    return cut;
 };
 
 export default ComputeHash;

@@ -86,7 +86,7 @@ const PDFViewer = (props) => {
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
 
-  decrypt();
+  // decrypt();
 
   return (
     <div>
