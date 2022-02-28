@@ -11,7 +11,6 @@ import React, { useEffect, useState } from "react";
 import ComputeHash from "./ComputeHash";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
-
 import WriteCopies from "./elements/WriteCopies";
 import {useStyles} from "./styles/Write";
 
@@ -135,10 +134,9 @@ const Write = (props) => {
     );
     let pdfurl = null;
     let imageurl = null;
-
-    const goldEncryptionKey = ComputeHash(description);
-    const silverEncryptionKey = ComputeHash(description);
-    const bronzeEncryptionKey = ComputeHash(description);
+    const goldEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+    const silverEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+    const bronzeEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
 
     client
       .add(CryptoJS.AES.encrypt(pdfFile, goldEncryptionKey).toString(), {
