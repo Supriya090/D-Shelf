@@ -123,7 +123,7 @@ function SinglePage(props) {
                 </div>
                 <Button
                   variant='contained'
-                  onClick={props.buyContent.bind(this, itemId)}
+                  onClick={props.buyContent.bind(this, itemId,price)}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now
