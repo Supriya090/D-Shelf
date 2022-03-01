@@ -73,26 +73,37 @@ function App() {
       setErrorMessage('Please install MetaMask browser extension to interact');
     }
   }
-  const buyContent = async(tokenId,amount) => { 
-        // const amount = 1;
-        const tx = {
-          value: ethers.utils.parseEther(amount.toString()),
-          gasLimit: 10000000,
-        };
-        marketContract.createMarketSale(bookAddress, tokenId,tx)
-        .then(async(transaction) => {
-          console.log(transaction);
-          const receipt = await transaction.wait();
-          console.log(receipt);
-          alert("Content Bought");
-        })
-        .catch(err => {
-          console.log(err);
-          alert("Some error occured");
-        });
+  // const buyContent = async(tokenId,amount) => { 
+  //       // const amount = 1;
+  //       const tx = {
+  //         value: ethers.utils.parseEther(amount.toString()),
+  //         gasLimit: 10000000,
+  //       };
+  //       marketContract.createMarketSale(bookAddress, tokenId,tx)
+  //       .then(async(transaction) => {
+  //         console.log(transaction);
+  //         const receipt = await transaction.wait();
+  //         console.log(receipt);
+  //         alert("Content Bought");
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //         alert("Some error occured");
+  //       });
    
     
-  }
+  // }
+
+  const buyContent = async(tokenId) => { 
+    // const amount = 1;
+
+           const tx = {
+          gasLimit: 10000000,
+        };
+    await marketContract.removeMarketItem(bookAddress, 1,tx)
+    
+
+}
 
   const fetchOwnContent = async() => { 
     const items = await marketContract.fetchMyNFTs()

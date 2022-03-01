@@ -165,7 +165,7 @@ function HorizontalScrolling({
             tokenType={value.tokenType}
             OwnedCollectionIds={CollectiontokenIds}
             index={index}
-            onClick={handleClick(value.cid,value.itemId,value.price)}
+            onClick={handleClick(value.cid,value.tokenId,value.price)}
           />
         ))}
       </ScrollMenu>
