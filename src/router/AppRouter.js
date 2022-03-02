@@ -79,7 +79,7 @@ function App() {
           value: ethers.utils.parseEther(amount.toString()),
           gasLimit: 10000000,
         };
-        marketContract.createMarketSale(bookAddress, tokenId,tx)
+        marketContract.createMarketSale(bookAddress, 1,tx)
         .then(async(transaction) => {
           console.log(transaction);
           const receipt = await transaction.wait();
@@ -100,7 +100,7 @@ function App() {
            const tx = {
           gasLimit: 10000000,
         };
-    await marketContract.removeMarketItem(bookAddress, 1,tx)
+    await marketContract.removeMarketItem(bookAddress, tokenId,tx)
     
 
 }

@@ -71,7 +71,6 @@ contract bookmarket is ReentrancyGuard {
         );
 
         IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
-
         emit MarketItemCreated(
             itemId,
             nftContract,
@@ -104,11 +103,12 @@ contract bookmarket is ReentrancyGuard {
         ) public payable nonReentrant {
         uint256 itemId = _itemId[tokenId];
         uint price = idToMarketItem[itemId].price;
-        require(msg.value == price, "Please submit the asking price in order to complete the purchase");
+        require(msg.value >= price, "Please submit the asking price in order to complete the purchase");
+        require(msg.sender != idToMarketItem[itemId].seller,"Seller can't be buyer");
 
         idToMarketItem[itemId].seller.transfer(msg.value);
-        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
-        // idToMarketItem[itemId].owner = payable(msg.sender);
+        // IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+        idToMarketItem[itemId].owner = payable(msg.sender);
         idToMarketItem[itemId].sold = true;
         _itemsSold.increment();
     }
