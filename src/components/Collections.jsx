@@ -90,7 +90,7 @@ const Collections = (props) => {
           console.log("listed..........",items)
           let listedcontent = []
           for(const item of items){
-            const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
+            const cid = ( await bookContract.getContentofToken(item.tokenId))[0]
             const content =  await bookContract.getContentbyCID(cid)
            
             listedcontent.push(addContent(content,item)) 
@@ -102,7 +102,7 @@ const Collections = (props) => {
         console.log("purchased..........",myitems)
         const mycontent = []
         for(const item of myitems){
-          const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
+          const cid = ( await bookContract.getContentofToken(item.tokenId))[0]
           const content =  await bookContract.getContentbyCID(cid)
           listedcontent.push(addContent(content,item)) 
       }

@@ -120,7 +120,7 @@ const PopupBox = (props) => {
               {console.log(selectedToken)}
               <TextField
                 id='price'
-                label='Price'
+                label='Price (in Gwei)'
                 variant='outlined'
                 name='price'
                 type='number'

@@ -5,7 +5,10 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-import "hardhat/console.sol";
+interface Ibook{
+  function addtoken(uint256 _tokenId, address buyer) external;
+  function removetoken(uint256 _tokenId, address seller) external;
+}
 
 contract bookmarket is ReentrancyGuard {
     using Counters for Counters.Counter;
@@ -66,7 +69,7 @@ contract bookmarket is ReentrancyGuard {
             tokenId,
             payable(msg.sender),
             payable(address(0)),
-            price,
+            price/1000000000,  //in Gwei
             false
         );
 
@@ -91,7 +94,6 @@ contract bookmarket is ReentrancyGuard {
         require(msg.sender==idToMarketItem[_itemId[tokenId]].seller,"Only owner can unlist the item");
 
         IERC721(nftContract).transferFrom(address(this),msg.sender, tokenId);
-
         delete idToMarketItem[_itemId[tokenId]];
     }
 
@@ -106,15 +108,23 @@ contract bookmarket is ReentrancyGuard {
         require(msg.value >= price, "Please submit the asking price in order to complete the purchase");
         require(msg.sender != idToMarketItem[itemId].seller,"Seller can't be buyer");
 
-        idToMarketItem[itemId].seller.transfer(msg.value);
-        // IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+        idToMarketItem[itemId].seller.transfer(price);
+        if(msg.value > price){
+            payable(msg.sender).transfer(msg.value - price);
+        }
+        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+
+        Ibook book = Ibook(nftContract);
+        book.addtoken(tokenId, msg.sender);
+        book.removetoken(tokenId, idToMarketItem[itemId].seller);
+
         idToMarketItem[itemId].owner = payable(msg.sender);
         idToMarketItem[itemId].sold = true;
         _itemsSold.increment();
     }
   
     /* Returns all unsold market items */
-    function fetchMarketItems() public view returns (MarketItem[] memory) {
+    function fetchMarketItems() external view returns (MarketItem[] memory) {
         uint itemCount = _itemIds.current();
         uint unsoldItemCount = _itemIds.current() - _itemsSold.current() - _unlisted.current();
         uint currentIndex = 0;
@@ -132,7 +142,7 @@ contract bookmarket is ReentrancyGuard {
     }
 
     /* Returns only items that a user has purchased */
-    function fetchMyNFTs() public view returns (MarketItem[] memory) {
+    function fetchMyNFTs() external view returns (MarketItem[] memory) {
         uint totalItemCount = _itemIds.current();
         uint itemCount = 0;
         uint currentIndex = 0;
@@ -156,7 +166,7 @@ contract bookmarket is ReentrancyGuard {
     }
 
     /* Returns only items a user has created */
-    function fetchItemsCreated() public view returns (MarketItem[] memory) {
+    function fetchItemsCreated() external view returns (MarketItem[] memory) {
         uint totalItemCount = _itemIds.current();
         uint itemCount = 0;
         uint currentIndex = 0;
@@ -180,7 +190,7 @@ contract bookmarket is ReentrancyGuard {
     }
 
   /* Returns total tokens items a user has created */
-  function fetchTotalUserTokens() public view returns (uint256[] memory) {
+  function fetchTotalUserTokens() external view returns (uint256[] memory) {
     uint totalItemCount = _itemIds.current();
     uint256 itemCount = 0;
     uint currentIndex = 0;

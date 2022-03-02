@@ -55,7 +55,7 @@ const MarketPlace = (props) => {
     
         
         for(const item of items){
-          const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
+          const cid = ( await bookContract.getContentofToken(item.tokenId))[0]
           const content =  await bookContract.getContentbyCID(cid)
          
           listedcontent.push(addContent(content,item))

@@ -215,7 +215,7 @@ contract book is ERC721 {
         //need efficient searching in frontend
     }
 
-    function getContentofToken(uint256 tokenId) public view returns (Content memory content){
+    function getContentofToken(uint256 tokenId) external view returns (Content memory content){
         uint256 contentID;
         uint256 IndexoftokenId;
         bool valid;

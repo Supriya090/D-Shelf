@@ -75,11 +75,12 @@ function App() {
   }
   const buyContent = async(tokenId,amount) => { 
         // const amount = 1;
+        console.log('buyContent', tokenId, amount);
         const tx = {
           value: ethers.utils.parseEther(amount.toString()),
           gasLimit: 10000000,
         };
-        marketContract.createMarketSale(bookAddress, 1,tx)
+        marketContract.createMarketSale(bookAddress, tokenId,tx)
         .then(async(transaction) => {
           console.log(transaction);
           const receipt = await transaction.wait();
