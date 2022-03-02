@@ -25,7 +25,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const PRIVATE_KEY =
   process.env.RINKEBY_PRIVATE_KEY ||
   process.env.PRIVATE_KEY ||
-  "59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
+  "8fb7b2b7c68ebfb9b77feba8e6d5b2e4287cdc8cfdfd666e36c88c66f8495718";
 module.exports = {
   solidity: {
     version: "0.8.4",

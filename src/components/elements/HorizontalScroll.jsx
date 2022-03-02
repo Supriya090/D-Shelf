@@ -17,6 +17,7 @@ function HorizontalScrolling({
   ...props
 }) {
   const [items, setItems] = React.useState(props.getItems);
+  const precision = 1000000000
   const navigate = useNavigate();
 
   const classes = useStyles();
@@ -55,6 +56,7 @@ function HorizontalScrolling({
   // const [CollectiontokenIds, setCollectiontokenIds] = useState([[]]);
   var CollectiontokenIds = [];
   useEffect(() => {
+    
     if (props.isCollection) {
       items.map((content, index) => {
         var CtokenIds = [];
@@ -165,7 +167,7 @@ function HorizontalScrolling({
             tokenType={value.tokenType}
             OwnedCollectionIds={CollectiontokenIds}
             index={index}
-            onClick={handleClick(value.cid,value.tokenId,value.price)}
+            onClick={handleClick(value.cid,value.tokenId,(value.price)/precision)}
           />
         ))}
       </ScrollMenu>

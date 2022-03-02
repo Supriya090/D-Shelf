@@ -17,10 +17,11 @@ contract bookmarket is ReentrancyGuard {
     Counters.Counter private _unlisted;
 
     address payable owner;
-    // uint256 listingPrice = 0.025 ether;
+    uint256 precision = 1000000000;
 
     constructor() {
         owner = payable(msg.sender);
+        
     }
 
     struct MarketItem {
@@ -47,9 +48,9 @@ contract bookmarket is ReentrancyGuard {
     );
 
     // /* Returns the listing price of the contract */
-    // function getListingPrice() public view returns (uint256) {
-    //     return listingPrice;
-    // }
+    function getPrecision() public view returns (uint256) {
+        return precision;
+    }
 
     /* Places an item for sale on the marketplace */
     function createMarketItem(
@@ -57,7 +58,7 @@ contract bookmarket is ReentrancyGuard {
         uint256 tokenId,
         uint256 price
     ) public nonReentrant {
-        require(price > 0, "Price must be at least 1 wei");
+        require(price >= 0, "Price must be at least 1 gwei");
 
         _itemIds.increment();
         uint256 itemId = _itemIds.current();
@@ -69,7 +70,7 @@ contract bookmarket is ReentrancyGuard {
             tokenId,
             payable(msg.sender),
             payable(address(0)),
-            price/1000000000,  //in Gwei
+            price,
             false
         );
 
@@ -104,13 +105,13 @@ contract bookmarket is ReentrancyGuard {
         uint256 tokenId
         ) public payable nonReentrant {
         uint256 itemId = _itemId[tokenId];
-        uint price = idToMarketItem[itemId].price;
-        require(msg.value >= price, "Please submit the asking price in order to complete the purchase");
+        uint price = (idToMarketItem[itemId].price);
+        require((msg.value*precision) >= price, "Please submit the asking price in order to complete the purchase");
         require(msg.sender != idToMarketItem[itemId].seller,"Seller can't be buyer");
 
-        idToMarketItem[itemId].seller.transfer(price);
-        if(msg.value > price){
-            payable(msg.sender).transfer(msg.value - price);
+        idToMarketItem[itemId].seller.transfer((price*1)/precision);
+        if((msg.value*precision) > price){
+            payable(msg.sender).transfer(((msg.value - price)*1)/precision);
         }
         IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
 
@@ -124,16 +125,16 @@ contract bookmarket is ReentrancyGuard {
     }
   
     /* Returns all unsold market items */
-    function fetchMarketItems() external view returns (MarketItem[] memory) {
+    function fetchMarketItems() public view returns (MarketItem[] memory) {
         uint itemCount = _itemIds.current();
         uint unsoldItemCount = _itemIds.current() - _itemsSold.current() - _unlisted.current();
         uint currentIndex = 0;
 
         MarketItem[] memory items = new MarketItem[](unsoldItemCount);
         for (uint i = 0; i < itemCount; i++) {
-            if (idToMarketItem[i + 1].owner == address(0) && idToMarketItem[i + 1].price != 0) {
+            if (idToMarketItem[i + 1].owner == address(0) && idToMarketItem[i + 1].itemId != 0) {
                 uint currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
+                MarketItem memory currentItem = idToMarketItem[currentId];
                 items[currentIndex] = currentItem;
                 currentIndex += 1;
             }
@@ -187,6 +188,28 @@ contract bookmarket is ReentrancyGuard {
             }
         }
         return items;
+    }
+
+    function isTokenListed(uint256 tokenId) public view returns(bool){
+        return (_itemId[tokenId]>0);
+    }
+
+    function FilterTokens(uint256[] memory _tokenIds) public view returns(uint256[] memory){
+        uint count = 0;
+        for (uint256 i = 0; i< _tokenIds.length; i++) {
+          if(_itemId[_tokenIds[i]]==0){
+              count += 1;
+          }
+        }
+        uint256[] memory tokenIds = new uint256[](count);
+        for (uint256 i = 0; i< _tokenIds.length; i++) {
+          if(_itemId[_tokenIds[i]]==0){
+              count -= 1;
+              tokenIds[count] = _tokenIds[i];
+          }
+        }
+
+        return tokenIds;
     }
 
   /* Returns total tokens items a user has created */

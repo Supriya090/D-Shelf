@@ -74,6 +74,7 @@ contract book is ERC721 {
         Content memory content = Content(0,"", new uint256[](0), TokenType.GOLD, ContentType.Other, block.timestamp, "", developer, "", "","");
         contents.push(content);
     }
+    
 
     function mintBatch(Content memory content, bytes32 GoldEncryptionKey, bytes32 SilverEncryptionKey, bytes32 BronzeEncryptionKey, uint gold, uint silver, uint bronze) external payable {
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+

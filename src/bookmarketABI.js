@@ -1,5 +1,5 @@
-export const bookMarketAddress = "0x4B1d648EaF947a3C95Fb3D277b086DF7C11FdBbC"
-export const bookMarketAbi = [
+export const bookMarketAddress = "0x92735a94737e50F12558aF7E5F94f0414339406A"
+export const bookMarketAbi =[
   {
     "inputs": [],
     "stateMutability": "nonpayable",
@@ -53,6 +53,25 @@ export const bookMarketAbi = [
     ],
     "name": "MarketItemCreated",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_tokenIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "FilterTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -272,6 +291,38 @@ export const bookMarketAbi = [
         "internalType": "uint256[]",
         "name": "",
         "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPrecision",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "isTokenListed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
