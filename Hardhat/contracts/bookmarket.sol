@@ -111,7 +111,7 @@ contract bookmarket is ReentrancyGuard {
 
         idToMarketItem[itemId].seller.transfer((price*1)/precision);
         if((msg.value*precision) > price){
-            payable(msg.sender).transfer(((msg.value - price)*1)/precision);
+            payable(msg.sender).transfer(((msg.value*precision - price)*1)/precision);
         }
         IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
 
