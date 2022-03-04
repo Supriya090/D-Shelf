@@ -8,6 +8,7 @@ import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
 import { usePalette } from "react-palette";
 import PopupBox from "./Popup";
+import { bookAddress } from "../../bookABI.js";
 
 function SubTitle(props) {
   const homeClasses = HomeStyles();
@@ -16,6 +17,18 @@ function SubTitle(props) {
   // const options = props.OwnedCollectionIds
   // console.log(options);
   let saleStats;
+  let CollectionsaleStats;
+
+  const unlist = async () => {
+    props.setup().then(async(value) => {
+      const marketContract = value[2];
+      await marketContract.removeMarketItem(bookAddress, props.tokenId).then(async (transaction) => {
+        console.log(transaction);
+        props.CollectionOnSale = false;
+        props.OnSale = false;
+      });
+    });
+  }
 
   if (props.onSale) {
     saleStats = (
@@ -51,6 +64,40 @@ function SubTitle(props) {
       </div>
     );
   }
+  if (props.CollectionOnSale) {
+    CollectionsaleStats = (
+      <div>
+        <div className={`${scrollClasses.biddings} ${homeClasses.biddings}`}>
+          <div>
+            Current Value
+            <div
+              className={`${scrollClasses.bidNumStyle} ${homeClasses.bidNumStyle}`}>
+              4 ETH{" "}
+            </div>
+            ($10000)
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}>
+            <Badge
+              className={scrollClasses.badge}
+              style={{ backgroundColor: "#C9B037" }}>
+              Gold
+            </Badge>
+            <Button
+              variant='contained'
+              onClick={unlist}
+              className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
+              Unlist Now
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (props.isTrending || props.onSale) {
     return (
@@ -74,7 +121,17 @@ function SubTitle(props) {
         {saleStats}
       </div>
     );
-  } else if (props.isAuthor) {
+  } 
+  if (props.CollectionOnSale) {
+    return (
+      <div>
+        <Typography>{props.title}</Typography>
+        <Typography>Author: {props.author}</Typography>
+        {CollectionsaleStats}
+      </div>
+    );
+  } 
+  else if (props.isAuthor) {
     return (
       <div
         className={scrollClasses.forAuthor}

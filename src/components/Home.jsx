@@ -61,8 +61,8 @@ const Home = (props) => {
         const items = await marketContract.fetchMarketItems();
         console.log(items);
         const tokenId = items[items.length - 1].tokenId;
-        const cid = (await bookContract.getContentofToken(tokenId))[0];
-        const content = await bookContract.getContentbyCID(cid);
+        const content = await bookContract.getContentofToken(tokenId);
+        // const content = await bookContract.getContentbyCID(cid);
         console.log("Feature content:", content);
         setFeaturedContent(addContent(content, items[items.length - 1]));
 

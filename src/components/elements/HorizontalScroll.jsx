@@ -13,9 +13,10 @@ import { useEffect } from "react";
 function HorizontalScrolling({
   isTrending = false,
   isAuthor = false,
-  onSale = false,
   ...props
 }) {
+  const onSale = props.onSale ? props.onSale : false;
+  const CollectionOnSale = props.CollectionOnSale ? props.CollectionOnSale : false;
   const [items, setItems] = React.useState(props.getItems);
   const precision = 1000000000
   const navigate = useNavigate();
@@ -98,6 +99,7 @@ function HorizontalScrolling({
     publicationDate,
     title,
     tokenIds,
+    tokenId,
     tokenType,
     OwnedCollectionIds,
     index,
@@ -125,11 +127,12 @@ function HorizontalScrolling({
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
+            tokenId={tokenId}
+            CollectionOnSale={CollectionOnSale}
             isCollection={props.isCollection}
             src={coverImageHash}
             title={title}
             author={author}
-            setup={props.setup}
             buyContent={props.buyContent}
             UserCollectiontokenIds={CollectiontokenIds}
             OwnedCollectionIds={OwnedCollectionIds[index]}
@@ -164,6 +167,7 @@ function HorizontalScrolling({
             publicationDate={value.publicationDate}
             title={value.title}
             tokenIds={value.tokenIds}
+            tokenId={value.tokenId}
             tokenType={value.tokenType}
             OwnedCollectionIds={CollectiontokenIds}
             index={index}
