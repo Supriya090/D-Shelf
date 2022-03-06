@@ -10,10 +10,10 @@ import {
   Box,
   InputBase,
 } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
 
 import { useStyles } from "./styles/Header";
 import WalletInfo from "./elements/WalletInfo";
+import SearchBar from "./elements/SearchBar";
 
 const headersData = [
   {
@@ -103,8 +103,6 @@ const Header = (props) => {
     Get();
   }, [])
 
-  console.log("title", title)
-  //Require popup searching
   const displayHeader = () => {
     let walletDetails;
     if (props.connButtonText === "Wallet Connected") {
@@ -130,19 +128,8 @@ const Header = (props) => {
                   D-Shelf
                 </Typography>
               </div>
-              <div className={search}>
-                <div className={searchIcon}>
-                  <SearchIcon />
-                </div>
-                <InputBase
-                  placeholder='Search Content ...'
-                  classes={{
-                    root: inputRoot,
-                    input: inputInput,
-                  }}
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </div>
+              {title ? (
+              <SearchBar data={title} />):(<></>)}
               <div style={{ display: "flex" }}>
                 {getMenuButtons()}
                 <Button
