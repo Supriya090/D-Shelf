@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router";
 import logo from "../assets/logo.png";
@@ -52,7 +52,59 @@ const Header = (props) => {
   const logoClick = () => {
     navigate("/", { replace: true });
   }
+  
+  const [title, setTitle] = useState([]);
+  var bookContract;
+  function getContent() {
+    return new Promise((resolve, reject) => {
+      if (props.connButtonText === "Wallet Connected") {
+        props.setup().then((value) => {
+          bookContract = value[1];
+          console.log("bookContract", bookContract);
+          resolve(bookContract);
+        });
+      } else {
+        props.unsetup().then((value) => {
+          bookContract = value[0];
+          console.log("bookContract", bookContract);
+          resolve(bookContract);
+        });
+      }
+    });
+  }
 
+  useEffect(() => {
+    function Get() {
+      getContent().then(async (bookContract) => {
+        await bookContract.getContentList()
+        .then((list)=>{
+          var List = []
+          list.map((item)=>{
+            List.push({...item})
+          })
+          List.shift()
+          for(var i = 0; i < List.length; i++){
+            delete List[i][0];
+            delete List[i][1];
+            delete List[i][2];
+            delete List[i][3];
+            delete List[i][4];
+            delete List[i][5];
+            delete List[i][6];
+            delete List[i][7];
+            delete List[i][8];
+            delete List[i][9];
+            delete List[i][10];
+          }
+        setTitle(List)
+        })
+      })
+    }
+    Get();
+  }, [])
+
+  console.log("title", title)
+  //Require popup searching
   const displayHeader = () => {
     let walletDetails;
     if (props.connButtonText === "Wallet Connected") {

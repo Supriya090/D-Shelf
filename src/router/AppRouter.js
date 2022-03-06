@@ -1,5 +1,5 @@
 import Header from '../components/Header';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "../App.css"
 import { Route, Routes } from 'react-router-dom';
 import Home from '../components/Home';
@@ -10,6 +10,7 @@ import SinglePage from '../components/SinglePage';
 import { ethers } from 'ethers'
 import { bookAddress, bookAbi } from '../bookABI.js'
 import { bookMarketAddress, bookMarketAbi } from '../bookmarketABI'
+import { SettingsOutlined } from '@material-ui/icons';
 
 
 
@@ -95,37 +96,6 @@ function App() {
     
   }
 
-  const removeFromSale = async(tokenId) => { 
-    // const amount = 1;
-
-           const tx = {
-          gasLimit: 10000000,
-        };
-    await marketContract.removeMarketItem(bookAddress, tokenId,tx)
-    
-
-}
-
-  const fetchOwnContent = async() => { 
-    const items = await marketContract.fetchMyNFTs()
-    console.log(items[0].tokenId)
-    let listedcontent = []
-
-    
-    for(const item of items){
-      const cid = (await bookContract.getContentIndexByID(item.tokenId))[0]
-      const content = await bookContract.getContentbyCID(cid)
-      let listed = {
-        tokenId : item.tokenId,
-        itemId : item.itemId,
-        content : content
-      }
-      listedcontent.push(listed)  
-    }
-    console.log(listedcontent)
-    return listedcontent
-  }
-
   const setup = () => {
     return new Promise((resolve, reject) => {
       ConnectWalletHandler()
@@ -141,7 +111,6 @@ function App() {
     })
   }
 
-  //TODO Need some work so that we can view in Home even if dont have any metamask
   const unSetup = () => {
     return new Promise((resolve, reject) => {
       if ( window.ethereum !== undefined) {
@@ -165,50 +134,9 @@ function App() {
       }
     })
   }
-
-  //get index value of the book i.e. of contents[] array from token id
-  const getContentindexfromToken = async (tokenIds) => {
-    tokenIds = await bookContract.getTokensOwnedByUser(defaultAccount);
-    const contentIndex = await bookContract.getContentIndexByID(tokenIds[0]);
-    console.log("From getContentindexfromToken() / contentIndex : ", contentIndex);
-  }
-
-  //directly get content from token id
-  const getContentByTokenId = async (tokenIds) => {
-    tokenIds = await bookContract.getTokensOwnedByUser(defaultAccount);
-    console.log("From getContentByTokenId() / tokenIds : ", tokenIds);
-    const content = await bookContract.getContentofToken(tokenIds[0]);
-    console.log("content of tokenId[0]", content);
-
-    // Can also be done by
-    // const contentIndex = await bookContract.getContentIndexByID(tokenIds[0]);
-    // const content = await getContentbyContentIndexArray(new Array("contentIndex"));
-
-    // console.log("content :", content);
-  }
-
-  //get all content by content index array
-  //depriciation :  getAllContentsOfUser()
-  //depriciation: getContentsOfEachTokenType(tokenType)
-  const getContentbyitsIndices = async (indices) => {
-    const totalcontentAvailable = await bookContract.getTotalContents();
-    indices = [];
-    //Please Note that first content is empty i.e content starts at index 1 so do apply for tokenIds
-    for (let i = 1; i < totalcontentAvailable.toNumber(); i++) {
-      indices.push(i);
-    }
-    console.log(indices);
-    let content = await bookContract.getContentbyContentIndexArray(indices);
-    console.log("From getContentbyitsIndices() / content :", content);
-
-    //can also be used to get content by tokentypes id of gold silver and bronze by finding its content index
-    // const totalgoldtokenAvailable = await bookContract.getTotalgoldTokens(); 
-    // const goldContentsIndexAvailable = await bookContract.getContentbyTokensArray(totalgoldtokenAvailable);
-    // const contents = await bookContract.getContentbyContentIndexArray(goldContentsIndexAvailable);
-  }
+  
 
   useEffect(() => {
-
     async function GetConnected(){
       if(window.ethereum){
         const accounts = await window.ethereum.request({
@@ -228,13 +156,10 @@ function App() {
       }
     }
     GetConnected();
-  
     async function OnWalletChange() {
       window.ethereum.on('accountsChanged', function (accounts) {
-        // Time to reload your interface with accounts[0]!
-        // console.log("accountsChanged :", accounts[0]);
-        setConnButtonText('Wallet Changed');
-        setErrorMessage('Click button to refresh contents');
+        alert('accountsChanged');
+        setup()
       })
     }
     
@@ -254,6 +179,7 @@ function App() {
         userAccount={defaultAccount}
         userBalance={userBalance}
         setup={setup}
+        unsetup={unSetup}
         errorMessage={errorMessage}
         connButtonText={connButtonText}
       />

@@ -21,6 +21,8 @@ const PDFViewer = (props) => {
 
   //exports pdf from prop
   var {pdfBase64, decryptKey} = props; 
+  console.log("pdfBase64", pdfBase64);
+  console.log("decryptKey", decryptKey);
 
   const decrypt = () => {
     //full pdf string decryption --->
@@ -86,7 +88,7 @@ const PDFViewer = (props) => {
 
   const renderPage = (props) => <CustomPageLayer renderPageProps={props} />;
 
-  // decrypt();
+  decrypt();
 
   return (
     <div>

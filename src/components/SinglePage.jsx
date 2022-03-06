@@ -18,8 +18,45 @@ function SinglePage(props) {
   const classes = useStyles();
   const [content, setContent] = useState({});
   const [pdf, setpdf] = useState(null);
+  const [EncryptionKey, setEncryptionKey] = useState(null);
+;
   var bookContract;
+  var url;
+  // var LoadData;
+  // var LoadPdf;
 
+//   const LoadData = () => {
+//     if(EncryptionKey !== "0x0000000000000000000000000000000000000000000000000000000000000000"){
+//     return (<>
+//       {LoadPdf}
+//     </>
+//     );
+//   }
+//   else{
+//     return (
+//       <div ><Typography >Buy Book to view Contents</Typography></div>
+//     );
+//   }
+// }
+
+// const LoadPdf =() => {
+//  if(pdf){
+//     console.log("pdf", pdf);
+//     console.log("encryption key", EncryptionKey);
+//     return (
+//       <div className={classes.sPViewer}>
+//         <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
+//       </div>
+//     );
+//   }
+//   else{
+//     return (
+//     <div className={classes.sPViewer}>
+//       <img src={loader} alt="loading" />
+//     </div>
+//     );
+//   }
+// }
   function getContent() {
     return new Promise((resolve, reject) => {
       if (props.connButtonText === "Wallet Connected") {
@@ -41,38 +78,37 @@ function SinglePage(props) {
   useEffect(() => {
     function Get() {
       getContent().then(async (bookContract) => {
-        console.log("bookContract", bookContract);
-        var url;
-        await bookContract
-          .getContentbyCID(id)
-          .then((content) => {
-            url = content.descriptionHash;
-            setContent(content);
-            console.log(content);
+        const content = await bookContract.getContentbyCID(id)
+        url = content.descriptionHash;
+        setContent(content);
+        await bookContract.getEncryptionKey(id)
+        .then((encryptionKey) => {
+          if(encryptionKey == "0x0000000000000000000000000000000000000000000000000000000000000000"){
+            setEncryptionKey(null);
+          }else{
+            setEncryptionKey(encryptionKey);
+          }
+          console.log("EncryptionKey", EncryptionKey)
+        })
+      })
+      .then(async () => {
+        if(EncryptionKey !== null){
+          await fetch(url)
+          .then((raw) => {
+            return raw.blob();
           })
-          .then(async () => {
-            await fetch(url)
-              .then((raw) => {
-                return raw.blob();
-              })
-              .then((blob) => {
-                var reader = new FileReader();
-                reader.readAsText(blob);
-                reader.onloadend = function () {
-                  var base64data = reader.result;
-                  console.log(base64data);
-                  var encrypted = CryptoJS.AES.decrypt(
-                    base64data,
-                    "secret key 123"
-                  );
-                  var decrypted = encrypted.toString(CryptoJS.enc.Utf8);
-                  setpdf(decrypted);
-                };
-              });
-          })
-          .catch((err) => {
-            console.log("Fetch Error", err);
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsText(blob);
+            reader.onloadend = function () {
+              var base64data = reader.result;
+              setpdf(base64data);
+            };
           });
+        }
+      })
+      .catch((err) => {
+        console.log("Fetch Error", err);
       });
     }
     Get();
@@ -96,7 +132,7 @@ function SinglePage(props) {
   console.log(publicationDate);
 
   const inDollars = price * 2663;
-  console.log("encryptedPdf 2 : ", pdf);
+
   return (
     <div className={classes.singleContent}>
       <div className={classes.bookDetails}>
@@ -188,14 +224,31 @@ function SinglePage(props) {
         </Typography>
         <Typography>{description}</Typography>
       </div>
-
-      {pdf ? (
-        <div className={classes.sPViewer}>
-          <PDFViewer pdfBase64={pdf} decryptKey={ComputeHash("1234567890")}/>
-        </div>
-      ) : (
-        <div>Loading ...</div>
-      )}
+      {
+        props.connButtonText === "Wallet Connected" ? (
+        <>
+        {
+          EncryptionKey && pdf ? (
+            <div className={classes.sPViewer}>
+              <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
+            </div>
+          ) : (<div><Typography 
+            style={{
+            fontSize: "1.5rem",
+            color: "#FFD600",
+            marginBottom: "10px",
+          }}
+          >Buy this Book to View</Typography></div>)
+        }
+        </>
+        ):(<div><Typography 
+          style={{
+          fontSize: "1.5rem",
+          color: "#FFD600",
+          marginBottom: "10px",
+        }}
+        >Connect your Wallet</Typography></div>)
+      }
     </div>
   );
 }
