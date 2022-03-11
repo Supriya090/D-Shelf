@@ -1,4 +1,4 @@
-import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
+import { Button, Divider, Typography, Tooltip, Badge } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useStyles as marketStyles } from "./styles/MarketPlace";
 import dummy from "../assets/dummy.jpg";
@@ -27,6 +27,15 @@ const Home = (props) => {
   const [featuredContent, setFeaturedContent] = useState({});
   const [listedContent, setlistedContent] = useState([]);
   const [RecentlyMinted, setRecentlyMinted] = useState([]);
+
+  let color;
+  if (featuredContent.tokenType === 0) {
+    color = "#C9B037";
+  } else if (featuredContent.tokenType === 1) {
+    color = "#B4B4B4";
+  } else {
+    color = "#AD8A56";
+  }
 
   const navigate = useNavigate();
   const marketRoute = () => {
@@ -112,7 +121,7 @@ const Home = (props) => {
     <div className={classes.mainContent}>
       <div className={classes.featuredContent}>
         <div className={classes.featured}>
-          <Typography>Featured Contents</Typography>
+          <Typography>Featured Content</Typography>
           <div className={classes.NFTFeatures}>
             <div>
               <div className={classes.owner}>
@@ -122,19 +131,35 @@ const Home = (props) => {
                   <br />
                   Author : {featuredContent.author} <br />
                 </Typography>
-                <Tooltip title='$10000'>
-                  <Button
-                    variant='contained'
-                    className={classes.exploreButton}
-                    style={{
-                      color: "#fff",
-                      backgroundColor: "#000",
-                      fontWeight: 500,
-                      cursor: "default",
-                    }}>
-                    2 ETH
-                  </Button>
-                </Tooltip>
+                <div className={classes.badges}>
+                  <Badge
+                    className={classes.badge}
+                    style={{ backgroundColor: `${color}` }}>
+                    {console.log(featuredContent.tokenType)}
+                    {(() => {
+                      switch (featuredContent.tokenType) {
+                        case 0:
+                          return "GOLD";
+                        case 1:
+                          return "SILVER";
+                        case 2:
+                          return "BRONZE";
+                      }
+                    })()}
+                  </Badge>
+                  <Tooltip title='$10000'>
+                    <Badge
+                      className={classes.badge}
+                      style={{
+                        color: "#fff",
+                        backgroundColor: "#000",
+                        fontSize: "1rem",
+                        marginTop: "10px",
+                      }}>
+                      2 ETH
+                    </Badge>
+                  </Tooltip>
+                </div>
               </div>
               <Divider />
               <ReadMore content={featuredContent}>
@@ -173,7 +198,7 @@ const Home = (props) => {
           ) : (
             <HorizontalScrolling
               getItems={listedContent}
-              isTrending={true}
+              isTrending={false}
               onSale={true}
               buyContent={props.buyContent}
             />
@@ -199,7 +224,7 @@ const Home = (props) => {
           <ListHead
             title={"Notable Writers"}
             leftButton={"Popular"}
-            hasRightButton={true}
+            // hasRightButton={true}
           />
           <HorizontalScrolling getItems={auctionContent} isAuthor={true} />
         </div>

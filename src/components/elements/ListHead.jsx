@@ -1,4 +1,4 @@
-import { Button, Typography } from "@material-ui/core";
+import { Button, Typography, Badge } from "@material-ui/core";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import { useStyles } from "../styles/Home";
 
@@ -8,11 +8,11 @@ function ListHead({ title, leftButton, hasRightButton = false }) {
   function RightButton() {
     if (hasRightButton) {
       return (
-        <Button
+        <Badge
           variant='contained'
           className={`${classes.listButton} ${classes.exploreButton}`}>
           View All
-        </Button>
+        </Badge>
       );
     } else {
       return null;
@@ -21,11 +21,11 @@ function ListHead({ title, leftButton, hasRightButton = false }) {
 
   return (
     <div className={classes.auctionHead}>
-      <Button
+      <Badge
         variant='contained'
         className={`${classes.listButton} ${classes.exploreButton}`}>
         {leftButton} <ArrowDownwardIcon />{" "}
-      </Button>
+      </Badge>
       <Typography>{title}</Typography>
       <RightButton />
     </div>

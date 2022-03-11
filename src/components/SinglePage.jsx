@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useStyles as homeStyles } from "./styles/Home";
-import { Typography, Button } from "@material-ui/core";
+import { Typography, Button, Badge } from "@material-ui/core";
 import { useStyles } from "./styles/SinglePage";
 import dummy from "../assets/dummy.jpg";
 import ComputeHash from "./ComputeHash";
@@ -133,6 +133,14 @@ function SinglePage(props) {
 
   console.log(publicationDate);
 
+  let color;
+  if (tokenType === 0) {
+    color = "#C9B037";
+  } else if (tokenType === 1) {
+    color = "#B4B4B4";
+  } else {
+    color = "#AD8A56";
+  }
   const inDollars = price * 2663;
 
   return (
@@ -159,17 +167,9 @@ function SinglePage(props) {
                   <div className={homeClasses.bidNumStyle}>{price} ETH </div>$
                   {inDollars}
                 </div>
-                <Button
-                  variant='contained'
-                  onClick={props.buyContent.bind(this, itemId, price)}
-                  className={homeClasses.exploreButton}
-                  style={{ marginTop: "0px" }}>
-                  Buy Now
-                </Button>
-                <Button
-                  variant='contained'
-                  className={homeClasses.exploreButton}
-                  style={{ marginTop: "0px" }}>
+                <Badge
+                  className={homeClasses.badge}
+                  style={{ marginTop: "0px", backgroundColor: `${color}` }}>
                   {(() => {
                     switch (tokenType) {
                       case 0:
@@ -180,6 +180,13 @@ function SinglePage(props) {
                         return "BRONZE";
                     }
                   })()}
+                </Badge>
+                <Button
+                  variant='contained'
+                  onClick={props.buyContent.bind(this, itemId, price)}
+                  className={homeClasses.exploreButton}
+                  style={{ marginTop: "0px" }}>
+                  Buy Now
                 </Button>
               </div>
               <div className={classes.bidDetails}>
@@ -239,6 +246,7 @@ function SinglePage(props) {
                   fontSize: "1.5rem",
                   color: "#FFD600",
                   marginBottom: "10px",
+                  fontWeight: 500,
                 }}>
                 Buy this Book to View
               </Typography>

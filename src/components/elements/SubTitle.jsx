@@ -2,8 +2,8 @@ import React from "react";
 import { Typography, Button, Badge } from "@material-ui/core";
 import useStyles from "../styles/Scrollbar";
 import { useStyles as HomeStyles } from "../styles/Home";
-import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
+// import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
+// import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
 import { usePalette } from "react-palette";
 import PopupBox from "./Popup";
@@ -18,6 +18,16 @@ function SubTitle(props) {
   let saleStats;
   let CollectionsaleStats;
 
+  let color;
+  if (props.tokenType === 0) {
+    color = "#C9B037";
+  } else if (props.tokenType === 1) {
+    color = "#B4B4B4";
+  } else {
+    color = "#AD8A56";
+  }
+
+  console.log(props);
   const unlist = async () => {
     props.setup().then(async (value) => {
       const marketContract = value[2];
@@ -39,9 +49,9 @@ function SubTitle(props) {
             Current Value
             <div
               className={`${scrollClasses.bidNumStyle} ${homeClasses.bidNumStyle}`}>
-              4 ETH{" "}
+              {props.price}
             </div>
-            ($10000)
+            ${props.price * 2657}
           </div>
           <div
             style={{
@@ -49,11 +59,6 @@ function SubTitle(props) {
               flexDirection: "column",
               alignItems: "center",
             }}>
-            <Badge
-              className={scrollClasses.badge}
-              style={{ backgroundColor: "#C9B037" }}>
-              Gold
-            </Badge>
             <Button
               variant='contained'
               onClick={props.buyContent}
@@ -73,7 +78,7 @@ function SubTitle(props) {
             Current Value
             <div
               className={`${scrollClasses.bidNumStyle} ${homeClasses.bidNumStyle}`}>
-              4 ETH{" "}
+              ${props.price * 2657}
             </div>
             ($10000)
           </div>
@@ -105,7 +110,7 @@ function SubTitle(props) {
       <div>
         <Typography>{props.title}</Typography>
         <Typography>Author: {props.author}</Typography>
-        <div className={scrollClasses.voteButtons}>
+        {/* <div className={scrollClasses.voteButtons}>
           <Button
             variant='contained'
             className={`${scrollClasses.voteButton} ${homeClasses.exploreButton}`}>
@@ -118,7 +123,21 @@ function SubTitle(props) {
             3 <ArrowDownwardRoundedIcon className={scrollClasses.voteArrow} />{" "}
             Downvote
           </Button>
-        </div>
+        </div> */}
+        <Badge
+          className={homeClasses.badge}
+          style={{ backgroundColor: `${color}` }}>
+          {(() => {
+            switch (props.tokenType) {
+              case 0:
+                return "GOLD";
+              case 1:
+                return "SILVER";
+              case 2:
+                return "BRONZE";
+            }
+          })()}
+        </Badge>
         {saleStats}
       </div>
     );
