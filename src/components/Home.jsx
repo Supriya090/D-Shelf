@@ -1,5 +1,6 @@
 import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
+import { useStyles as marketStyles } from "./styles/MarketPlace";
 import dummy from "../assets/dummy.jpg";
 import { useStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
@@ -9,13 +10,15 @@ import { useNavigate } from "react-router";
 import ReadMore from "./elements/ReadMore";
 import loader from "../assets/loading-yellow.gif";
 
-// const auctionContent = content;
+const auctionContent = content;
 
 const Home = (props) => {
   var bookContract;
   var marketContract;
   var provider;
   var signer;
+
+  const marketClasses = marketStyles();
 
   const classes = useStyles();
   const [goldContents, setGoldContents] = useState([]);
@@ -64,11 +67,11 @@ const Home = (props) => {
         //All listed content in reverse limited to top of 10
         const items = await marketContract.fetchMarketItems();
         let listedcontent = [];
-        for(const item of items){
-          const content = await bookContract.getContentofToken(item.tokenId)
-          listedcontent.push(content)
+        for (const item of items) {
+          const content = await bookContract.getContentofToken(item.tokenId);
+          listedcontent.push(content);
         }
-        setlistedContent(listedcontent.reverse().slice(0,10))
+        setlistedContent(listedcontent.reverse().slice(0, 10));
 
         //Featured content
         const tokenId = items[items.length - 1].tokenId;
@@ -78,7 +81,7 @@ const Home = (props) => {
 
         //Recently minted content limited to top of 10
         console.log("Recently minted:", props.title);
-        setRecentlyMinted(props.title.reverse().slice(0,10))
+        setRecentlyMinted(props.title.reverse().slice(0, 10));
 
         // bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
         //   console.log("All gold Content : ", GoldContents);
@@ -164,10 +167,16 @@ const Home = (props) => {
           {listedContent.length === 0 ? (
             <img
               src={loader}
+              className={marketClasses.loader}
               alt='loading...'
             />
           ) : (
-            <HorizontalScrolling getItems={listedContent} isTrending={true} onSale={true} buyContent={props.buyContent} />
+            <HorizontalScrolling
+              getItems={listedContent}
+              isTrending={true}
+              onSale={true}
+              buyContent={props.buyContent}
+            />
           )}
         </div>
         <div className={classes.auctions}>
@@ -175,19 +184,16 @@ const Home = (props) => {
           {RecentlyMinted.length === 0 ? (
             <img
               src={loader}
+              className={marketClasses.loader}
               alt='loading...'
             />
           ) : (
-            <HorizontalScrolling getItems={RecentlyMinted} isTrending={true} onSale={false} />
+            <HorizontalScrolling
+              getItems={RecentlyMinted}
+              isTrending={true}
+              onSale={false}
+            />
           )}
-        </div>
-        <div className={classes.notableContents} style={{ marginTop: "80px" }}>
-          <ListHead
-            title={"Notable Contents"}
-            leftButton={"Trending"}
-            hasRightButton={true}
-          />
-          <HorizontalScrolling getItems={listedContent} isTrending={true} />
         </div>
         <div className={classes.notableCreators} style={{ marginTop: "80px" }}>
           <ListHead
@@ -195,7 +201,7 @@ const Home = (props) => {
             leftButton={"Popular"}
             hasRightButton={true}
           />
-          <HorizontalScrolling getItems={listedContent} isAuthor={true} />
+          <HorizontalScrolling getItems={auctionContent} isAuthor={true} />
         </div>
       </div>
       <Button
