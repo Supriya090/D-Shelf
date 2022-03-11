@@ -1,15 +1,15 @@
-
 import React, { useState } from "react";
-import "./SearchBar.css";
+import { useStyles } from "../styles/Search";
 import SearchIcon from "@material-ui/icons/Search";
 import CloseIcon from "@material-ui/icons/Close";
-import { InputBase } from "@material-ui/core";
+import { InputBase, Badge } from "@material-ui/core";
 
 function SearchBar({ data }) {
-const [filteredData, setFilteredData] = useState([]);
-const [wordEntered, setWordEntered] = useState("");
+  const searchStyles = useStyles();
+  const [filteredData, setFilteredData] = useState([]);
+  const [wordEntered, setWordEntered] = useState("");
 
-console.log("data", data);
+  console.log("data", data);
 
   const handleFilter = (event) => {
     const searchWord = event.target.value;
@@ -30,34 +30,67 @@ console.log("data", data);
     setWordEntered("");
   };
 
-return (
-    <div className="search">
-      <div className="searchInputs">
-         <InputBase
-                placeholder='Search Content ...'
-                value={wordEntered}
-                onChange={handleFilter}
-                inputProps={{ "aria-label": "search" }}
-            />
-        <div className="searchIcon">
+  return (
+    <div className={searchStyles.search}>
+      <div className={searchStyles.searchInputs}>
+        <InputBase
+          placeholder='Search Content ...'
+          value={wordEntered}
+          onChange={handleFilter}
+          classes={{
+            root: searchStyles.inputRoot,
+          }}
+          inputProps={{ "aria-label": "search" }}
+        />
+        <div className={searchStyles.searchIcon}>
           {filteredData.length === 0 ? (
             <SearchIcon />
           ) : (
-            <CloseIcon id="clearBtn" onClick={clearInput} />
+            <CloseIcon id='clearBtn' onClick={clearInput} />
           )}
         </div>
       </div>
       {filteredData.length != 0 && (
-        <div className="dataResult">
+        <div className={searchStyles.dataResult}>
           {filteredData.slice(0, 15).map((value, key) => {
             return (
-              <a className="dataItem" href={`/singlePage/${value.cid}/${value.cid}/${value.cid}`} target="_blank">
-                <img src={value.coverImageHash} style={{width: "100%", height: "100%", objectFit: "contain"}}/>
-                {value.tokenType === 0 ? (<p>GOLD   {value.title}</p>):
-                (<>{
-                  value.tokenType === 1 ? (<p>SILVER   {value.title}</p>) : (<p>BRONZE   {value.title}</p>)
-                }</>)
-                }
+              <a
+                className={searchStyles.dataItem}
+                href={`/singlePage/${value.cid}/${value.cid}/${value.cid}`}
+                target='_blank'>
+                <>
+                  <img
+                    src={value.coverImageHash}
+                    style={{
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                  <p>{value.title}</p>
+                </>
+                {value.tokenType === 0 ? (
+                  <Badge
+                    className={searchStyles.badge}
+                    style={{ backgroundColor: "#C9B037" }}>
+                    GOLD
+                  </Badge>
+                ) : (
+                  <>
+                    {value.tokenType === 1 ? (
+                      <Badge
+                        className={searchStyles.badge}
+                        style={{ backgroundColor: "#B4B4B4" }}>
+                        SILVER
+                      </Badge>
+                    ) : (
+                      <Badge
+                        className={searchStyles.badge}
+                        style={{ backgroundColor: "#AD8A56" }}>
+                        BRONZE
+                      </Badge>
+                    )}
+                  </>
+                )}
               </a>
             );
           })}
