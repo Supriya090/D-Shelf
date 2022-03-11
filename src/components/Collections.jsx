@@ -13,6 +13,8 @@ const Collections = (props) => {
   var marketContract;
   var provider;
   var signer;
+  var filtered;
+  var TotalUnlistedIds = [];
 
   const marketClasses = marketStyles();
   const homeClasses = homeStyles();
@@ -77,92 +79,91 @@ const Collections = (props) => {
       props
         .setup()
         .then((value) => {
-          // console.log(value)
           defaultAccount = value[0];
           bookContract = value[1];
           marketContract = value[2];
           provider = value[3];
           signer = value[4];
-          // console.log(defaultAccount, bookContract, marketContract, provider, signer);
         })
         .then(async () => {
           const items =  await marketContract.fetchItemsCreated()
           console.log("listed..........",items)
           let listedcontent = []
           for(const item of items){
-            const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
-            const content =  await bookContract.getContentbyCID(cid)
-           
+            const content = await bookContract.getContentofToken(item.tokenId)
             listedcontent.push(addContent(content,item)) 
-        }
-        setListedContents(listedcontent)
-        console.log("Listed Contents",listedcontent)
+          }
+          setListedContents(listedcontent)
+          console.log("Listed Contents",listedcontent)
 
-        const myitems =  await marketContract.fetchMyNFTs()
-        console.log("purchased..........",myitems)
-        const mycontent = []
-        for(const item of myitems){
-          const cid = ( await bookContract.getContentIndexByID(item.tokenId))[0]
-          const content =  await bookContract.getContentbyCID(cid)
-          listedcontent.push(addContent(content,item)) 
-      }
-      setPurchasedContents(mycontent)
-      console.log("Purchased Contents",mycontent)
+          const myitems =  await marketContract.fetchMyNFTs()
+          console.log("purchased..........",myitems)
+          const mycontent = []
+          for(const item of myitems){
+            const content = await bookContract.getContentofToken(item.tokenId)
+            listedcontent.push(addContent(content,item)) 
+          }
+          setPurchasedContents(mycontent)
+          console.log("Purchased Contents",mycontent)
 
-          await bookContract.getTotalgoldTokens().then((totalTokens) => {
-            setTotalIds(totalTokens);
-          });
-          await bookContract.getAllContentsOfUser().then((UserContents) => {
-            console.log("User owned Content : ", UserContents);
-            //Render User Contents
-            setContents(addItemId(UserContents));
-          });
-          await bookContract.getTotalgoldTokens().then((totalGoldTokens) => {
+          const totalTokens = await bookContract.getTokensOwnedByUser()
+          setTotalIds(totalTokens);
+          const UnlistedTokenOfUser = await marketContract.FilterTokens(totalTokens)
+            for (var i = 0; i < UnlistedTokenOfUser.length; i++) {
+              TotalUnlistedIds.push(UnlistedTokenOfUser[i].toNumber());
+            }
+          console.log("Unlisted Token Of User",TotalUnlistedIds)
+        })
+        .then(async() => {
+          console.log(TotalUnlistedIds);
+          await bookContract.getTotalgoldTokens()
+          .then((totalGoldTokens) => {
             var TotalGoldIds = [];
             for (var i = 0; i < totalGoldTokens.length; i++) {
               TotalGoldIds.push(totalGoldTokens[i].toNumber());
             }
-            setTotalGoldIds((TotalGoldIds));
+            filtered = TotalGoldIds.filter((value) => TotalUnlistedIds.includes(value));
+            console.log("Total Gold Ids",filtered);
+            setTotalGoldIds(filtered);
           });
-          await bookContract
-            .getContentsByTokenTypeofUser("gold", defaultAccount)
-            .then((UserGoldContents) => {
-              console.log("User owned gold Content : ", UserGoldContents);
-              //Render User Gold Content
-              setGoldContents(addItemId(UserGoldContents));
-            });
-          await bookContract
-            .getTotalsilverTokens()
-            .then((totalSilverTokens) => {
-              var TotalSilverIds = [];
-              for (var i = 0; i < totalSilverTokens.length; i++) {
-                TotalSilverIds.push(totalSilverTokens[i].toNumber());
-              }
-              setTotalSilverIds(TotalSilverIds);
-            });
-          await bookContract
-            .getContentsByTokenTypeofUser("silver", defaultAccount)
-            .then((UserSilverContents) => {
-              //Render User Silver Content
-              console.log("User owned silver Content : ", UserSilverContents);
-              setSilverContents(addItemId(UserSilverContents));
-            });
-          await bookContract
-            .getTotalbronzeTokens()
-            .then((totalBronzeTokens) => {
-              var TotalBronzeIds = [];
-              for (var i = 0; i < totalBronzeTokens.length; i++) {
-                TotalBronzeIds.push(totalBronzeTokens[i].toNumber());
-              }
-              setTotalBronzeIds(TotalBronzeIds);
-            });
-          await bookContract
-            .getContentsByTokenTypeofUser("bronze", defaultAccount)
-            .then((UserBronzeContents) => {
-              console.log("User owned Bronze Content : ", UserBronzeContents);
-              //Render User Bronze Content
-              setBronzeContents(addItemId(UserBronzeContents));
-            });
+
+          await bookContract.getTotalsilverTokens()
+          .then((totalSilverTokens) => {
+            var TotalSilverIds = [];
+            for (var i = 0; i < totalSilverTokens.length; i++) {
+              TotalSilverIds.push(totalSilverTokens[i].toNumber());
+            }
+            filtered = TotalSilverIds.filter((value) => TotalUnlistedIds.includes(value));
+            console.log("Total Silver Ids",filtered);
+            setTotalSilverIds(filtered);
+          });
+
+          await bookContract.getTotalbronzeTokens()
+          .then((totalBronzeTokens) => {
+            var TotalBronzeIds = [];
+            for (var i = 0; i < totalBronzeTokens.length; i++) {
+              TotalBronzeIds.push(totalBronzeTokens[i].toNumber());
+            }
+            filtered = TotalBronzeIds.filter((value) => TotalUnlistedIds.includes(value));
+            console.log("Total Bronze Ids",filtered);
+            setTotalBronzeIds(filtered);
+          });
+
+          const UserContents = await bookContract.getAllContentsOfUser()
+          console.log("User owned Content : ", UserContents);
+          setContents(addItemId(UserContents));
+
+          const UserGoldContents = await bookContract.getContentsByTokenTypeofUser("gold", defaultAccount)
+          console.log("User owned gold Content : ", UserGoldContents);
+          setGoldContents(addItemId(UserGoldContents));
+
+          const UserSilverContents = await bookContract.getContentsByTokenTypeofUser("silver", defaultAccount)
+          console.log("User owned silver Content : ", UserSilverContents);
+          setSilverContents(addItemId(UserSilverContents));
+
+          const UserBronzeContents = await bookContract.getContentsByTokenTypeofUser("bronze", defaultAccount)
+          console.log("User owned bronze Content : ", UserBronzeContents);
+          setBronzeContents(addItemId(UserBronzeContents));
         })
         .catch((err) => {
           console.log(err);
@@ -177,16 +178,38 @@ const Collections = (props) => {
       </div>
       <div className={homeClasses.itemsList}>
         <div className={homeClasses.auctions}>
-          <ListHead title={""} leftButton={"Total Owned"} />
-          {UserContents.length === 0 && TotalIds === 0 ? (
+          <ListHead title={""} leftButton={"On Sale"} />
+          {listedContents.length === 0 ? (
             <img
               src={loader}
               alt='loading...'
               className={marketClasses.loader}
             />
           ) : (
-            <></>
-            // <HorizontalScrolling getItems={UserContents} isCollection={true} setup={props.setup} TotalIds={TotalIds} />
+            <HorizontalScrolling 
+              getItems={listedContents} 
+              isCollection={false}
+              CollectionOnSale={true}
+              setup={props.setup} 
+            />
+          )}
+        </div>
+        <div
+          className={homeClasses.notableContents}
+          style={{ marginTop: "80px" }}>
+          <ListHead title={""} leftButton={"Purchased"} />
+          {purchasedContents.length !== 0 ? (
+            <HorizontalScrolling
+              getItems={purchasedContents}
+              isCollection={false}
+              setup={props.setup}
+            />
+          ) : (
+            <img
+              src={loader}
+              alt='loading...'
+              className={marketClasses.loader}
+            />
           )}
         </div>
         <div

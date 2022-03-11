@@ -1,5 +1,5 @@
-export const bookMarketAddress = "0x73003798a8AF7005c2F400B3Efaff6DA28119D46"
-export const bookMarketAbi = [
+export const bookMarketAddress = "0x92735a94737e50F12558aF7E5F94f0414339406A"
+export const bookMarketAbi =[
   {
     "inputs": [],
     "stateMutability": "nonpayable",
@@ -57,6 +57,44 @@ export const bookMarketAbi = [
   {
     "inputs": [
       {
+        "internalType": "uint256[]",
+        "name": "_tokenIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "FilterTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "_itemId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "nftContract",
         "type": "address"
@@ -86,7 +124,7 @@ export const bookMarketAbi = [
       },
       {
         "internalType": "uint256",
-        "name": "itemId",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -243,6 +281,69 @@ export const bookMarketAbi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fetchTotalUserTokens",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPrecision",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "isTokenListed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "removeMarketItem",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

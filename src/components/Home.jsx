@@ -61,8 +61,8 @@ const Home = (props) => {
         const items = await marketContract.fetchMarketItems();
         console.log(items);
         const tokenId = items[items.length - 1].tokenId;
-        const cid = (await bookContract.getContentIndexByID(tokenId))[0];
-        const content = await bookContract.getContentbyCID(cid);
+        const content = await bookContract.getContentofToken(tokenId);
+        // const content = await bookContract.getContentbyCID(cid);
         console.log("Feature content:", content);
         setFeaturedContent(addContent(content, items[items.length - 1]));
 
@@ -115,7 +115,7 @@ const Home = (props) => {
                       fontWeight: 500,
                       cursor: "default",
                     }}>
-                    {console.log("Price: ", featuredContent.authorAddr)}2 ETH
+                    2 ETH
                   </Button>
                 </Tooltip>
               </div>

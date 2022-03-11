@@ -1,4 +1,4 @@
-export const bookAddress = "0x54fEd3541139310F980029528fA1baEf76f70aDC"
+export const bookAddress = "0x1F2Ac4dd097c80299DA57c705922cB9377321034"
 export const bookAbi = [
   {
     "inputs": [
@@ -104,6 +104,25 @@ export const bookAbi = [
     ],
     "name": "minted",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "ContentEncryptionKey",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -369,6 +388,76 @@ export const bookAbi = [
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getContentList",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "cid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "tokenIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "enum book.TokenType",
+            "name": "tokenType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum book.ContentType",
+            "name": "contentType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "publicationDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "author",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "authorAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "coverImageHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "descriptionHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct book.Content[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -781,11 +870,24 @@ export const bookAbi = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "cid",
+        "type": "uint256"
       }
     ],
+    "name": "getEncryptionKey",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "encryptedKey",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getTokensOwnedByUser",
     "outputs": [
       {
@@ -955,6 +1057,21 @@ export const bookAbi = [
         "internalType": "struct book.Content",
         "name": "content",
         "type": "tuple"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "GoldEncryptionKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "SilverEncryptionKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "BronzeEncryptionKey",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",

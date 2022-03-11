@@ -6,13 +6,13 @@ import {
 } from "@material-ui/core";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import React, { useState } from "react";
+import { create as ipfsHttpClient } from 'ipfs-http-client'
+import React, { useEffect, useState } from "react";
+import ComputeHash from "./ComputeHash";
 import CryptoJS from "crypto-js";
 import { ethers } from "ethers";
-import { create as ipfsHttpClient } from "ipfs-http-client";
-
 import WriteCopies from "./elements/WriteCopies";
-import { useStyles } from "./styles/Write";
+import {useStyles} from "./styles/Write";
 
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
@@ -44,6 +44,9 @@ const Write = (props) => {
     setInputValues({ ...inputValues, [event.target.name]: value });
   };
 
+  //const encryptKey = ComputeHash("1234567890");
+
+  var pdf;
   const allowedFiles = ["application/pdf"];
   const handleFile = async (e) => {
     let selectedFile = e.target.files[0];
@@ -131,8 +134,12 @@ const Write = (props) => {
     );
     let pdfurl = null;
     let imageurl = null;
+    const goldEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+    const silverEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+    const bronzeEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+
     client
-      .add(CryptoJS.AES.encrypt(pdfFile, "secret key 123").toString(), {
+      .add(CryptoJS.AES.encrypt(pdfFile, goldEncryptionKey).toString(), {
         progress: (progress) => console.log(`Pdf received: ${progress}`),
       })
       .then((addedpdf) => {
@@ -174,6 +181,9 @@ const Write = (props) => {
             bookContract
               .mintBatch(
                 ContentMetadata,
+                goldEncryptionKey,
+                silverEncryptionKey,
+                bronzeEncryptionKey,
                 goldNumber,
                 silverNumber,
                 bronzeNumber,
@@ -193,45 +203,11 @@ const Write = (props) => {
             imageurl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
             console.log("addedImage : ", imageurl);
             console.log("addedpdf : ", pdfurl);
-
-            let ContentMetadata = {
-              title: title,
-              tokenIds: [],
-              tokenType: 1,
-              contentType: 1,
-              publicationDate: Date.now(),
-              author: "Rahul Shah",
-              authorAddr: defaultAccount,
-              coverImageHash: imageurl,
-              descriptionHash: pdfurl,
-            };
-
-            console.log("ContentMetadata : ", ContentMetadata);
-            const Amount =
-              goldNumber * 0.003 +
-              silverNumber * 0.002 +
-              bronzeNumber * 0.001 +
-              0.01; //0.01 is for the gas fee
-
-            const tx = {
-              value: ethers.utils.parseEther(Amount.toString()),
-              gasLimit: 5000000,
-            };
+            
             bookContract
-              .mintBatch(
-                ContentMetadata,
-                goldNumber,
-                silverNumber,
-                bronzeNumber,
-                tx
-              )
               .then(async (transaction) => {
                 await transaction.wait();
                 console.log("transaction :", transaction);
-                alert(
-                  "Successfully minted , Your total tokens: ",
-                  await bookContract.balanceOf(defaultAccount)
-                );
                 //Render Back to Home Page
               })
               .catch((error) => {

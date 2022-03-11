@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { useStyles as homeStyles } from "./styles/Home";
 import { Typography, Button } from "@material-ui/core";
 import { useStyles } from "./styles/SinglePage";
+import dummy from "../assets/dummy.jpg";
+import ComputeHash from "./ComputeHash";
 import PDFViewer from "./PDFViewer";
 import { useParams } from "react-router-dom";
 import loader from "../assets/loading-yellow.gif";
 import { useEffect } from "react";
 import CryptoJS from "crypto-js";
 import alt from "../assets/alt.png";
+import { size } from "draft-js/lib/DefaultDraftBlockRenderMap";
 
 function SinglePage(props) {
   const { id, itemId, price } = useParams();
@@ -15,8 +18,45 @@ function SinglePage(props) {
   const classes = useStyles();
   const [content, setContent] = useState({});
   const [pdf, setpdf] = useState(null);
+  const [EncryptionKey, setEncryptionKey] = useState(null);
+;
   var bookContract;
+  var url;
+  // var LoadData;
+  // var LoadPdf;
 
+//   const LoadData = () => {
+//     if(EncryptionKey !== "0x0000000000000000000000000000000000000000000000000000000000000000"){
+//     return (<>
+//       {LoadPdf}
+//     </>
+//     );
+//   }
+//   else{
+//     return (
+//       <div ><Typography >Buy Book to view Contents</Typography></div>
+//     );
+//   }
+// }
+
+// const LoadPdf =() => {
+//  if(pdf){
+//     console.log("pdf", pdf);
+//     console.log("encryption key", EncryptionKey);
+//     return (
+//       <div className={classes.sPViewer}>
+//         <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
+//       </div>
+//     );
+//   }
+//   else{
+//     return (
+//     <div className={classes.sPViewer}>
+//       <img src={loader} alt="loading" />
+//     </div>
+//     );
+//   }
+// }
   function getContent() {
     return new Promise((resolve, reject) => {
       if (props.connButtonText === "Wallet Connected") {
@@ -38,38 +78,37 @@ function SinglePage(props) {
   useEffect(() => {
     function Get() {
       getContent().then(async (bookContract) => {
-        console.log("bookContract", bookContract);
-        var url;
-        await bookContract
-          .getContentbyCID(id)
-          .then((content) => {
-            url = content.descriptionHash;
-            setContent(content);
-            console.log(content);
+        const content = await bookContract.getContentbyCID(id)
+        url = content.descriptionHash;
+        setContent(content);
+        await bookContract.getEncryptionKey(id)
+        .then((encryptionKey) => {
+          if(encryptionKey == "0x0000000000000000000000000000000000000000000000000000000000000000"){
+            setEncryptionKey(null);
+          }else{
+            setEncryptionKey(encryptionKey);
+          }
+          console.log("EncryptionKey", EncryptionKey)
+        })
+      })
+      .then(async () => {
+        if(EncryptionKey !== null){
+          await fetch(url)
+          .then((raw) => {
+            return raw.blob();
           })
-          .then(async () => {
-            await fetch(url)
-              .then((raw) => {
-                return raw.blob();
-              })
-              .then((blob) => {
-                var reader = new FileReader();
-                reader.readAsText(blob);
-                reader.onloadend = function () {
-                  var base64data = reader.result;
-                  console.log(base64data);
-                  var encrypted = CryptoJS.AES.decrypt(
-                    base64data,
-                    "secret key 123"
-                  );
-                  var decrypted = encrypted.toString(CryptoJS.enc.Utf8);
-                  setpdf(decrypted);
-                };
-              });
-          })
-          .catch((err) => {
-            console.log("Fetch Error", err);
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsText(blob);
+            reader.onloadend = function () {
+              var base64data = reader.result;
+              setpdf(base64data);
+            };
           });
+        }
+      })
+      .catch((err) => {
+        console.log("Fetch Error", err);
       });
     }
     Get();
@@ -93,7 +132,7 @@ function SinglePage(props) {
   console.log(publicationDate);
 
   const inDollars = price * 2663;
-  console.log("encryptedPdf 2 : ", pdf);
+
   return (
     <div className={classes.singleContent}>
       <div className={classes.bookDetails}>
@@ -120,7 +159,7 @@ function SinglePage(props) {
                 </div>
                 <Button
                   variant='contained'
-                  onClick={props.buyContent.bind(this, itemId, price)}
+                  onClick={props.buyContent.bind(this, itemId,price)}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now
@@ -185,13 +224,31 @@ function SinglePage(props) {
         </Typography>
         <Typography>{description}</Typography>
       </div>
-      {pdf ? (
-        <div className={classes.sPViewer}>
-          <PDFViewer pdfBase64={pdf} />
-        </div>
-      ) : (
-        <div>Loading ...</div>
-      )}
+      {
+        props.connButtonText === "Wallet Connected" ? (
+        <>
+        {
+          EncryptionKey && pdf ? (
+            <div className={classes.sPViewer}>
+              <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
+            </div>
+          ) : (<div><Typography 
+            style={{
+            fontSize: "1.5rem",
+            color: "#FFD600",
+            marginBottom: "10px",
+          }}
+          >Buy this Book to View</Typography></div>)
+        }
+        </>
+        ):(<div><Typography 
+          style={{
+          fontSize: "1.5rem",
+          color: "#FFD600",
+          marginBottom: "10px",
+        }}
+        >Connect your Wallet</Typography></div>)
+      }
     </div>
   );
 }

@@ -42,16 +42,21 @@ const PopupBox = (props) => {
         .setup()
         .then((value) => {
           marketContract = value[2];
-          const pricing = ethers.BigNumber.from(price);
-          if (selectedToken === null) {
-            setSelectedToken(props.OwnedCollectionIds[0]);
+          const precision = 1000000000
+          const pricing = ethers.BigNumber.from(Math.floor(price*precision));
+          let token;
+          if ((selectedToken >= 0)) {
+            token = selectedToken;
+          }
+          else{
+            token = props.OwnedCollectionIds[0];
           }
 
-          console.log("selected token", props.OwnedCollectionIds[0]);
+          console.log("selected token", token);
           // console.log(tokenId);
           console.log(pricing);
           marketContract
-            .createMarketItem(bookAddress, props.OwnedCollectionIds[0], pricing)
+            .createMarketItem(bookAddress, token, pricing)
             .then(async (transaction) => {
               console.log(transaction);
               const receipt = await transaction.wait();
@@ -120,7 +125,7 @@ const PopupBox = (props) => {
               {console.log(selectedToken)}
               <TextField
                 id='price'
-                label='Price'
+                label='Price (ETH)'
                 variant='outlined'
                 name='price'
                 type='number'
