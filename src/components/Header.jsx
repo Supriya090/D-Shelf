@@ -14,6 +14,7 @@ import {
 import { useStyles } from "./styles/Header";
 import WalletInfo from "./elements/WalletInfo";
 import SearchBar from "./elements/SearchBar";
+import { setBlockData } from "draft-js/lib/DraftModifier";
 
 const headersData = [
   {
@@ -52,57 +53,12 @@ const Header = (props) => {
   const logoClick = () => {
     navigate("/", { replace: true });
   }
-  
-  const [title, setTitle] = useState([]);
-  var bookContract;
-  function getContent() {
-    return new Promise((resolve, reject) => {
-      if (props.connButtonText === "Wallet Connected") {
-        props.setup().then((value) => {
-          bookContract = value[1];
-          console.log("bookContract", bookContract);
-          resolve(bookContract);
-        });
-      } else {
-        props.unsetup().then((value) => {
-          bookContract = value[0];
-          console.log("bookContract", bookContract);
-          resolve(bookContract);
-        });
-      }
-    });
-  }
 
+  const[searchValue, setSearchValue] = useState([]);
   useEffect(() => {
-    function Get() {
-      getContent().then(async (bookContract) => {
-        await bookContract.getContentList()
-        .then((list)=>{
-          var List = []
-          list.map((item)=>{
-            List.push({...item})
-          })
-          List.shift()
-          for(var i = 0; i < List.length; i++){
-            delete List[i][0];
-            delete List[i][1];
-            delete List[i][2];
-            delete List[i][3];
-            delete List[i][4];
-            delete List[i][5];
-            delete List[i][6];
-            delete List[i][7];
-            delete List[i][8];
-            delete List[i][9];
-            delete List[i][10];
-          }
-        setTitle(List)
-        })
-      })
-    }
-    Get();
-  }, [])
-
+    setSearchValue(props.title);
+  }, [props.title]);
+  
   const displayHeader = () => {
     let walletDetails;
     if (props.connButtonText === "Wallet Connected") {
@@ -128,8 +84,7 @@ const Header = (props) => {
                   D-Shelf
                 </Typography>
               </div>
-              {title ? (
-              <SearchBar data={title} />):(<></>)}
+              <SearchBar data={searchValue} />
               <div style={{ display: "flex" }}>
                 {getMenuButtons()}
                 <Button

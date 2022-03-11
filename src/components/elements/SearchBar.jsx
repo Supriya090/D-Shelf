@@ -1,18 +1,11 @@
 
 import React, { useState } from "react";
 import "./SearchBar.css";
-import { useStyles } from "../styles/SearchBar";
 import SearchIcon from "@material-ui/icons/Search";
 import CloseIcon from "@material-ui/icons/Close";
 import { InputBase } from "@material-ui/core";
 
 function SearchBar({ data }) {
-const {
-    search,
-    searchIcon,
-    inputInput,
-    inputRoot,
-    } = useStyles();
 const [filteredData, setFilteredData] = useState([]);
 const [wordEntered, setWordEntered] = useState("");
 
@@ -44,9 +37,6 @@ return (
                 placeholder='Search Content ...'
                 value={wordEntered}
                 onChange={handleFilter}
-                classes={{
-                    root: inputRoot,
-                }}
                 inputProps={{ "aria-label": "search" }}
             />
         <div className="searchIcon">

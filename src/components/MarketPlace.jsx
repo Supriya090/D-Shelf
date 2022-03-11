@@ -56,10 +56,7 @@ const MarketPlace = (props) => {
         
         for(const item of items){
           const content = await bookContract.getContentofToken(item.tokenId)
-          // const content =  await bookContract.getContentbyCID(cid)
-         console.log("content",content)
           listedcontent.push(addContent(content,item))
-          
         }
         let gold = [], silver = [], bronze =[]
         for(const content of listedcontent){
