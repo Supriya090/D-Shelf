@@ -157,7 +157,7 @@ function SinglePage(props) {
                 <div className={classes.right}>
                   {title}
                   <br />
-                  {publicationDate}
+                  {/* {publicationDate} */}
                   <br />
                   On Sale
                   <div style={{ marginTop: "50px" }}>
