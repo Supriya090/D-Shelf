@@ -22,6 +22,7 @@ function App() {
   let provider = null;
   let signer = null;
   let list = []
+  const [title, setTitle] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
@@ -154,6 +155,28 @@ function App() {
       }else{
         unSetup()
       }
+      await bookContract.getContentList()
+        .then((list)=>{
+          var List = []
+          list.map((item)=>{
+            List.push({...item})
+          })
+          List.shift()
+          for(var i = 0; i < List.length; i++){
+            delete List[i][0];
+            delete List[i][1];
+            delete List[i][2];
+            delete List[i][3];
+            delete List[i][4];
+            delete List[i][5];
+            delete List[i][6];
+            delete List[i][7];
+            delete List[i][8];
+            delete List[i][9];
+            delete List[i][10];
+          }
+        setTitle(List)
+        })
     }
     GetConnected();
     async function OnWalletChange() {
@@ -179,13 +202,13 @@ function App() {
         userAccount={defaultAccount}
         userBalance={userBalance}
         setup={setup}
-        unsetup={unSetup}
+        title={title}
         errorMessage={errorMessage}
         connButtonText={connButtonText}
-      />
+      />)
 
       <Routes>
-        <Route exact path="/" element={<Home connButtonText={connButtonText} unSetup={unSetup} />}></Route>
+        <Route exact path="/" element={<Home connButtonText={connButtonText} unSetup={unSetup} buyContent={buyContent} title={title}/>}></Route>
         <Route path="/MarketPlace" element={<MarketPlace unSetup={unSetup} buyContent={buyContent} />}></Route>
         <Route path="/myCollections" element={<Collections connButtonText={connButtonText} setup={setup} />}></Route>
         <Route exact path="/write" element={<Write connButtonText={connButtonText} setup={setup} />}></Route>

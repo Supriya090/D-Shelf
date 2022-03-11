@@ -7,8 +7,9 @@ import { content } from "./elements/dummyImages";
 import ListHead from "./elements/ListHead";
 import { useNavigate } from "react-router";
 import ReadMore from "./elements/ReadMore";
+import loader from "../assets/loading-yellow.gif";
 
-const auctionContent = content;
+// const auctionContent = content;
 
 const Home = (props) => {
   var bookContract;
@@ -21,6 +22,8 @@ const Home = (props) => {
   const [silverContents, setSilverContents] = useState([]);
   const [bronzeContents, setBronzeContents] = useState([]);
   const [featuredContent, setFeaturedContent] = useState({});
+  const [listedContent, setlistedContent] = useState([]);
+  const [RecentlyMinted, setRecentlyMinted] = useState([]);
 
   const navigate = useNavigate();
   const marketRoute = () => {
@@ -58,38 +61,49 @@ const Home = (props) => {
         signer = value[3];
       })
       .then(async () => {
+        //All listed content in reverse limited to top of 10
         const items = await marketContract.fetchMarketItems();
-        console.log(items);
+        let listedcontent = [];
+        for(const item of items){
+          const content = await bookContract.getContentofToken(item.tokenId)
+          listedcontent.push(content)
+        }
+        setlistedContent(listedcontent.reverse().slice(0,10))
+
+        //Featured content
         const tokenId = items[items.length - 1].tokenId;
         const content = await bookContract.getContentofToken(tokenId);
-        // const content = await bookContract.getContentbyCID(cid);
         console.log("Feature content:", content);
         setFeaturedContent(addContent(content, items[items.length - 1]));
 
-        bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
-          console.log("All gold Content : ", GoldContents);
-          setGoldContents(GoldContents);
-          //Render Gold Content
-        });
-        bookContract
-          .getContentsOfEachTokenType("silver")
-          .then((SilverContents) => {
-            //Render Silver Content
-            console.log("All silver Content : ", SilverContents);
-            setSilverContents(SilverContents);
-          });
-        bookContract
-          .getContentsOfEachTokenType("bronze")
-          .then((BronzeContents) => {
-            //Render Bronze Content
-            console.log("All Bronze Content : ", BronzeContents);
-            setBronzeContents(BronzeContents);
-          });
+        //Recently minted content limited to top of 10
+        console.log("Recently minted:", props.title);
+        setRecentlyMinted(props.title.reverse().slice(0,10))
+
+        // bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
+        //   console.log("All gold Content : ", GoldContents);
+        //   setGoldContents(GoldContents);
+        //   //Render Gold Content
+        // });
+        // bookContract
+        //   .getContentsOfEachTokenType("silver")
+        //   .then((SilverContents) => {
+        //     //Render Silver Content
+        //     console.log("All silver Content : ", SilverContents);
+        //     setSilverContents(SilverContents);
+        //   });
+        // bookContract
+        //   .getContentsOfEachTokenType("bronze")
+        //   .then((BronzeContents) => {
+        //     //Render Bronze Content
+        //     console.log("All Bronze Content : ", BronzeContents);
+        //     setBronzeContents(BronzeContents);
+        //   });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [props.connButtonText]);
+  }, [props.connButtonText, props.title]);
 
   return (
     <div className={classes.mainContent}>
@@ -146,8 +160,26 @@ const Home = (props) => {
       </div>
       <div className={classes.itemsList}>
         <div className={classes.auctions}>
-          <ListHead title={"On Auctions"} leftButton={"On Sale"} />
-          <HorizontalScrolling getItems={auctionContent} onSale={true} />
+          <ListHead title={"Recently Listed"} leftButton={"On Sale"} />
+          {listedContent.length === 0 ? (
+            <img
+              src={loader}
+              alt='loading...'
+            />
+          ) : (
+            <HorizontalScrolling getItems={listedContent} isTrending={true} onSale={true} buyContent={props.buyContent} />
+          )}
+        </div>
+        <div className={classes.auctions}>
+          <ListHead title={"Recently Minted"} leftButton={"New Content"} />
+          {RecentlyMinted.length === 0 ? (
+            <img
+              src={loader}
+              alt='loading...'
+            />
+          ) : (
+            <HorizontalScrolling getItems={RecentlyMinted} isTrending={true} onSale={false} />
+          )}
         </div>
         <div className={classes.notableContents} style={{ marginTop: "80px" }}>
           <ListHead
@@ -155,7 +187,7 @@ const Home = (props) => {
             leftButton={"Trending"}
             hasRightButton={true}
           />
-          <HorizontalScrolling getItems={auctionContent} isTrending={true} />
+          <HorizontalScrolling getItems={listedContent} isTrending={true} />
         </div>
         <div className={classes.notableCreators} style={{ marginTop: "80px" }}>
           <ListHead
@@ -163,7 +195,7 @@ const Home = (props) => {
             leftButton={"Popular"}
             hasRightButton={true}
           />
-          <HorizontalScrolling getItems={auctionContent} isAuthor={true} />
+          <HorizontalScrolling getItems={listedContent} isAuthor={true} />
         </div>
       </div>
       <Button
