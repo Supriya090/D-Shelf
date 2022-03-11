@@ -1,8 +1,7 @@
 import React from "react";
-import { TextField, Typography, Button, Badge } from "@material-ui/core";
+import { Typography, Button, Badge } from "@material-ui/core";
 import useStyles from "../styles/Scrollbar";
 import { useStyles as HomeStyles } from "../styles/Home";
-import { useStyles as PopStyles } from "../styles/Popup";
 import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@material-ui/icons/ArrowDownwardRounded";
 import dummy from "../../assets/dummy.jpg";
@@ -20,15 +19,17 @@ function SubTitle(props) {
   let CollectionsaleStats;
 
   const unlist = async () => {
-    props.setup().then(async(value) => {
+    props.setup().then(async (value) => {
       const marketContract = value[2];
-      await marketContract.removeMarketItem(bookAddress, props.tokenId).then(async (transaction) => {
-        console.log(transaction);
-        props.CollectionOnSale = false;
-        props.OnSale = false;
-      });
+      await marketContract
+        .removeMarketItem(bookAddress, props.tokenId)
+        .then(async (transaction) => {
+          console.log(transaction);
+          props.CollectionOnSale = false;
+          props.OnSale = false;
+        });
     });
-  }
+  };
 
   if (props.onSale) {
     saleStats = (
@@ -121,7 +122,7 @@ function SubTitle(props) {
         {saleStats}
       </div>
     );
-  } 
+  }
   if (props.CollectionOnSale) {
     return (
       <div>
@@ -130,22 +131,21 @@ function SubTitle(props) {
         {CollectionsaleStats}
       </div>
     );
-  } 
-  else if (props.isAuthor) {
+  } else if (props.isAuthor) {
     return (
       <div
         className={scrollClasses.forAuthor}
         style={{ backgroundColor: data.darkMuted }}>
-        <img src={dummy} alt='avatar' className={scrollClasses.avatar} />
+        <img src={props.avatar} alt='avatar' className={scrollClasses.avatar} />
         <div className={scrollClasses.authorInfo}>
-          <Typography>Author: {props.author}</Typography>
-          <Typography style={{ marginBottom: "10px" }}>
-            1000 followers
+          <Typography style={{ marginTop: "5px" }}>
+            Author: {props.author}
           </Typography>
-          <Typography style={{ fontSize: "0.85rem" }}>
-            I'm a five star basketball skills development coach for youth to
-            professional talent. I'm passionate about implementing integrity and
-            joy into my players. That's kinda how my meme came about!
+          <Typography style={{ marginBottom: "15px" }}>
+            {props.followers} Followers
+          </Typography>
+          <Typography style={{ fontSize: "0.8rem" }}>
+            {props.authorDescription}
           </Typography>
           <Button
             variant='contained'

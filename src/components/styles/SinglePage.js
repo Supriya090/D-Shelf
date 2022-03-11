@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: "right"
     },
     details: {
+        width: "40%",
         marginTop: "20px",
         color: "#fff",
         fontFamily: "Rubik, sans-serif",

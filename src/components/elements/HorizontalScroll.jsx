@@ -16,18 +16,20 @@ function HorizontalScrolling({
   ...props
 }) {
   const onSale = props.onSale ? props.onSale : false;
-  const CollectionOnSale = props.CollectionOnSale ? props.CollectionOnSale : false;
+  const CollectionOnSale = props.CollectionOnSale
+    ? props.CollectionOnSale
+    : false;
   const [items, setItems] = React.useState(props.getItems);
-  const precision = 1000000000
+  const precision = 1000000000;
   const navigate = useNavigate();
 
   const classes = useStyles();
-  const handleClick = (cid,itemId,price) => () => {
+  const handleClick = (cid, itemId, price) => () => {
     console.log("cid", itemId);
     const id = cid.toNumber();
 
     // itemId = itemId.toNumber();
-    
+
     //Load Single page view
     navigate(`/singlePage/${id}/${itemId}/${price}`);
   };
@@ -57,7 +59,6 @@ function HorizontalScrolling({
   // const [CollectiontokenIds, setCollectiontokenIds] = useState([[]]);
   var CollectiontokenIds = [];
   useEffect(() => {
-    
     if (props.isCollection) {
       items.map((content, index) => {
         var CtokenIds = [];
@@ -92,6 +93,9 @@ function HorizontalScrolling({
     cid,
     author,
     authorAddr,
+    avatar,
+    followers,
+    authorDescription,
     contentType,
     coverImageHash,
     description,
@@ -122,8 +126,8 @@ function HorizontalScrolling({
             }}
           />
           <SubTitle
-          price = {price}
-          itemId = {itemId}
+            price={price}
+            itemId={itemId}
             isTrending={isTrending}
             isAuthor={isAuthor}
             onSale={onSale}
@@ -133,13 +137,15 @@ function HorizontalScrolling({
             src={coverImageHash}
             title={title}
             author={author}
+            avatar={avatar}
+            followers={followers}
+            authorDescription={authorDescription}
             buyContent={props.buyContent}
             UserCollectiontokenIds={CollectiontokenIds}
             OwnedCollectionIds={OwnedCollectionIds[index]}
             tokenType={tokenType}
-            setup = {props.setup}
+            setup={props.setup}
           />
-
         </div>
       </div>
     );
@@ -160,6 +166,9 @@ function HorizontalScrolling({
             price={value.price}
             author={value.author}
             authorAddr={value.authorAddr}
+            avatar={value.avatar}
+            followers={value.followers}
+            authorDescription={value.authorDescription}
             contentType={value.contentType}
             coverImageHash={value.coverImageHash}
             description={value.description}
@@ -171,7 +180,11 @@ function HorizontalScrolling({
             tokenType={value.tokenType}
             OwnedCollectionIds={CollectiontokenIds}
             index={index}
-            onClick={handleClick(value.cid,value.tokenId,(value.price)/precision)}
+            onClick={handleClick(
+              value.cid,
+              value.tokenId,
+              value.price / precision
+            )}
           />
         ))}
       </ScrollMenu>

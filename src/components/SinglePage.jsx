@@ -19,44 +19,43 @@ function SinglePage(props) {
   const [content, setContent] = useState({});
   const [pdf, setpdf] = useState(null);
   const [EncryptionKey, setEncryptionKey] = useState(null);
-;
   var bookContract;
   var url;
   // var LoadData;
   // var LoadPdf;
 
-//   const LoadData = () => {
-//     if(EncryptionKey !== "0x0000000000000000000000000000000000000000000000000000000000000000"){
-//     return (<>
-//       {LoadPdf}
-//     </>
-//     );
-//   }
-//   else{
-//     return (
-//       <div ><Typography >Buy Book to view Contents</Typography></div>
-//     );
-//   }
-// }
+  //   const LoadData = () => {
+  //     if(EncryptionKey !== "0x0000000000000000000000000000000000000000000000000000000000000000"){
+  //     return (<>
+  //       {LoadPdf}
+  //     </>
+  //     );
+  //   }
+  //   else{
+  //     return (
+  //       <div ><Typography >Buy Book to view Contents</Typography></div>
+  //     );
+  //   }
+  // }
 
-// const LoadPdf =() => {
-//  if(pdf){
-//     console.log("pdf", pdf);
-//     console.log("encryption key", EncryptionKey);
-//     return (
-//       <div className={classes.sPViewer}>
-//         <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
-//       </div>
-//     );
-//   }
-//   else{
-//     return (
-//     <div className={classes.sPViewer}>
-//       <img src={loader} alt="loading" />
-//     </div>
-//     );
-//   }
-// }
+  // const LoadPdf =() => {
+  //  if(pdf){
+  //     console.log("pdf", pdf);
+  //     console.log("encryption key", EncryptionKey);
+  //     return (
+  //       <div className={classes.sPViewer}>
+  //         <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
+  //       </div>
+  //     );
+  //   }
+  //   else{
+  //     return (
+  //     <div className={classes.sPViewer}>
+  //       <img src={loader} alt="loading" />
+  //     </div>
+  //     );
+  //   }
+  // }
   function getContent() {
     return new Promise((resolve, reject) => {
       if (props.connButtonText === "Wallet Connected") {
@@ -77,39 +76,42 @@ function SinglePage(props) {
 
   useEffect(() => {
     function Get() {
-      getContent().then(async (bookContract) => {
-        const content = await bookContract.getContentbyCID(id)
-        url = content.descriptionHash;
-        setContent(content);
-        await bookContract.getEncryptionKey(id)
-        .then((encryptionKey) => {
-          if(encryptionKey == "0x0000000000000000000000000000000000000000000000000000000000000000"){
-            setEncryptionKey(null);
-          }else{
-            setEncryptionKey(encryptionKey);
-          }
-          console.log("EncryptionKey", EncryptionKey)
-        })
-      })
-      .then(async () => {
-        if(EncryptionKey !== null){
-          await fetch(url)
-          .then((raw) => {
-            return raw.blob();
-          })
-          .then((blob) => {
-            var reader = new FileReader();
-            reader.readAsText(blob);
-            reader.onloadend = function () {
-              var base64data = reader.result;
-              setpdf(base64data);
-            };
+      getContent()
+        .then(async (bookContract) => {
+          const content = await bookContract.getContentbyCID(id);
+          url = content.descriptionHash;
+          setContent(content);
+          await bookContract.getEncryptionKey(id).then((encryptionKey) => {
+            if (
+              encryptionKey ===
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ) {
+              setEncryptionKey(null);
+            } else {
+              setEncryptionKey(encryptionKey);
+            }
+            console.log("EncryptionKey", EncryptionKey);
           });
-        }
-      })
-      .catch((err) => {
-        console.log("Fetch Error", err);
-      });
+        })
+        .then(async () => {
+          if (EncryptionKey !== null) {
+            await fetch(url)
+              .then((raw) => {
+                return raw.blob();
+              })
+              .then((blob) => {
+                var reader = new FileReader();
+                reader.readAsText(blob);
+                reader.onloadend = function () {
+                  var base64data = reader.result;
+                  setpdf(base64data);
+                };
+              });
+          }
+        })
+        .catch((err) => {
+          console.log("Fetch Error", err);
+        });
     }
     Get();
   }, [props.connButtonText]);
@@ -159,7 +161,7 @@ function SinglePage(props) {
                 </div>
                 <Button
                   variant='contained'
-                  onClick={props.buyContent.bind(this, itemId,price)}
+                  onClick={props.buyContent.bind(this, itemId, price)}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now
@@ -224,31 +226,37 @@ function SinglePage(props) {
         </Typography>
         <Typography>{description}</Typography>
       </div>
-      {
-        props.connButtonText === "Wallet Connected" ? (
+      {props.connButtonText === "Wallet Connected" ? (
         <>
-        {
-          EncryptionKey && pdf ? (
+          {EncryptionKey && pdf ? (
             <div className={classes.sPViewer}>
-              <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
+              <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey} />
             </div>
-          ) : (<div><Typography 
-            style={{
-            fontSize: "1.5rem",
-            color: "#FFD600",
-            marginBottom: "10px",
-          }}
-          >Buy this Book to View</Typography></div>)
-        }
+          ) : (
+            <div>
+              <Typography
+                style={{
+                  fontSize: "1.5rem",
+                  color: "#FFD600",
+                  marginBottom: "10px",
+                }}>
+                Buy this Book to View
+              </Typography>
+            </div>
+          )}
         </>
-        ):(<div><Typography 
-          style={{
-          fontSize: "1.5rem",
-          color: "#FFD600",
-          marginBottom: "10px",
-        }}
-        >Connect your Wallet</Typography></div>)
-      }
+      ) : (
+        <div>
+          <Typography
+            style={{
+              fontSize: "1.5rem",
+              color: "#FFD600",
+              marginBottom: "10px",
+            }}>
+            Connect your Wallet
+          </Typography>
+        </div>
+      )}
     </div>
   );
 }
