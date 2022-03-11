@@ -50,14 +50,15 @@ function SearchBar({ data }) {
           )}
         </div>
       </div>
-      {filteredData.length != 0 && (
+      {filteredData.length !== 0 && (
         <div className={searchStyles.dataResult}>
           {filteredData.slice(0, 15).map((value, key) => {
             return (
               <a
                 className={searchStyles.dataItem}
                 href={`/singlePage/${value.cid}/${value.cid}/${value.cid}`}
-                target='_blank'>
+                target='_blank'
+                alt={value.title}>
                 <>
                   <img
                     src={value.coverImageHash}

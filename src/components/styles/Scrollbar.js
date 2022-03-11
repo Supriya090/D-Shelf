@@ -67,10 +67,10 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         left: 0,
         bottom: 0,
-        padding: "50px 15px 0px 15px",
+        padding: "50px 20px 0px 20px",
         borderRadius: "10px",
-        height: "60%",
-        opacity: 0.95
+        height: "65%",
+        opacity: 0.95,
     },
     avatar: {
         height: "80px",
@@ -93,6 +93,7 @@ const useStyles = makeStyles((theme) => ({
         padding: "1px 18px",
         margin: "10px 5px",
         position: "absolute",
+        width: "40%",
         bottom: 15,
         left: 0,
         right: 0,

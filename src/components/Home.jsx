@@ -1,5 +1,6 @@
-import { Button, Divider, Typography, Tooltip } from "@material-ui/core";
+import { Button, Divider, Typography, Tooltip, Badge } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
+import { useStyles as marketStyles } from "./styles/MarketPlace";
 import dummy from "../assets/dummy.jpg";
 import { useStyles } from "./styles/Home";
 import HorizontalScrolling from "./elements/HorizontalScroll";
@@ -9,13 +10,15 @@ import { useNavigate } from "react-router";
 import ReadMore from "./elements/ReadMore";
 import loader from "../assets/loading-yellow.gif";
 
-// const auctionContent = content;
+const auctionContent = content;
 
 const Home = (props) => {
   var bookContract;
   var marketContract;
   var provider;
   var signer;
+
+  const marketClasses = marketStyles();
 
   const classes = useStyles();
   const [goldContents, setGoldContents] = useState([]);
@@ -24,6 +27,15 @@ const Home = (props) => {
   const [featuredContent, setFeaturedContent] = useState({});
   const [listedContent, setlistedContent] = useState([]);
   const [RecentlyMinted, setRecentlyMinted] = useState([]);
+
+  let color;
+  if (featuredContent.tokenType === 0) {
+    color = "#C9B037";
+  } else if (featuredContent.tokenType === 1) {
+    color = "#B4B4B4";
+  } else {
+    color = "#AD8A56";
+  }
 
   const navigate = useNavigate();
   const marketRoute = () => {
@@ -64,11 +76,11 @@ const Home = (props) => {
         //All listed content in reverse limited to top of 10
         const items = await marketContract.fetchMarketItems();
         let listedcontent = [];
-        for(const item of items){
-          const content = await bookContract.getContentofToken(item.tokenId)
-          listedcontent.push(content)
+        for (const item of items) {
+          const content = await bookContract.getContentofToken(item.tokenId);
+          listedcontent.push(content);
         }
-        setlistedContent(listedcontent.reverse().slice(0,10))
+        setlistedContent(listedcontent.reverse().slice(0, 10));
 
         //Featured content
         const tokenId = items[items.length - 1].tokenId;
@@ -78,7 +90,7 @@ const Home = (props) => {
 
         //Recently minted content limited to top of 10
         console.log("Recently minted:", props.title);
-        setRecentlyMinted(props.title.reverse().slice(0,10))
+        setRecentlyMinted(props.title.reverse().slice(0, 10));
 
         // bookContract.getContentsOfEachTokenType("gold").then((GoldContents) => {
         //   console.log("All gold Content : ", GoldContents);
@@ -109,7 +121,7 @@ const Home = (props) => {
     <div className={classes.mainContent}>
       <div className={classes.featuredContent}>
         <div className={classes.featured}>
-          <Typography>Featured Contents</Typography>
+          <Typography>Featured Content</Typography>
           <div className={classes.NFTFeatures}>
             <div>
               <div className={classes.owner}>
@@ -119,19 +131,35 @@ const Home = (props) => {
                   <br />
                   Author : {featuredContent.author} <br />
                 </Typography>
-                <Tooltip title='$10000'>
-                  <Button
-                    variant='contained'
-                    className={classes.exploreButton}
-                    style={{
-                      color: "#fff",
-                      backgroundColor: "#000",
-                      fontWeight: 500,
-                      cursor: "default",
-                    }}>
-                    2 ETH
-                  </Button>
-                </Tooltip>
+                <div className={classes.badges}>
+                  <Badge
+                    className={classes.badge}
+                    style={{ backgroundColor: `${color}` }}>
+                    {console.log(featuredContent.tokenType)}
+                    {(() => {
+                      switch (featuredContent.tokenType) {
+                        case 0:
+                          return "GOLD";
+                        case 1:
+                          return "SILVER";
+                        case 2:
+                          return "BRONZE";
+                      }
+                    })()}
+                  </Badge>
+                  <Tooltip title='$10000'>
+                    <Badge
+                      className={classes.badge}
+                      style={{
+                        color: "#fff",
+                        backgroundColor: "#000",
+                        fontSize: "1rem",
+                        marginTop: "10px",
+                      }}>
+                      2 ETH
+                    </Badge>
+                  </Tooltip>
+                </div>
               </div>
               <Divider />
               <ReadMore content={featuredContent}>
@@ -164,10 +192,16 @@ const Home = (props) => {
           {listedContent.length === 0 ? (
             <img
               src={loader}
+              className={marketClasses.loader}
               alt='loading...'
             />
           ) : (
-            <HorizontalScrolling getItems={listedContent} isTrending={true} onSale={true} buyContent={props.buyContent} />
+            <HorizontalScrolling
+              getItems={listedContent}
+              isTrending={false}
+              onSale={true}
+              buyContent={props.buyContent}
+            />
           )}
         </div>
         <div className={classes.auctions}>
@@ -175,27 +209,24 @@ const Home = (props) => {
           {RecentlyMinted.length === 0 ? (
             <img
               src={loader}
+              className={marketClasses.loader}
               alt='loading...'
             />
           ) : (
-            <HorizontalScrolling getItems={RecentlyMinted} isTrending={true} onSale={false} />
+            <HorizontalScrolling
+              getItems={RecentlyMinted}
+              isTrending={true}
+              onSale={false}
+            />
           )}
-        </div>
-        <div className={classes.notableContents} style={{ marginTop: "80px" }}>
-          <ListHead
-            title={"Notable Contents"}
-            leftButton={"Trending"}
-            hasRightButton={true}
-          />
-          <HorizontalScrolling getItems={listedContent} isTrending={true} />
         </div>
         <div className={classes.notableCreators} style={{ marginTop: "80px" }}>
           <ListHead
             title={"Notable Writers"}
             leftButton={"Popular"}
-            hasRightButton={true}
+            // hasRightButton={true}
           />
-          <HorizontalScrolling getItems={listedContent} isAuthor={true} />
+          <HorizontalScrolling getItems={auctionContent} isAuthor={true} />
         </div>
       </div>
       <Button

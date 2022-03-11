@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     owner: {
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "flex-start",
+        alignItems: "center",
     },
     description: {
         "& p": {
@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
     itemsList: {
         "& p": {
             fontFamily: "Rubik, sans-serif",
-            fontSize: "3.2rem",
+            fontSize: "3rem",
             fontWeight: 500,
             color: "#fff",
             textAlign: "left",
@@ -109,7 +109,21 @@ const useStyles = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: "rgba(255, 255, 255,0.1)",
         },
-        fontWeight: 500
+        fontWeight: 500,
+        padding: "5px 25px"
+    },
+    badge: {
+        padding: "5px 15px",
+        borderRadius: "5px",
+        fontSize: "0.8rem",
+        fontWeight: 500,
+        color: "#000",
+        margin: "0px 15px",
+        fontFamily: "Rubik, sans-serif",
+    },
+    badges: {
+        display: "flex",
+        flexDirection: "column"
     }
 }));
 

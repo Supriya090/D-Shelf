@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  TextField,
-  Typography,
-  Button,
-  Badge,
-  Divider,
-} from "@material-ui/core";
+import { TextField, Typography, Button, Badge } from "@material-ui/core";
 import Popup from "reactjs-popup";
 import useStyles from "../styles/Scrollbar";
 import { useStyles as HomeStyles } from "../styles/Home";
@@ -44,15 +38,7 @@ const PopupBox = (props) => {
           marketContract = value[2];
           const precision = 1000000000
           const pricing = ethers.BigNumber.from(Math.floor(price*precision));
-          // let token;
-          // if ((selectedToken >= 0)) {
-          //   token = selectedToken;
-          // }
-          // else{
-          //   token = props.OwnedCollectionIds[0];
-          // }
-
-          console.log("selected token 2", selectedToken, props.authorAddr);
+          console.log("selected token : ", selectedToken, props.authorAddr);
           // console.log(tokenId);
           console.log(pricing);
           marketContract
@@ -122,7 +108,6 @@ const PopupBox = (props) => {
                   ))}
                 </select>
               </div>
-              {console.log("selectedddddd : ",selectedToken)}
               <TextField
                 id='price'
                 label='Price (ETH)'
