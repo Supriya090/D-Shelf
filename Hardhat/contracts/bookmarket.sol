@@ -15,6 +15,7 @@ contract bookmarket is ReentrancyGuard {
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
     Counters.Counter private _unlisted;
+    mapping(uint256 => bool) public isListed;
 
     address payable owner;
     uint256 precision = 1000000000;
@@ -30,6 +31,7 @@ contract bookmarket is ReentrancyGuard {
         uint256 tokenId;
         address payable seller;
         address payable owner;
+        address payable authorAddr;
         uint256 price;
         bool sold;
     }
@@ -43,6 +45,7 @@ contract bookmarket is ReentrancyGuard {
         uint256 indexed tokenId,
         address seller,
         address owner,
+        address authorAddr,
         uint256 price,
         bool sold
     );
@@ -56,7 +59,8 @@ contract bookmarket is ReentrancyGuard {
     function createMarketItem(
         address nftContract,
         uint256 tokenId,
-        uint256 price
+        uint256 price,
+        address author
     ) public nonReentrant {
         require(price >= 0, "Price must be at least 1 gwei");
 
@@ -70,17 +74,20 @@ contract bookmarket is ReentrancyGuard {
             tokenId,
             payable(msg.sender),
             payable(address(0)),
+            payable(author),
             price,
             false
         );
 
         IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+        isListed[tokenId] = true;
         emit MarketItemCreated(
             itemId,
             nftContract,
             tokenId,
             msg.sender,
             address(0),
+            author,
             price,
             false
         );
@@ -96,6 +103,7 @@ contract bookmarket is ReentrancyGuard {
 
         IERC721(nftContract).transferFrom(address(this),msg.sender, tokenId);
         delete idToMarketItem[_itemId[tokenId]];
+        isListed[tokenId] = false;
     }
 
     /* Creates the sale of a marketplace item */
@@ -109,7 +117,8 @@ contract bookmarket is ReentrancyGuard {
         require((msg.value*precision) >= price, "Please submit the asking price in order to complete the purchase");
         require(msg.sender != idToMarketItem[itemId].seller,"Seller can't be buyer");
 
-        idToMarketItem[itemId].seller.transfer((price*1)/precision);
+        idToMarketItem[itemId].seller.transfer((price*8)/(precision*10));
+        idToMarketItem[itemId].authorAddr.transfer((price*2)/(precision*10));
         if((msg.value*precision) > price){
             payable(msg.sender).transfer(((msg.value*precision - price)*1)/precision);
         }
@@ -118,7 +127,7 @@ contract bookmarket is ReentrancyGuard {
         Ibook book = Ibook(nftContract);
         book.addtoken(tokenId, msg.sender);
         book.removetoken(tokenId, idToMarketItem[itemId].seller);
-
+        isListed[tokenId] = false;
         idToMarketItem[itemId].owner = payable(msg.sender);
         idToMarketItem[itemId].sold = true;
         _itemsSold.increment();
@@ -166,6 +175,29 @@ contract bookmarket is ReentrancyGuard {
         return items;
     }
 
+    function fetchListeditems() public view returns (MarketItem[] memory) {
+        uint totalItemCount = _itemIds.current();
+        uint itemCount = 0;
+        uint currentIndex = 0;
+
+        for (uint i = 0; i < totalItemCount; i++) {
+            if (idToMarketItem[i + 1].seller == msg.sender && isListed[idToMarketItem[i + 1].tokenId] == true) {
+                itemCount += 1;
+            }
+        }
+
+        MarketItem[] memory items = new MarketItem[](itemCount);
+        for (uint i = 0; i < totalItemCount; i++) {
+            if (idToMarketItem[i + 1].seller == msg.sender && isListed[idToMarketItem[i + 1].tokenId] == true) {
+                uint currentId = i + 1;
+                MarketItem storage currentItem = idToMarketItem[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }
+
     /* Returns only items a user has created */
     function fetchItemsCreated() external view returns (MarketItem[] memory) {
         uint totalItemCount = _itemIds.current();
@@ -191,19 +223,19 @@ contract bookmarket is ReentrancyGuard {
     }
 
     function isTokenListed(uint256 tokenId) public view returns(bool){
-        return (_itemId[tokenId]>0);
+        return isListed[tokenId];
     }
 
     function FilterTokens(uint256[] memory _tokenIds) public view returns(uint256[] memory){
         uint count = 0;
         for (uint256 i = 0; i< _tokenIds.length; i++) {
-          if(_itemId[_tokenIds[i]]==0){
+          if(isListed[_tokenIds[i]]==false){
               count += 1;
           }
         }
         uint256[] memory tokenIds = new uint256[](count);
         for (uint256 i = 0; i< _tokenIds.length; i++) {
-          if(_itemId[_tokenIds[i]]==0){
+          if(isListed[_tokenIds[i]]==false){
               count -= 1;
               tokenIds[count] = _tokenIds[i];
           }
@@ -212,27 +244,8 @@ contract bookmarket is ReentrancyGuard {
         return tokenIds;
     }
 
-  /* Returns total tokens items a user has created */
-  function fetchTotalUserTokens() external view returns (uint256[] memory) {
-    uint totalItemCount = _itemIds.current();
-    uint256 itemCount = 0;
-    uint currentIndex = 0;
-
-    for (uint i = 0; i < totalItemCount; i++) {
-      if (idToMarketItem[i + 1].seller == msg.sender) {
-        itemCount += 1;
-      }
-    }
-
-    uint256[] memory tokenIds = new uint256[](itemCount);
-    for (uint i = 0; i < totalItemCount; i++) {
-      if (idToMarketItem[i + 1].seller == msg.sender) {
-        uint currentId = i + 1;
-        uint256 currenttoken = idToMarketItem[currentId].tokenId;
-        tokenIds[currentIndex] = currenttoken;
-        currentIndex += 1;
-      }
-    }
-    return tokenIds;
+  //get price
+  function getPrice(uint256 tokenId) external view returns (uint256){
+    return idToMarketItem[_itemId[tokenId]].price;
   }
 }

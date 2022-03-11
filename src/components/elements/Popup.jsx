@@ -20,7 +20,7 @@ const PopupBox = (props) => {
   const homeClasses = HomeStyles();
   const scrollClasses = useStyles();
   const writeClasses = WriteStyles();
-  const [selectedToken, setSelectedToken] = useState("");
+  const [selectedToken, setSelectedToken] = useState(props.OwnedCollectionIds[0]);
   const [price, setPrice] = React.useState(null);
   let marketContract;
 
@@ -44,19 +44,19 @@ const PopupBox = (props) => {
           marketContract = value[2];
           const precision = 1000000000
           const pricing = ethers.BigNumber.from(Math.floor(price*precision));
-          let token;
-          if ((selectedToken >= 0)) {
-            token = selectedToken;
-          }
-          else{
-            token = props.OwnedCollectionIds[0];
-          }
+          // let token;
+          // if ((selectedToken >= 0)) {
+          //   token = selectedToken;
+          // }
+          // else{
+          //   token = props.OwnedCollectionIds[0];
+          // }
 
-          console.log("selected token", token);
+          console.log("selected token 2", selectedToken, props.authorAddr);
           // console.log(tokenId);
           console.log(pricing);
           marketContract
-            .createMarketItem(bookAddress, token, pricing)
+            .createMarketItem(bookAddress, selectedToken, pricing,props.authorAddr)
             .then(async (transaction) => {
               console.log(transaction);
               const receipt = await transaction.wait();
@@ -122,7 +122,7 @@ const PopupBox = (props) => {
                   ))}
                 </select>
               </div>
-              {console.log(selectedToken)}
+              {console.log("selectedddddd : ",selectedToken)}
               <TextField
                 id='price'
                 label='Price (ETH)'

@@ -1,4 +1,4 @@
-export const bookAddress = "0x1F2Ac4dd097c80299DA57c705922cB9377321034"
+export const bookAddress = "0x5D5F49Aaf9250708D1B898Fc92A29BcBE750958f"
 export const bookAbi = [
   {
     "inputs": [
@@ -1191,6 +1191,19 @@ export const bookAbi = [
       }
     ],
     "name": "safeTransferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "setApproval",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

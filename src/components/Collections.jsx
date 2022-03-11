@@ -86,7 +86,7 @@ const Collections = (props) => {
           signer = value[4];
         })
         .then(async () => {
-          const items =  await marketContract.fetchItemsCreated()
+          const items =  await marketContract.fetchListeditems()
           console.log("listed..........",items)
           let listedcontent = []
           for(const item of items){
@@ -100,14 +100,16 @@ const Collections = (props) => {
           console.log("purchased..........",myitems)
           const mycontent = []
           for(const item of myitems){
+            console.log("token",item.tokenId)
             const content = await bookContract.getContentofToken(item.tokenId)
-            listedcontent.push(addContent(content,item)) 
+            mycontent.push(addContent(content,item)) 
           }
-          setPurchasedContents(mycontent)
+          setPurchasedContents(addItemId(mycontent))
           console.log("Purchased Contents",mycontent)
 
           const totalTokens = await bookContract.getTokensOwnedByUser()
           setTotalIds(totalTokens);
+          console.log("Total Tokens",totalTokens);
           const UnlistedTokenOfUser = await marketContract.FilterTokens(totalTokens)
             for (var i = 0; i < UnlistedTokenOfUser.length; i++) {
               TotalUnlistedIds.push(UnlistedTokenOfUser[i].toNumber());

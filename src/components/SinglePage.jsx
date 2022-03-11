@@ -112,7 +112,7 @@ function SinglePage(props) {
       });
     }
     Get();
-  }, [props.connButtonText]);
+  }, [props.connButtonText, EncryptionKey]);
 
   const {
     cid,

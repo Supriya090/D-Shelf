@@ -163,7 +163,7 @@ function SubTitle(props) {
           Author: {props.author}
         </Typography>
         <PopupBox
-          author={props.author}
+          authorAddr={props.authorAddr}
           setup={props.setup}
           OwnedCollectionIds={props.OwnedCollectionIds}
           title={props.title}

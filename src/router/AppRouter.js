@@ -77,7 +77,7 @@ function App() {
   }
   const buyContent = async(tokenId,amount) => { 
         // const amount = 1;
-        console.log('buyContent', tokenId, amount);
+        console.log('buyContent', tokenId, Number(amount));
         const tx = {
           value: ethers.utils.parseEther(amount.toString()),
           gasLimit: 10000000,
@@ -88,6 +88,10 @@ function App() {
           const receipt = await transaction.wait();
           console.log(receipt);
           alert("Content Bought");
+        })
+        .then(async() => {
+          const approvance = await bookContract.setApproval(tokenId)
+          console.log("Approval : ",approvance);
         })
         .catch(err => {
           console.log(err);

@@ -133,6 +133,7 @@ function HorizontalScrolling({
             src={coverImageHash}
             title={title}
             author={author}
+            authorAddr={authorAddr}
             buyContent={props.buyContent}
             UserCollectiontokenIds={CollectiontokenIds}
             OwnedCollectionIds={OwnedCollectionIds[index]}

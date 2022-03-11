@@ -354,6 +354,11 @@ contract book is ERC721 {
         userOwnedTokens[buyer].push(_tokenId);
     }
 
+    function setApproval(uint256 _tokenId) external {
+        require(ownerOf(_tokenId) == msg.sender, "Still not owned by you");
+        setApprovalForAll(contractAddress, true);
+    }
+
     function removetoken(uint256 _tokenId, address seller) external {
         for(uint256 i = 0; i< userOwnedTokens[seller].length; i++){
             if(userOwnedTokens[seller][i] == _tokenId){

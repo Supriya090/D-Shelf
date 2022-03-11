@@ -1,5 +1,5 @@
-export const bookMarketAddress = "0x92735a94737e50F12558aF7E5F94f0414339406A"
-export const bookMarketAbi =[
+export const bookMarketAddress = "0xd062fadeb62Dd0d827f6a24BB2CA1F292108E0A6"
+export const bookMarketAbi = [
   {
     "inputs": [],
     "stateMutability": "nonpayable",
@@ -36,6 +36,12 @@ export const bookMarketAbi =[
         "indexed": false,
         "internalType": "address",
         "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "authorAddr",
         "type": "address"
       },
       {
@@ -108,6 +114,11 @@ export const bookMarketAbi =[
         "internalType": "uint256",
         "name": "price",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "author",
+        "type": "address"
       }
     ],
     "name": "createMarketItem",
@@ -165,6 +176,66 @@ export const bookMarketAbi =[
             "type": "address"
           },
           {
+            "internalType": "address payable",
+            "name": "authorAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "sold",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct bookmarket.MarketItem[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fetchListeditems",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "itemId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "nftContract",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "seller",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "authorAddr",
+            "type": "address"
+          },
+          {
             "internalType": "uint256",
             "name": "price",
             "type": "uint256"
@@ -212,6 +283,11 @@ export const bookMarketAbi =[
           {
             "internalType": "address payable",
             "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "authorAddr",
             "type": "address"
           },
           {
@@ -265,6 +341,11 @@ export const bookMarketAbi =[
             "type": "address"
           },
           {
+            "internalType": "address payable",
+            "name": "authorAddr",
+            "type": "address"
+          },
+          {
             "internalType": "uint256",
             "name": "price",
             "type": "uint256"
@@ -285,25 +366,50 @@ export const bookMarketAbi =[
   },
   {
     "inputs": [],
-    "name": "fetchTotalUserTokens",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "getPrecision",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "isListed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
