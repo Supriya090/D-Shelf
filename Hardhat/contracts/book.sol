@@ -76,7 +76,7 @@ contract book is ERC721 {
     }
     
 
-    function mintBatch(Content memory content, bytes32 GoldEncryptionKey, bytes32 SilverEncryptionKey, bytes32 BronzeEncryptionKey, uint gold, uint silver, uint bronze) external payable {
+    function mintBatch(Content memory content, bytes32 EncryptionKey, uint gold, uint silver, uint bronze) external payable {
         uint256 mintFee =   mintingFee[TokenType.GOLD]*gold+
                             mintingFee[TokenType.SILVER]*silver+
                             mintingFee[TokenType.BRONZE]*bronze;
@@ -123,21 +123,21 @@ contract book is ERC721 {
             content.tokenType=TokenType.GOLD;
             content.tokenIds=tokenIdsGold;
             contents.push(content);
-            ContentEncryptionKey[contents.length]=GoldEncryptionKey;
+            ContentEncryptionKey[contents.length]=EncryptionKey;
         }
         if(silver>0){
             content.cid=contents.length;
             content.tokenType=TokenType.SILVER;
             content.tokenIds=tokenIdsSilver;
             contents.push(content);
-            ContentEncryptionKey[contents.length]=SilverEncryptionKey;
+            ContentEncryptionKey[contents.length]=EncryptionKey;
         }
         if(bronze>0){
             content.cid=contents.length;
             content.tokenType=TokenType.BRONZE;
             content.tokenIds=tokenIdsBronze;
             contents.push(content);
-            ContentEncryptionKey[contents.length]=BronzeEncryptionKey;
+            ContentEncryptionKey[contents.length]=EncryptionKey;
         }
     }
 

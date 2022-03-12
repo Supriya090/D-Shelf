@@ -1,4 +1,4 @@
-export const bookAddress = "0x00448d9df8baFF62a627384f57d77cc2095621ac"
+export const bookAddress = "0x113282d616B90c8Ae2E8d042a65B49fB6199bF2E"
 export const bookAbi = [
   {
     "inputs": [
@@ -1060,17 +1060,7 @@ export const bookAbi = [
       },
       {
         "internalType": "bytes32",
-        "name": "GoldEncryptionKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "SilverEncryptionKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "BronzeEncryptionKey",
+        "name": "EncryptionKey",
         "type": "bytes32"
       },
       {

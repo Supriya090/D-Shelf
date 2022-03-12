@@ -14,13 +14,14 @@ import { size } from "draft-js/lib/DefaultDraftBlockRenderMap";
 
 function SinglePage(props) {
   const precision = 1000000000;
-  const { id, itemId } = useParams();
+  const { id, tokenId } = useParams();
   const homeClasses = homeStyles();
   const classes = useStyles();
   const [content, setContent] = useState({});
   const [pdf, setpdf] = useState(null);
   const [price, setPrice] = useState(null);
   const [EncryptionKey, setEncryptionKey] = useState(null);
+  const [buy, setbuy] = useState(null);
   var bookContract;
   var marketContract;
   var url;
@@ -47,7 +48,9 @@ function SinglePage(props) {
       .then(async(content) => {
       url = content.descriptionHash;
       setContent(content);
-      const listing = await marketContract.getPrice(id);
+      const listing = await marketContract.getPrice(tokenId);
+      const isListed = await marketContract.isTokenListed(tokenId);
+      setbuy(isListed)
       console.log("listing", listing);
       setPrice(listing.toNumber() / precision);
       await bookContract.getEncryptionKey(id).then((encryptionKey) => {
@@ -83,7 +86,7 @@ function SinglePage(props) {
     });
   }
   Get();
-  }, [props.connButtonText, EncryptionKey, price]);
+  }, [props.connButtonText, EncryptionKey, price, buy]);
 
   const {
     cid,
@@ -129,7 +132,7 @@ function SinglePage(props) {
             <div className={classes.details}>
               <Typography>{title}</Typography>
               <div className={classes.buyDetails}>
-                {price && price !== 0 ? (
+                {buy ? (
                 <div>
                   Current Value
                   <div className={homeClasses.bidNumStyle}>{price} ETH </div>$
@@ -150,10 +153,10 @@ function SinglePage(props) {
                     }
                   })()}
                 </Badge>
-                {price && price !== 0 ? (
+                {buy ? (
                 <Button
                   variant='contained'
-                  onClick={props.buyContent.bind(this, itemId, price)}
+                  onClick={props.buyContent.bind(this, tokenId, price)}
                   className={homeClasses.exploreButton}
                   style={{ marginTop: "0px" }}>
                   Buy Now
@@ -208,7 +211,7 @@ function SinglePage(props) {
         <>
           {EncryptionKey && pdf ? (
             <div className={classes.sPViewer}>
-              {/* <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey} /> */}
+              <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey} />
             </div>
           ) : (
             <div>

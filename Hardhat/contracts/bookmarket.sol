@@ -127,7 +127,6 @@ contract bookmarket is ReentrancyGuard {
         Ibook book = Ibook(nftContract);
         book.addtoken(tokenId, msg.sender);
         book.removetoken(tokenId, idToMarketItem[itemId].seller);
-        delete idToMarketItem[_itemId[tokenId]].price;
         isListed[tokenId] = false;
         idToMarketItem[itemId].owner = payable(msg.sender);
         idToMarketItem[itemId].sold = true;

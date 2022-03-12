@@ -134,12 +134,10 @@ const Write = (props) => {
     );
     let pdfurl = null;
     let imageurl = null;
-    const goldEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
-    const silverEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
-    const bronzeEncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+    const EncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
 
     client
-      .add(CryptoJS.AES.encrypt(pdfFile, goldEncryptionKey).toString(), {
+      .add(CryptoJS.AES.encrypt(pdfFile, EncryptionKey).toString(), {
         progress: (progress) => console.log(`Pdf received: ${progress}`),
       })
       .then((addedpdf) => {
@@ -181,9 +179,7 @@ const Write = (props) => {
             bookContract
               .mintBatch(
                 ContentMetadata,
-                goldEncryptionKey,
-                silverEncryptionKey,
-                bronzeEncryptionKey,
+                EncryptionKey,
                 goldNumber,
                 silverNumber,
                 bronzeNumber,
