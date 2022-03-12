@@ -13,108 +13,77 @@ import alt from "../assets/alt.png";
 import { size } from "draft-js/lib/DefaultDraftBlockRenderMap";
 
 function SinglePage(props) {
-  const { id, itemId, price } = useParams();
+  const precision = 1000000000;
+  const { id, itemId } = useParams();
   const homeClasses = homeStyles();
   const classes = useStyles();
   const [content, setContent] = useState({});
   const [pdf, setpdf] = useState(null);
+  const [price, setPrice] = useState(null);
   const [EncryptionKey, setEncryptionKey] = useState(null);
   var bookContract;
+  var marketContract;
   var url;
-  // var LoadData;
-  // var LoadPdf;
-
-  //   const LoadData = () => {
-  //     if(EncryptionKey !== "0x0000000000000000000000000000000000000000000000000000000000000000"){
-  //     return (<>
-  //       {LoadPdf}
-  //     </>
-  //     );
-  //   }
-  //   else{
-  //     return (
-  //       <div ><Typography >Buy Book to view Contents</Typography></div>
-  //     );
-  //   }
-  // }
-
-  // const LoadPdf =() => {
-  //  if(pdf){
-  //     console.log("pdf", pdf);
-  //     console.log("encryption key", EncryptionKey);
-  //     return (
-  //       <div className={classes.sPViewer}>
-  //         <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey}/>
-  //       </div>
-  //     );
-  //   }
-  //   else{
-  //     return (
-  //     <div className={classes.sPViewer}>
-  //       <img src={loader} alt="loading" />
-  //     </div>
-  //     );
-  //   }
-  // }
-  function getContent() {
-    return new Promise((resolve, reject) => {
-      if (props.connButtonText === "Wallet Connected") {
-        props.setup().then((value) => {
-          bookContract = value[1];
-          console.log("bookContract", bookContract);
-          resolve(bookContract);
-        });
-      } else {
-        props.unsetup().then((value) => {
-          bookContract = value[0];
-          console.log("bookContract", bookContract);
-          resolve(bookContract);
-        });
-      }
-    });
-  }
 
   useEffect(() => {
-    function Get() {
-      getContent()
-        .then(async (bookContract) => {
-          const content = await bookContract.getContentbyCID(id);
-          url = content.descriptionHash;
-          setContent(content);
-          await bookContract.getEncryptionKey(id).then((encryptionKey) => {
-            if (
-              encryptionKey ===
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
-            ) {
-              setEncryptionKey(null);
-            } else {
-              setEncryptionKey(encryptionKey);
-            }
-            console.log("EncryptionKey", EncryptionKey);
-          });
-        })
-        .then(async () => {
-          if (EncryptionKey !== null) {
-            await fetch(url)
-              .then((raw) => {
-                return raw.blob();
-              })
-              .then((blob) => {
-                var reader = new FileReader();
-                reader.readAsText(blob);
-                reader.onloadend = function () {
-                  var base64data = reader.result;
-                  setpdf(base64data);
-                };
-              });
-          }
-        })
-        .catch((err) => {
-          console.log("Fetch Error", err);
+    async function Get() {
+      // getContent()
+      if (props.connButtonText === "Wallet Connected") {
+        await props.setup().then((value) => {
+          bookContract = value[1];
+          marketContract = value[2];
+          console.log("bookContract", bookContract);
+          console.log("market", marketContract);
         });
-    }
-    Get();
-  }, [props.connButtonText, EncryptionKey]);
+      } else {
+        await props.unsetup().then((value) => {
+          bookContract = value[0];
+          marketContract = value[1];
+          console.log("market", marketContract);
+          console.log("bookContract", bookContract);
+        });
+      }
+      await bookContract.getContentbyCID(id)
+      .then(async(content) => {
+      url = content.descriptionHash;
+      setContent(content);
+      const listing = await marketContract.getPrice(itemId);
+      console.log("listing", listing);
+      setPrice(listing.toNumber() / precision);
+      await bookContract.getEncryptionKey(id).then((encryptionKey) => {
+        if (
+          encryptionKey ===
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+        ) {
+          setEncryptionKey(null);
+        } else {
+          setEncryptionKey(encryptionKey);
+        }
+        console.log("EncryptionKey", EncryptionKey);
+      });
+    })
+    .then(async () => {
+      if (EncryptionKey !== null) {
+        await fetch(url)
+          .then((raw) => {
+            return raw.blob();
+          })
+          .then((blob) => {
+            var reader = new FileReader();
+            reader.readAsText(blob);
+            reader.onloadend = function () {
+              var base64data = reader.result;
+              setpdf(base64data);
+            };
+          });
+        }
+    })
+    .catch((err) => {
+      console.log("Fetch Error", err);
+    });
+  }
+  Get();
+  }, [props.connButtonText, EncryptionKey, price]);
 
   const {
     cid,
@@ -129,10 +98,8 @@ function SinglePage(props) {
     tokenIds,
     tokenType,
   } = content;
-  const date = new Date(publicationDate).toString();
-
-  console.log(publicationDate);
-
+  const date = new Date(Number(publicationDate)).toString();
+  var splitDate = date.split(" ");
   let color;
   if (tokenType === 0) {
     color = "#C9B037";
@@ -162,11 +129,13 @@ function SinglePage(props) {
             <div className={classes.details}>
               <Typography>{title}</Typography>
               <div className={classes.buyDetails}>
+                {price && price !== 0 ? (
                 <div>
                   Current Value
                   <div className={homeClasses.bidNumStyle}>{price} ETH </div>$
                   {inDollars}
                 </div>
+                ):(<div>Not for Sale</div>)}
                 <Badge
                   className={homeClasses.badge}
                   style={{ marginTop: "0px", backgroundColor: `${color}` }}>
@@ -181,6 +150,7 @@ function SinglePage(props) {
                     }
                   })()}
                 </Badge>
+                {price && price !== 0 ? (
                 <Button
                   variant='contained'
                   onClick={props.buyContent.bind(this, itemId, price)}
@@ -188,6 +158,7 @@ function SinglePage(props) {
                   style={{ marginTop: "0px" }}>
                   Buy Now
                 </Button>
+                ):(<></>)}
               </div>
               <div className={classes.bidDetails}>
                 <div className={classes.left}>
@@ -205,7 +176,7 @@ function SinglePage(props) {
                 <div className={classes.right}>
                   {title}
                   <br />
-                  {/* {publicationDate} */}
+                  {splitDate[0]} / {splitDate[1]}-{splitDate[2]}-{splitDate[3]}
                   <br />
                   On Sale
                   <div style={{ marginTop: "50px" }}>

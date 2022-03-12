@@ -56,7 +56,7 @@ function SearchBar({ data }) {
             return (
               <a
                 className={searchStyles.dataItem}
-                href={`/singlePage/${value.cid}/${value.cid}/${value.cid}`}
+                href={`/singlePage/${value.cid}/${value.tokenIds[0]}`}
                 target='_blank'
                 alt={value.title}>
                 <>

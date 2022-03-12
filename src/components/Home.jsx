@@ -27,6 +27,7 @@ const Home = (props) => {
   const [featuredContent, setFeaturedContent] = useState({});
   const [listedContent, setlistedContent] = useState([]);
   const [RecentlyMinted, setRecentlyMinted] = useState([]);
+  const [price, setPrice] = useState(null);
 
   let color;
   if (featuredContent.tokenType === 0) {
@@ -88,6 +89,9 @@ const Home = (props) => {
         console.log("Feature content:", content);
         setFeaturedContent(addContent(content, items[items.length - 1]));
 
+        const listing = await marketContract.getPrice(tokenId);
+        console.log("listing", listing);
+        setPrice(listing.toNumber() / 1000000000);
         //Recently minted content limited to top of 10
         console.log("Recently minted:", props.title);
         setRecentlyMinted(props.title.reverse().slice(0, 10));
@@ -156,7 +160,7 @@ const Home = (props) => {
                         fontSize: "1rem",
                         marginTop: "10px",
                       }}>
-                      2 ETH
+                      {price} ETH
                     </Badge>
                   </Tooltip>
                 </div>

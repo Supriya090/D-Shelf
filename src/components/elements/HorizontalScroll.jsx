@@ -20,7 +20,6 @@ function HorizontalScrolling({
     ? props.CollectionOnSale
     : false;
   const [items, setItems] = React.useState(props.getItems);
-  const precision = 1000000000;
   const navigate = useNavigate();
 
   const classes = useStyles();
@@ -31,7 +30,7 @@ function HorizontalScrolling({
     // itemId = itemId.toNumber();
 
     //Load Single page view
-    navigate(`/singlePage/${id}/${itemId}/${price}`);
+    navigate(`/singlePage/${id}/${itemId}`);
   };
 
   function LeftArrow() {
@@ -183,8 +182,7 @@ function HorizontalScrolling({
             index={index}
             onClick={handleClick(
               value.cid,
-              value.tokenId,
-              value.price / precision
+              value.tokenId
             )}
           />
         ))}

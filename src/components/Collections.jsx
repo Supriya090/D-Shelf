@@ -51,7 +51,7 @@ const Collections = (props) => {
         return listed
     }
 
-    const addItemId = (contentArray,item={tokenId:-1,itemId:-1}) => {
+    const addItemId = (contentArray,item={tokenId:0,itemId:0}) => {
       const array = []
       for (const content of contentArray) {
         let listed = {
