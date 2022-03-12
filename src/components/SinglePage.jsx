@@ -14,7 +14,7 @@ import { size } from "draft-js/lib/DefaultDraftBlockRenderMap";
 
 function SinglePage(props) {
   const precision = 1000000000;
-  const { id, tokenId } = useParams();
+  const { tokenId } = useParams();
   const homeClasses = homeStyles();
   const classes = useStyles();
   const [content, setContent] = useState({});
@@ -44,7 +44,7 @@ function SinglePage(props) {
           console.log("bookContract", bookContract);
         });
       }
-      await bookContract.getContentbyCID(id)
+      await bookContract.getContentofToken(tokenId)
       .then(async(content) => {
       url = content.descriptionHash;
       setContent(content);
@@ -53,7 +53,7 @@ function SinglePage(props) {
       setbuy(isListed)
       console.log("listing", listing);
       setPrice(listing.toNumber() / precision);
-      await bookContract.getEncryptionKey(id).then((encryptionKey) => {
+      await bookContract.getEncryptionKey(tokenId).then((encryptionKey) => {
         if (
           encryptionKey ===
           "0x0000000000000000000000000000000000000000000000000000000000000000"

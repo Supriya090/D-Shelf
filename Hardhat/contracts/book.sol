@@ -122,22 +122,22 @@ contract book is ERC721 {
             content.cid=contents.length;
             content.tokenType=TokenType.GOLD;
             content.tokenIds=tokenIdsGold;
-            contents.push(content);
             ContentEncryptionKey[contents.length]=EncryptionKey;
+            contents.push(content);
         }
         if(silver>0){
             content.cid=contents.length;
             content.tokenType=TokenType.SILVER;
             content.tokenIds=tokenIdsSilver;
-            contents.push(content);
             ContentEncryptionKey[contents.length]=EncryptionKey;
+            contents.push(content);
         }
         if(bronze>0){
             content.cid=contents.length;
             content.tokenType=TokenType.BRONZE;
             content.tokenIds=tokenIdsBronze;
-            contents.push(content);
             ContentEncryptionKey[contents.length]=EncryptionKey;
+            contents.push(content);
         }
     }
 
@@ -162,7 +162,7 @@ contract book is ERC721 {
 
     //view functions
     function getContentIndexByID(uint256 tokenId) public view returns (uint256,uint256,bool) {
-        for (uint i = 0; i < contents.length; i++) {
+        for (uint i = 1; i < contents.length; i++) {
             for(uint j = 0;j < contents[i].tokenIds.length;j++){
                 if(contents[i].tokenIds[j]==tokenId){
                     return (i,j,true);
@@ -171,18 +171,6 @@ contract book is ERC721 {
         }
         return (0,0,false);
     }
-
-    function getContentbyCID(uint256 cid) external view returns (Content memory content){
-        require(cid > 0 && cid < contents.length, "Content ID is not valid");
-        return contents[cid];
-    }
-
-    //Similar is done in getContentofToken() with additional checking
-    /*
-    function getAllContentsbyTokenId(uint256 tokenId) public view returns (Content memory content){
-        return(getContentbyCID(getContentIndexByID(tokenId)[0]));
-    }
-    */
     
     function getTokensOwnedByUser() external view returns (uint256[] memory){
         return userOwnedTokens[msg.sender];
@@ -202,12 +190,25 @@ contract book is ERC721 {
         return bronzeTokenIds;
     }
  
-    function getEncryptionKey(uint cid) external view returns (bytes32 encryptedKey){
-        require(cid > 0 && cid < contents.length, "Invalid cid");
-        for (uint256 id = 0; id < contents[cid].tokenIds.length; id++) {
-            if(ownerOf(contents[cid].tokenIds[id]) == msg.sender){
-                return ContentEncryptionKey[cid];
+    function getEncryptionKey(uint tokenId) external view returns (bytes32 encryptedKey){
+        uint256 contentID;
+        bool valid;
+        (contentID, , valid) = getContentIndexByID(tokenId);
+        require(valid == true, "Invalid tokenId or not minted yet");
+        for (uint256 id = 0; id < contents[contentID].tokenIds.length; id++) {
+            if(ownerOf(contents[contentID].tokenIds[id]) == msg.sender){
+                return ContentEncryptionKey[contentID];
             }
+        }
+    }
+
+    function getEncryptionKeybyToken(uint tokenId) external view returns (bytes32 encryptedKey){
+        uint256 contentID;
+        bool valid;
+        (contentID, , valid) = getContentIndexByID(tokenId);
+        require(valid == true, "Invalid tokenId or not minted yet");
+        if(ownerOf(tokenId) == msg.sender){
+            return ContentEncryptionKey[contentID];
         }
     }
     

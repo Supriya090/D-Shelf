@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 function ReadMore({ children,content }) {
   const navigate = useNavigate();
   const singleRoute = () => {
-    navigate(`/singlePage/${content.cid}/${content.tokenId}`);
+    navigate(`/singlePage/${content.tokenId}`);
   };
   const classes = useStyles();
   const [isHidden, setIsHidden] = useState(true);

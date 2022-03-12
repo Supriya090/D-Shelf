@@ -23,14 +23,9 @@ function HorizontalScrolling({
   const navigate = useNavigate();
 
   const classes = useStyles();
-  const handleClick = (cid, itemId) => () => {
-    console.log("cid", itemId);
-    const id = cid.toNumber();
-
-    // itemId = itemId.toNumber();
-
+  const handleClick = (tokenId) => () => {
     //Load Single page view
-    navigate(`/singlePage/${id}/${itemId}`);
+    navigate(`/singlePage/${tokenId}`);
   };
 
   function LeftArrow() {
@@ -181,7 +176,6 @@ function HorizontalScrolling({
             OwnedCollectionIds={CollectiontokenIds}
             index={index}
             onClick={handleClick(
-              value.cid,
               value.tokenId
             )}
           />
