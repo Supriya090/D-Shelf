@@ -47,7 +47,7 @@ function SinglePage(props) {
       .then(async(content) => {
       url = content.descriptionHash;
       setContent(content);
-      const listing = await marketContract.getPrice(itemId);
+      const listing = await marketContract.getPrice(id);
       console.log("listing", listing);
       setPrice(listing.toNumber() / precision);
       await bookContract.getEncryptionKey(id).then((encryptionKey) => {
@@ -208,7 +208,7 @@ function SinglePage(props) {
         <>
           {EncryptionKey && pdf ? (
             <div className={classes.sPViewer}>
-              <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey} />
+              {/* <PDFViewer pdfBase64={pdf} decryptKey={EncryptionKey} /> */}
             </div>
           ) : (
             <div>

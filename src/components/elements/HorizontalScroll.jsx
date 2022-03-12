@@ -23,7 +23,7 @@ function HorizontalScrolling({
   const navigate = useNavigate();
 
   const classes = useStyles();
-  const handleClick = (cid, itemId, price) => () => {
+  const handleClick = (cid, itemId) => () => {
     console.log("cid", itemId);
     const id = cid.toNumber();
 

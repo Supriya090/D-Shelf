@@ -22,7 +22,7 @@ const PDFViewer = (props) => {
   //exports pdf from prop
   var {pdfBase64, decryptKey} = props; 
   console.log("pdfBase64", pdfBase64);
-  console.log("decryptKey", decryptKey);
+  console.log("decryptKey from pdf", decryptKey.toString());
 
   const decrypt = () => {
     //full pdf string decryption --->

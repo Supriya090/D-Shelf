@@ -32,9 +32,9 @@ const Collections = (props) => {
 
   useEffect(() => {
 
-    const addContent = (content,item={tokenId:"a",itemId:"b"}) => {
+    const addContent = (content,item={itemId:"b"}) => {
       let listed = {
-        tokenId : item.tokenId,
+        tokenId : content.tokenIds[0],
         tokenIds : content.tokenIds,
         itemId : item.itemId,
         title : content.title,
@@ -51,11 +51,11 @@ const Collections = (props) => {
         return listed
     }
 
-    const addItemId = (contentArray,item={tokenId:0,itemId:0}) => {
+    const addItemId = (contentArray,item={itemId:0}) => {
       const array = []
       for (const content of contentArray) {
         let listed = {
-          tokenId : item.tokenId,
+          tokenId : content.tokenIds[0],
           tokenIds : content.tokenIds,
           itemId : item.itemId,
           title : content.title,
