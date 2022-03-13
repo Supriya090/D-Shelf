@@ -115,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
         height: "420px",
         position: "absolute",
         right: "18%",
-        top: "46%"
+        top: "50%"
     },
     uploadPdf: {
         flex: "0 0 100%"

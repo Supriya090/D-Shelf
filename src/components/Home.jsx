@@ -129,6 +129,7 @@ const Home = (props) => {
       });
   }, [props.connButtonText, props.title]);
 
+  const inDollars = "$ " + price * 2580;
   return (
     <div className={classes.mainContent}>
       <div className={classes.featuredContent}>
@@ -159,7 +160,7 @@ const Home = (props) => {
                       }
                     })()}
                   </Badge>
-                  <Tooltip title='$10000'>
+                  <Tooltip title={inDollars}>
                     <Badge
                       className={classes.badge}
                       style={{
@@ -218,6 +219,7 @@ const Home = (props) => {
         </div>
         <div className={classes.auctions}>
           <ListHead title={"Recently Minted"} leftButton={"New Content"} />
+          {console.log(RecentlyMinted)}
           {RecentlyMinted.length === 0 ? (
             <img
               src={loader}
