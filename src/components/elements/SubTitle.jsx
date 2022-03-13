@@ -78,7 +78,7 @@ function SubTitle(props) {
             Current Value
             <div
               className={`${scrollClasses.bidNumStyle} ${homeClasses.bidNumStyle}`}>
-              ${props.price * 2657}
+              ${props.price * 2580}
             </div>
             ($10000)
           </div>
