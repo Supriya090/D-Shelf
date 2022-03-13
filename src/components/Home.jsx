@@ -47,7 +47,7 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    const addContent = (content, item = { tokenId: "a", itemId: "b" }) => {
+    const addContent = (content, item = { tokenId: "a", itemId: "b" }, price) => {
       let listed = {
         tokenId: item.tokenId,
         tokenIds: content.tokenIds,
@@ -61,7 +61,7 @@ const Home = (props) => {
         coverImageHash: content.coverImageHash,
         descriptionHash: content.descriptionHash,
         description: content.description,
-        price: item.price,
+        price: price,
       };
       return listed;
     };
@@ -79,9 +79,17 @@ const Home = (props) => {
         let listedcontent = [];
         for (const item of items) {
           const content = await bookContract.getContentofToken(item.tokenId);
-          listedcontent.push(content);
+          const price = await marketContract.getPrice(item.tokenId);
+          console.log("ok",content ,price);
+          listedcontent.push(addContent(content, item, price.toNumber()));
         }
-        setlistedContent(listedcontent.reverse().slice(0, 10));
+        let contents = []
+        for(const content of listedcontent){
+          contents.push(content)
+        }
+        contents = contents.reverse().slice(0, 10);
+        console.log(contents);
+        setlistedContent(contents);
 
         //Featured content
         const tokenId = items[items.length - 1].tokenId;

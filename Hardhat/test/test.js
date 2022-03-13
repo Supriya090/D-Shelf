@@ -30,144 +30,83 @@ describe("NFTMarket", function() {
     owner = accounts[0]
   })
 
-  it("should mint single as well as batch of nfts", async function() {
-    const dummy = accounts[5];
-    const buyerAddress = accounts[6];
-    let listingPrice = await market.getListingPrice()
-    listingPrice = listingPrice.toString()
-    const auctionPrice = ethers.utils.parseUnits('1', 'ether')
-    const content1 = {
-      tokenIds:[],
-      tokenType : 1,
-      contentType : 1,
-      publicationDate:212112,
-      author:"Rahul Shah",
-      authorAddr: dummy.address,
-      coverImageHash: "Image",
-      descriptionHash : "description"
-    }
-
-    const content2 = {
-      tokenIds:[],
-      tokenType : 0,
-      contentType : 0,
-      publicationDate:1225666,
-      author:"Ranju GC",
-      authorAddr: dummy.address,
-      coverImageHash: "coverImage",
-      descriptionHash : "descriptionHash"
-    }
-
-
-    await nft.connect(accounts[1]).mintBatch( content1, 1,0,0, { value: ethers.utils.parseEther("0.1"), gasLimit: 2000000} );
-
-    await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
-    expect(await nft.balanceOf(owner.address)).to.equal(60);
-    expect(await nft.balanceOf(accounts[1].address)).to.equal(1);
-    expect(await nft.balanceOf(buyerAddress.address)).to.equal(0);
-    await market.connect(accounts[1]).createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
-
-    console.log("Minter : ", await nft.getTokensOwnedByUser(accounts[1].address))
-    console.log("Before Buying : ", await nft.getTokensOwnedByUser(buyerAddress.address))
+  
+  // it("Should mint 1 Bronze", async function() {
     
-    await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, { value: auctionPrice})
-    console.log("Seller : ", await nft.getTokensOwnedByUser(accounts[1].address))
-    console.log("Buyer : ", await nft.getTokensOwnedByUser(buyerAddress.address))
+  //   let buyerAddress = accounts[1];
+  //   const dummy = accounts[5];
+  //   const content = {
+  //     cid: 1,
+  //     title: "The Gravity of Us",
+  //     tokenIds:[],
+  //     tokenType : 1,
+  //     contentType : 1,
+  //     publicationDate:2121176542,
+  //     author:"Rahul Shah",
+  //     authorAddr: dummy.address,
+  //     coverImageHash: "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+  //     descriptionHash : "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+  //     description: "MetaMask wallet is a crypto wallet & gateway to blockchain apps. MetaMask walletused to interact with the Ethereum blockchain. MetaMask allows users to access theirEthereum wallet, store and manage account keys, broadcast transactions, send and receiveEthereum-based cryptocurrencies and tokens, and securely connect to decentralized appli-cations through a compatible web browser or the mobile apps built-in browser."
+  //   }
 
-    expect(await nft.balanceOf(accounts[1].address)).to.equal(0);
-    expect(await nft.balanceOf(buyerAddress.address)).to.equal(1);
-  })
-
-  it("should have contents index value=4, 1 single mint,10mint of gold, 20 mints of silver, 30 mint of bronze  ", async function() {
-    const dummy = accounts[5];
-    const content1 = {
-      tokenIds:[],
-      tokenType : 1,
-      contentType : 1,
-      publicationDate:212112,
-      author:"Rahul Shah",
-      authorAddr: dummy.address,
-      coverImageHash: "Image",
-      descriptionHash : "description"
-    }
-
-    const content2 = {
-      tokenIds:[],
-      tokenType : 0,
-      contentType : 0,
-      publicationDate:1225666,
-      author:"Ranju GC",
-      authorAddr: dummy.address,
-      coverImageHash: "coverImage",
-      descriptionHash : "descriptionHash"
-    }
-
-    await nft.mintBatch(content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
-    expect(await nft.balanceOf(owner.address)).to.equal(60);
-    const value = await nft.connect(owner.address).getAllContentsOfUser()
-    console.log("content : ", value);
-    const value3 = [1,2,3]
-    const value2 = await nft.connect(owner.address).getContentbyContentIndexArray(value3)
-    expect(value.length).to.equal(3);
-    console.log(value2);
-    console.log(await nft.connect(owner.address).getTokensOwnedByUser(owner.address));
-    console.log(await nft.connect(owner.address).getTokensOwnedByUser(accounts[1].address));
-    console.log(await nft.getContentofToken(23));
-    const a = [1,5,18,40];
-    const value4 = await nft.getContentbyTokensArray(a)
-    console.log(value4);
-    console.log(await nft.getContentbyContentIndexArray(value4));
-    console.log(await nft.getContentsOfEachTokenType("gold"));
-    console.log(await nft.getContentsByTokenTypeofUser("silver",owner.address));
-
-  })
-
-
-  it("Should create and execute market sales", async function() {
+  //   await nft.mintBatch( content, ethers.utils.formatBytes32String("622a2d43ab027546d340c844"),0, 0, 1, { value: ethers.utils.parseEther("1.0")} );
+  // })
+  
+  it("Should mint and execute market sales", async function() {
     
     let buyerAddress = accounts[1];
-    let listingPrice = await market.getListingPrice()
-    listingPrice = listingPrice.toString()
-    const auctionPrice = ethers.utils.parseUnits('1', 'ether')
-    console.log("Buyer Address : ",buyerAddress.address);
     const dummy = accounts[5];
-    const content1 = {
+    const content = {
+      cid: 1,
+      title: "The Gravity of Us",
       tokenIds:[],
       tokenType : 1,
       contentType : 1,
-      publicationDate:212112,
+      publicationDate:2121176542,
       author:"Rahul Shah",
       authorAddr: dummy.address,
-      coverImageHash: "Image",
-      descriptionHash : "description"
+      coverImageHash: "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+      descriptionHash : "https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
+      description: "MetaMask wallet is a crypto wallet & gateway to blockchain apps. MetaMask walletused to interact with the Ethereum blockchain. MetaMask allows users to access theirEthereum wallet, store and manage account keys, broadcast transactions, send and receiveEthereum-based cryptocurrencies and tokens, and securely connect to decentralized appli-cations through a compatible web browser or the mobile apps built-in browser."
     }
 
-    const content2 = {
-      tokenIds:[],
-      tokenType : 0,
-      contentType : 0,
-      publicationDate:1225666,
-      author:"Ranju GC",
-      authorAddr: dummy.address,
-      coverImageHash: "coverImage",
-      descriptionHash : "descriptionHash"
-    }
-    await nft.mintBatch( content2, 10, 20, 30, { value: ethers.utils.parseEther("10.0")} );    await market.createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
-    await market.createMarketItem(nftContractAddress, 2, auctionPrice, { value: listingPrice })
-
-    await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, { value: auctionPrice})
-
-    items = await market.fetchMarketItems()
-    items = await Promise.all(items.map(async i => {
-      let item = {
-        price: i.price.toString(),
-        tokenId: i.tokenId.toString(),
-        seller: i.seller,
-        owner: i.owner
-      }
-      return item
-    }))
-    console.log('items: ', items)
+    await nft.mintBatch( content, ethers.utils.formatBytes32String("622a2d43ab027546d340c844"),10, 20, 30, { value: ethers.utils.parseEther("10.0")} );
+    // await nft.mintBatch( content, ethers.utils.formatBytes32String("622a2d43ab027546d340c844"),1, 0, 0, { value: ethers.utils.parseEther("10.0")} );
+    await nft.getTokensOwnedByUser()
+    await nft.getTotalContents()
+    await nft.getTotalgoldTokens()
+    await nft.getTotalsilverTokens()
+    await nft.getTotalbronzeTokens()
+    await nft.getEncryptionKey(10)
+    await nft.getEncryptionKeybyToken(20)
+    await nft.getContentList()
+    await nft.getContentofToken(11)
+    await nft.getAllContentsOfUser()
+    await nft.getContentsOfEachTokenType("gold")
+    await nft.getContentsOfEachTokenType("silver")
+    await nft.getContentsOfEachTokenType("bronze")
+    await nft.getContentsByTokenTypeofUser("gold", accounts[0].address)
+    await nft.getContentsByTokenTypeofUser("silver", accounts[0].address)
+    await nft.getContentsByTokenTypeofUser("bronze", accounts[0].address)
+    await nft.setApproval(5)
+    await nft.setApproval(15)
+    
+    await market.createMarketItem(nftContractAddress, 1, 1, accounts[0].address)
+    await market.createMarketItem(nftContractAddress, 2, 1, accounts[0].address)
+    await market.createMarketItem(nftContractAddress, 3, 1, accounts[0].address)
+    await market.createMarketItem(nftContractAddress, 4, 1, accounts[0].address)
+    await market.createMarketItem(nftContractAddress, 5, 1, accounts[0].address)
+    await market.removeMarketItem(nftContractAddress, 2)
+    await market.removeMarketItem(nftContractAddress, 3)
+    const auctionPrice = await market.getPrice(1)
+    await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, { value: ethers.utils.parseEther(auctionPrice.toString())})
+    await market.connect(buyerAddress).createMarketSale(nftContractAddress, 4, { value: ethers.utils.parseEther(auctionPrice.toString())})
+    await market.fetchMarketItems()
+    await market.fetchListeditems()
+    await market.fetchItemsCreated()
+    await market.isTokenListed(4)
+    await market.FilterTokens([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+    await market.connect(buyerAddress).fetchMyNFTs()
   })
 
 })
