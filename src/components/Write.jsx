@@ -134,7 +134,8 @@ const Write = (props) => {
     );
     let pdfurl = null;
     let imageurl = null;
-    const EncryptionKey = ethers.utils.formatBytes32String(ComputeHash(description));
+    const shuffle = str => [...str].sort(()=>Math.random()-.5).join('');
+    const EncryptionKey = ethers.utils.formatBytes32String(ComputeHash(shuffle(description)));
 
     client
       .add(CryptoJS.AES.encrypt(pdfFile, EncryptionKey).toString(), {

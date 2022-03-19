@@ -61,7 +61,7 @@ function SubTitle(props) {
             }}>
             <Button
               variant='contained'
-              onClick={props.buyContent}
+              onClick={props.buyContent.bind(this, props.tokenId, props.price/1000000000)}
               className={`${scrollClasses.bidButton} ${homeClasses.exploreButton}`}>
               Buy Now
             </Button>
