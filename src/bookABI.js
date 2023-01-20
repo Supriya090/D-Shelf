@@ -1,4 +1,4 @@
-export const bookAddress = "0x2c3249e7f2272e9B6b5A8117f20727c99BaE5302"
+export const bookAddress = process.env.BOOK
 export const bookAbi = [
   {
     "inputs": [

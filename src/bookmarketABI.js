@@ -1,4 +1,4 @@
-export const bookMarketAddress = "0x0c386399a0a5f4512a7FB1ca30B5b742Ff050B54"
+export const bookMarketAddress = process.env.BOOK_MARKET
 export const bookMarketAbi = [
   {
     "inputs": [],

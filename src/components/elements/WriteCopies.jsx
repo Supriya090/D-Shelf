@@ -35,7 +35,6 @@ function WriteCopies(props) {
           label='No. of Copies'
           variant='outlined'
           type='number'
-          name='number'
           name={props.numberName}
           value={props.initialVals.number}
           className={classes.textField}

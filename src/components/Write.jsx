@@ -94,7 +94,7 @@ const Write = (props) => {
       return;
     }
     if (typeof window.ethereum !== "undefined") {
-      if (props.connButtonText === "Wallet Connected") {
+      // if (props.connButtonText === "Wallet Connected") {
         props
           .setup()
           .then((value) => {
@@ -108,9 +108,9 @@ const Write = (props) => {
           .catch((err) => {
             console.log(err);
           });
-      } else {
-        alert("Please connect to the wallet");
-      }
+      // } else {
+      //   alert("Please connect to the wallet");
+      // }
     } else {
       alert("Please add Metamask extension");
       return;

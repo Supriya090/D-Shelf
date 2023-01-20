@@ -32,6 +32,7 @@ function App() {
 
   const ConnectWalletHandler = async () => {
     if (window.ethereum) {
+      console.log("aaaaaaaaaa"+window.ethereum)
       // set ethers provider
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();

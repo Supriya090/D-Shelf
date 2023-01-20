@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
+require('dotenv').config()
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -18,11 +19,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 /**
  * @type string
  */
-
-const PRIVATE_KEY =
-  process.env.RINKEBY_PRIVATE_KEY ||
-  process.env.PRIVATE_KEY ||
-  "8fb7b2b7c68ebfb9b77feba8e6d5b2e4287cdc8cfdfd666e36c88c66f8495718";
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 module.exports = {
   solidity: {
     version: "0.8.4",
@@ -44,15 +41,9 @@ module.exports = {
     timeout: 40000,
   },
   networks: {
-    rinkeby: {
-      url:
-        process.env.RINKEBY_URL ||
-        "https://eth-rinkeby.alchemyapi.io/v2/cQwQ1GuU6HfIcVaHoHMZe7dKl_ttPwGL",
-      accounts: [`${PRIVATE_KEY}`],
-    },
-    kovan: {
-      url: process.env.KOVAN_URL || "",
-      accounts: [PRIVATE_KEY],
+    polygon_mumbai: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: [process.env.PRIVATE_KEY]
     },
     ganache:{
       url : "http://localhost:8545",
@@ -65,6 +56,6 @@ module.exports = {
     coinmarketcap: "7a96224a-d043-4efa-87cb-aa9ac1d03aad"
   },
   etherscan: {
-    apiKey: "SE3NA3Y1BFEGWAYNWSZY6VK3QXPT2EMTM6",
+    apiKey: process.env.POLYGONSCAN_API_KEY
   },
 };
